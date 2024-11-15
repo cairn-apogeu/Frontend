@@ -8,10 +8,10 @@ export default function Login() {
         <Image src="/apogeu-logo.png" alt="Apogeu Brand Book Logo" width={180} height={150}/>
         <h1 className="text-center mt-8 mb-12 text-2xl font-bold">Acesse, estude e transforme suas ideias!</h1>
         <form className="flex flex-col gap-4 w-3/4 mt-6">
-          <label htmlFor="login" className="text-md font-bold ">Login</label>
+          <label htmlFor="login" className="text-md font-bold ml-4 ">Login</label>
           <input type="text" id="login" className="p-2 rounded-3xl border shadow-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 border-r-2 bg-[#D9D8D8] h-[4rem] mb-3" />
 
-          <label htmlFor="password" className="text-md font-bold">Senha</label>
+          <label htmlFor="password" className="text-md font-bold ml-4">Senha</label>
           <input type="password" id="password" className="p-2 border shadow-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-[#D9D8D8] h-[4rem] rounded-3xl" />
 
           <div className="flex justify-between text-lg mt-2 ml-4">
