@@ -1,4 +1,4 @@
-// src/pages/login.tsx
+// src/app/page.tsx
 import Image from 'next/image';
 
 export default function Login() {
@@ -19,15 +19,14 @@ export default function Login() {
               <input type="checkbox" className="mr-1 bg-[#D9D8D8] font-bold" />
               Lembrar
             </label>
-            <a href="#" className="text-black underline">Esqueci minha senha</a>
+            <a href="./page2.tsx" className="text-black underline">Esqueci minha senha</a>
           </div>
-
           <button type="submit" className="mt-20 p-3 bg-[#405F73] border  border-gray-300 text-white hover:bg-blue-600  h-[4rem] rounded-3xl text-4xl">Acessar</button>
         </form>
       </div>
 
       <div className="relative w-1/2 bg-black">
-        <Image src="/direita-login.png" alt="Climbers on a mountain" layout="fill" objectFit="cover" />
+        <Image src="/direita-login.png" alt="Climbers on a mountain" fill style={{ objectFit: 'cover' }} />
       </div>
     </div>
   );
