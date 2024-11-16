@@ -1,99 +1,48 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import Card from '../components/Cards';
+import axios from 'axios';
+
+interface CardType {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  status: string;
+  tempo_estimado?: number;
+  tempo?: number;
+  assigned?: string;
+  sprint?: number;
+  dod: string[];
+  dor: string[];
+  tipo: string;
+  xp: number;
+  indicacao_conteudo?: string;
+}
 
 const KanbanPage: React.FC = () => {
-  const cards = [
-    {
-      id: 1,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Todo',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },    {
-      id: 2,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Prevented',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },
-    {
-      id: 3,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Prevented',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },
-    {
-      id: 4,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Prevented',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },
-    {
-      id: 5,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Prevented',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },
-    {
-      id: 6,
-      titulo: 'Tarefa 1',
-      descricao: 'Descrição da tarefa 1',
-      status: 'Prevented',
-      tempo_estimado: 5,
-      tempo: 2,
-      assigned: 'João',
-      sprint: 1,
-      dod: ['Critério 1', 'Critério 2'],
-      dor: ['Critério A', 'Critério B'],
-      tipo: 'Frontend',
-      xp: 2,
-      indicacao_conteudo: 'Conteúdo 1'
-    },
-    
-  ];
+  const [cards, setCards] = useState<CardType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await axios.get<CardType[]>('http://localhost:3333/cards');
+        setCards(response.data);
+        console.log(response.data);
+      } catch (err) {
+        setError('Erro ao carregar os cards');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCards();
+  }, []);
+
+  if (loading) return <p>Carregando...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="kanban-container">
