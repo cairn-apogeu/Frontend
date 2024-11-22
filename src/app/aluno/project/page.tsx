@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import SideNav from "@/app/components/sideNav";
-import Timeline from "./aluno/project/components/timeline";
+import Timeline from "./components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
 
