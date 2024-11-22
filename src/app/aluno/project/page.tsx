@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import SideNav from "@/app/components/sideNav";
-import Timeline from "./components/timeline";
+import Timeline from "./aluno/project/components/timeline";
 import { IoChevronBack } from "react-icons/io5";
+import { IoAddCircleOutline } from "react-icons/io5";
+
 
 export default function Kanban() {
   const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
@@ -11,7 +13,7 @@ export default function Kanban() {
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
       <SideNav />
-      <div className="flex flex-col gap-11 w-full h-screen ml-16 p-14">
+      <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
         {/* Header */}
         <div className="flex items-center gap-5">
           <IoChevronBack size={28} />
@@ -48,6 +50,56 @@ export default function Kanban() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Kanban Section */}
+        <div className="flex flex-col mt-6 w-full items-center">
+
+            {/* Prevented */}
+            <div className="flex flex-col w-full bg-[#1B1B1B] h-64 rounded-xl shadow-md">
+              <div className="flex w-full">
+                <div className="flex items-center justify-center w-32 h-12 bg-[#F14646] mt-4 ml-4 rounded-md shadow-md text-white text-2xl font-fustat">
+                  Prevented
+                </div>
+              </div>
+              <div className="flex-1 overflow-x-scroll">
+                {/* Conteúdo da área scrollável */}
+              </div>
+            </div>
+
+            <div className="w-full flex justify-center h-fit align-middle mt-9">
+              {/* To do */}
+              <div className=" flex flex-col w-full min-h-64 h-fit mr-9 bg-[#1B1B1B] rounded-xl shadow-md">
+                <div className="flex w-32 h-12 bg-[#F17C46] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+                To do
+                </div>
+
+                <div className="flex items-center justify-center w-full mt-4" >
+                  <button >
+                    <IoAddCircleOutline size={36}  />
+                  </button>
+                </div>
+
+
+
+
+              </div >
+              {/* Doing */}
+              <div className="flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md">
+                <div className="flex w-32 h-12 bg-[#F1C946] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+                Doing
+                </div>
+
+              </div>
+              {/* Done */}
+              <div className="flex flex-col w-full min-h-64 h-fit ml-9 bg-[#1B1B1B] rounded-xl shadow-md">
+                <div className="flex w-32 h-12 bg-[#51F146] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+                Done
+                </div>
+
+              </div>
+
+            </div>
         </div>
       </div>
     </div>
