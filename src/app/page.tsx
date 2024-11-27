@@ -1,8 +1,18 @@
 // src/app/login/page.tsx
 'use client';
 
-export default function InitialPage() {
+import { useAuth } from "@clerk/nextjs";
+import { useEffect } from "react";
 
+export default function InitialPage() {
+  const { isSignedIn, userId} = useAuth();
+  // console.log(`USER ID ANTES: ${userId}\nIS SIGNED IN ANTES: ${isSignedIn}`);
+  
+  useEffect(() => {
+    if (isSignedIn) {
+      console.log(`Usuário logado: ${userId}`);
+    }
+  }, [isSignedIn, userId]);
   return (
     <div className="flex h-screen bg-[#141414]">
 

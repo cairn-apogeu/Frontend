@@ -1,7 +1,7 @@
 // src/app/login/page.tsx
 'use client';
 
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { useState, useEffect } from 'react';
 import { useSignIn, useClerk  } from '@clerk/nextjs';
 import Image from 'next/image';
@@ -17,13 +17,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { isSignedIn, isLoaded, userId, sessionId } = useAuth();
+  const { isSignedIn, userId} = useAuth();
   // console.log(`USER ID ANTES: ${userId}\nIS SIGNED IN ANTES: ${isSignedIn}`);
   
   useEffect(() => {
-    if (isSignedIn) {
       console.log(`Usuário logado: ${userId}`);
-    }
   }, [isSignedIn, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +43,7 @@ export default function LoginPage() {
         console.log("LOGIN FEITO");
         console.log(`USER ID DEPOIS: ${userId}\nIS SIGNED IN DEPOIS: ${isSignedIn}`);
         await setActive({ session: response.createdSessionId });
+        
       } else {
         
         setError('Autenticação incompleta. Verifique suas credenciais.');
