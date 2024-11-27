@@ -1,8 +1,9 @@
 // src/app/login/page.tsx
 'use client';
 
-import { useState } from 'react';
-import { useSignIn, useClerk } from '@clerk/nextjs';
+import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { useState, useEffect } from 'react';
+import { useSignIn, useClerk  } from '@clerk/nextjs';
 import Image from 'next/image';
 import Mountains from '../../public/Mountains-darkmode.png'
 import LogoFull from '../../public/logo-full.svg'
@@ -15,6 +16,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const { isSignedIn, isLoaded, userId, sessionId } = useAuth();
+  // console.log(`USER ID ANTES: ${userId}\nIS SIGNED IN ANTES: ${isSignedIn}`);
+  
+  useEffect(() => {
+    if (isSignedIn) {
+      console.log(`Usuário logado: ${userId}`);
+    }
+  }, [isSignedIn, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,12 +42,17 @@ export default function LoginPage() {
       });
 
       if (response.status === 'complete') {
+        console.log("LOGIN FEITO");
+        console.log(`USER ID DEPOIS: ${userId}\nIS SIGNED IN DEPOIS: ${isSignedIn}`);
         await setActive({ session: response.createdSessionId });
       } else {
         
         setError('Autenticação incompleta. Verifique suas credenciais.');
       }
     } catch (err: any) {
+
+      console.log(`------- ERRO --------\n\n${err}\n\n------------------------`);
+
         setError(err.errors?.[0]?.longMessage || 'Erro ao fazer login')
     } finally {
       setIsLoading(false);
