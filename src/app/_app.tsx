@@ -1,6 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs';
 
-const clerkPublishableKey = 'YOUR_PUBLISHABLE_KEY'; // Substitua pelo seu publishable key do Clerk
+const clerkPublishableKey = 'pk_test_ZXF1aXBwZWQtamF3ZmlzaC0xMi5jbGVyay5hY2NvdW50cy5kZXYk'; // Substitua pelo seu publishable key do Clerk
 
 import { AppProps } from 'next/app';
 

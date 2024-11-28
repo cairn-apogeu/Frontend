@@ -5,7 +5,7 @@ import SideNav from "@/app/components/sideNav";
 import Timeline from "./components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
-
+import Card from "./components/card";
 
 export default function Kanban() {
   const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
@@ -69,12 +69,16 @@ export default function Kanban() {
 
             <div className="w-full flex justify-center h-fit align-middle mt-9">
               {/* To do */}
-              <div className=" flex flex-col w-full min-h-64 h-fit mr-9 bg-[#1B1B1B] rounded-xl shadow-md">
-                <div className="flex w-32 h-12 bg-[#F17C46] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+              <div className=" flex flex-col w-full min-h-64 h-fit mr-9 bg-[#1B1B1B] rounded-xl shadow-md p-4 justify-center">
+                <div className="flex w-32 h-12 bg-[#F17C46] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 To do
                 </div>
 
-                <div className="flex items-center justify-center w-full mt-4" >
+                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
+                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
+                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
+
+                <div className="flex items-center justify-center w-full" >
                   <button >
                     <IoAddCircleOutline size={36}  />
                   </button>
@@ -83,17 +87,20 @@ export default function Kanban() {
 
 
 
+
+
+
               </div >
               {/* Doing */}
-              <div className="flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md">
-                <div className="flex w-32 h-12 bg-[#F1C946] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+              <div className="flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4">
+                <div className="flex w-32 h-12 bg-[#F1C946] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 Doing
                 </div>
 
               </div>
               {/* Done */}
-              <div className="flex flex-col w-full min-h-64 h-fit ml-9 bg-[#1B1B1B] rounded-xl shadow-md">
-                <div className="flex w-32 h-12 bg-[#51F146] mt-4 rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat">
+              <div className="flex flex-col w-full min-h-64 h-fit ml-9 bg-[#1B1B1B] rounded-xl shadow-md p-4">
+                <div className="flex w-32 h-12 bg-[#51F146] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 Done
                 </div>
 
