@@ -1,11 +1,9 @@
 // src/app/login/page.tsx
 "use client";
 
-import RadarComponent from "./components/radarChart";
-
 export default function InitialPage() {
   return (
-    <div className="flex h-screen white">
+    <div className="flex h-screen bg-[#141414]">
       <div>
         <button
           type="submit"
@@ -14,7 +12,6 @@ export default function InitialPage() {
           Login
         </button>
       </div>
-      <RadarComponent />
     </div>
   );
 }
