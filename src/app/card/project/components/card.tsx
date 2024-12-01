@@ -1,6 +1,5 @@
+// card.tsx
 import React, { useState } from 'react';
-import SideNav from '@/app/components/sideNav';
-import { IoChevronBack } from 'react-icons/io5';
 import Link from 'next/link';
 
 interface FormData {
@@ -34,6 +33,8 @@ const MinhaPagina: React.FC = () => {
 
     const [title, setTitle] = useState("Diagrama de sequência Kanban");
     const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [assignedTo, setAssignedTo] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string | null>(null);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -75,13 +76,29 @@ const MinhaPagina: React.FC = () => {
         setIsEditingTitle(false);
     };
 
+    // Função mock para obter o nome do usuário a partir do ID
+    const getUserName = (userId: string): string => {
+        const userMap: { [key: string]: string } = {
+            'user_2pMMcELGJus08M5j1n0cIrCac4X': 'ArthurFelipeVaz',
+            // Adicione mais mapeamentos conforme necessário
+        };
+        return userMap[userId] || 'Usuário Desconhecido';
+    };
+
+    const handleAssignClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault();
+        // Atribui o usuário fixo
+        const userId = 'user_2pMMcELGJus08M5j1n0cIrCac4X';
+        setAssignedTo(userId);
+        const name = getUserName(userId);
+        setUserName(name);
+        // Aqui vai adicionar lógica para chamar o endpoint 
+    };
+
     return (
         <div className="flex min-h-screen bg-[#1F1F1F] text-gray-300">
-            
             <div className="flex-grow ml-16 py-8 px-8">
                 <div className="max-w-[1200px] mx-auto">
-                    
-
                     <form
                         onSubmit={handleSubmit}
                         className="bg-[#2D2D2D] p-6 rounded-md shadow-md relative space-y-8" style={{ width: "85%" }}
@@ -108,9 +125,17 @@ const MinhaPagina: React.FC = () => {
                                 )}
                                 <p className="text-sm text-gray-400">17/11/2024</p>
                             </div>
-                            <Link href="#" className="text-blue-400 hover:underline">
-                                Assign to
-                            </Link>
+                            <div className="relative">
+                                {userName ? (
+                                    <span className="text-blue-400 hover:underline cursor-pointer">
+                                        {userName}
+                                    </span>
+                                ) : (
+                                    <Link href="#" className="text-blue-400 hover:underline" onClick={handleAssignClick}>
+                                        Assign to
+                                    </Link>
+                                )}
+                            </div>
                         </div>
 
                         {/* Campos principais */}
@@ -178,7 +203,7 @@ const MinhaPagina: React.FC = () => {
 
                             {/* Coluna Direita: Tempo, Conteúdo de Apoio e Atributos */}
                             <div className="space-y-4 relative" style={{ width: "80%", height: "400px", marginLeft: "80px" ,paddingLeft: "20%" }}>
-                                <div >
+                                <div>
                                     <label
                                         htmlFor="tempo"
                                         className="block text-sm font-medium text-gray-300 mb-1"
@@ -212,7 +237,7 @@ const MinhaPagina: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <p className="text-md font-semibold text-gray-200 mb-2 h-">
+                                    <p className="text-md font-semibold text-gray-200 mb-2">
                                         Atributos
                                     </p>
                                     <div className="grid gap-1">
