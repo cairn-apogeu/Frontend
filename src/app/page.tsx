@@ -1,16 +1,20 @@
 // src/app/login/page.tsx
 'use client';
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
+
+
+
 
 export default function InitialPage() {
   const { isSignedIn, userId} = useAuth();
-  // console.log(`USER ID ANTES: ${userId}\nIS SIGNED IN ANTES: ${isSignedIn}`);
   
   useEffect(() => {
     if (isSignedIn) {
       console.log(`Usuário logado: ${userId}`);
+      document.cookie = `user=${userId}; path=/; max-age=86400; secure; samesite=strict`;
+
     }
   }, [isSignedIn, userId]);
   return (

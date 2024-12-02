@@ -1,12 +1,11 @@
 // src/app/login/page.tsx
 'use client';
 
-import { useAuth } from "@clerk/clerk-react";
 import { useState, useEffect } from 'react';
 import { useSignIn, useClerk  } from '@clerk/nextjs';
 import Image from 'next/image';
-import Mountains from '../../public/Mountains-darkmode.png'
-import LogoFull from '../../public/logo-full.svg'
+import Mountains from '../../../public/Mountains-darkmode.png'
+import LogoFull from '../../../public/logo-full.svg'
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
@@ -17,13 +16,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { isSignedIn, userId} = useAuth();
-  // console.log(`USER ID ANTES: ${userId}\nIS SIGNED IN ANTES: ${isSignedIn}`);
   
-  useEffect(() => {
-      console.log(`Usuário logado: ${userId}`);
-  }, [isSignedIn, userId]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -40,8 +33,7 @@ export default function LoginPage() {
       });
 
       if (response.status === 'complete') {
-        console.log("LOGIN FEITO");
-        console.log(`USER ID DEPOIS: ${userId}\nIS SIGNED IN DEPOIS: ${isSignedIn}`);
+
         await setActive({ session: response.createdSessionId });
         
       } else {
