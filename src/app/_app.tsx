@@ -1,8 +1,8 @@
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
 
-const clerkPublishableKey = 'YOUR_PUBLISHABLE_KEY'; // Substitua pelo seu publishable key do Clerk
+const clerkPublishableKey = "YOUR_PUBLISHABLE_KEY"; // Substitua pelo seu publishable key do Clerk
 
-import { AppProps } from 'next/app';
+import { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
