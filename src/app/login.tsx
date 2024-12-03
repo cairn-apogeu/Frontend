@@ -1,18 +1,18 @@
 // src/app/login/page.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useSignIn, useClerk } from '@clerk/nextjs';
-import Image from 'next/image';
-import Mountains from '../../public/Mountains-darkmode.png'
-import LogoFull from '../../public/logo-full.svg'
+import { useState } from "react";
+import { useSignIn, useClerk } from "@clerk/nextjs";
+import Image from "next/image";
+import Mountains from "../../public/Mountains-darkmode.png";
+import LogoFull from "../../public/logo-full.svg";
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
   const { setActive } = useClerk();
 
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,22 +23,21 @@ export default function LoginPage() {
 
     try {
       if (!signIn) {
-        throw new Error('Serviço de autenticação não disponível');
+        throw new Error("Serviço de autenticação não disponível");
       }
       const response = await signIn.create({
         identifier,
         password,
-        strategy: 'password',
+        strategy: "password",
       });
 
-      if (response.status === 'complete') {
+      if (response.status === "complete") {
         await setActive({ session: response.createdSessionId });
       } else {
-        
-        setError('Autenticação incompleta. Verifique suas credenciais.');
+        setError("Autenticação incompleta. Verifique suas credenciais.");
       }
     } catch (err: any) {
-        setError(err.errors?.[0]?.longMessage || 'Erro ao fazer login')
+      setError(err.errors?.[0]?.longMessage || "Erro ao fazer login");
     } finally {
       setIsLoading(false);
     }
@@ -46,12 +45,14 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen bg-[#141414]">
-      <Image src={Mountains} fill className='absolute z-0' alt="montain" />
+      <Image src={Mountains} fill className="absolute z-0" alt="montain" />
       <div className="flex flex-col justify-around items-center w-1/2 p-10 z-10 bg-[#1b1b1b] rounded-r-3xl shadow-2xl">
-        <Image src={LogoFull} className='w-60' alt="logo-full"/>
+        <Image src={LogoFull} className="w-60" alt="logo-full" />
         <form className="flex flex-col gap-5 w-96  " onSubmit={handleSubmit}>
-          <div className='flex flex-col gap-2'>
-            <label htmlFor="login" className="text-xl font-fustat text-[#eeee]">Login</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="login" className="text-xl font-fustat text-[#eeee]">
+              Login
+            </label>
             <input
               type="text"
               id="login"
@@ -60,11 +61,12 @@ export default function LoginPage() {
               onChange={(e) => setIdentifier(e.target.value)}
               required
             />
-
           </div>
 
-          <div className='flex flex-col gap-2'>
-            <label htmlFor="login" className="text-xl font-fustat text-[#eeee]">Senha</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="login" className="text-xl font-fustat text-[#eeee]">
+              Senha
+            </label>
             <input
               type="password"
               id="password"
@@ -82,7 +84,7 @@ export default function LoginPage() {
             className="mt-5 py-3 w-full bg-[#4DB8FF] text-white hover:bg-[#0070bb] font-fustat font-semibold transition-all rounded-xl text-lg"
             disabled={isLoading}
           >
-            {isLoading ? 'Entrando...' : 'Entrar'}
+            {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
       </div>
