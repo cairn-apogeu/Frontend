@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider, SignedIn, SignedOut } from '@clerk/nextjs';
-import LoginPage from "./login";
+import LoginPage from "./login/page";
 
 const fustat = localFont({
   src: "./fonts/Fustat.woff",
@@ -24,6 +24,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
       <body
