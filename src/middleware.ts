@@ -120,5 +120,8 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: '/((?!_next|api|favicon.ico).*)', // Aplica o middleware em todas as rotas, exceto as especificadas
+  matcher: [
+    '/api/:path*', // Aplica o middleware em todas as rotas da API
+    '/((?!_next|favicon.ico).*)',
+  ],
 };
