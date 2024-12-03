@@ -4,8 +4,8 @@
 import { useState } from "react";
 import { useSignIn, useClerk } from "@clerk/nextjs";
 import Image from "next/image";
-import Mountains from "../../public/Mountains-darkmode.png";
-import LogoFull from "../../public/logo-full.svg";
+import Mountains from "../../../public/Mountains-darkmode.png";
+import LogoFull from "../../../public/logo-full.svg";
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
