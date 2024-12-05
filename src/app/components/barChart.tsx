@@ -18,8 +18,8 @@ const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
 
 const BarChartComponent = () => {
   const [cardsData, setCardsData] = useState<Card[]>([]);
-  const [userData, setUserData] = useState<Record<string, number[]>>({});
-  const [equipeData, setEquipeData] = useState<number[]>([0, 0]);
+  const [userData, setUserData] = useState<Record<string, number>>({});
+  const [equipeData, setEquipeData] = useState<number>(0);
 
   axios
     .get<Card[]>(`${apiUrl}/cards`)
@@ -34,17 +34,17 @@ const BarChartComponent = () => {
       const usersTime = filteredCards.reduce(
         (acc, card) => {
           if (!acc[card.assigned]) {
-            acc[card.assigned] = [0, 0];
+            acc[card.assigned] = 0;
           }
-          acc[card.assigned][0] += card.tempo_estimado || 0;
-          acc[card.assigned][1] += card.tempo || 0;
+          acc[card.assigned] -= card.tempo_estimado || 0;
+          acc[card.assigned] += card.tempo || 0;
 
-          acc.equipe[0] += card.tempo_estimado || 0;
-          acc.equipe[1] += card.tempo || 0;
+          acc.equipe -= card.tempo_estimado || 0;
+          acc.equipe += card.tempo || 0;
 
           return acc;
         },
-        { equipe: [0, 0] } as Record<string, number[]>
+        { equipe: 0 } as Record<string, number>
       );
 
       setUserData(usersTime);
@@ -55,31 +55,29 @@ const BarChartComponent = () => {
     });
 
   const labels = Object.keys(userData).filter((key) => key !== "equipe");
-  const estimatedData = labels.map((user) => userData[user][0]);
-  const realData = labels.map((user) => userData[user][1]);
+  const realData = labels.map((user) => userData[user]);
 
   const data = {
     labels: [...labels, "Equipe"],
     datasets: [
       {
-        label: "Tempo estimado",
-        data: [...estimatedData, equipeData[0]],
-        backgroundColor: "rgba(30,100,255,255)",
-        borderColor: "rgba(30,100,255,255)",
+        label: "Delta tempo",
+        data: [...realData, equipeData],
+        backgroundColor: [...realData, equipeData].map((value) =>
+          value < 0 ? "rgba(255,0,0,0.6)" : "rgba(30,100,255,0.6)"
+        ),
+        borderColor: [...realData, equipeData].map((value) =>
+          value < 0 ? "rgba(255,0,0,1)" : "rgba(30,100,255,1)"
+        ),
         borderWidth: 1,
-      },
-      {
-        label: "Tempo real",
-        data: [...realData, equipeData[1]],
-        backgroundColor: "rgba(77,184,255,255)",
-        borderColor: "rgba(77,184,255,255)",
-        borderWidth: 1,
+        barPercentage: 0.8,
+        categoryPercentage: 0.5,
       },
     ],
   };
 
   return (
-    <div style={{ width: "1000px" }}>
+    <div style={{ width: "500px" }}>
       <Bar data={data}></Bar>
     </div>
   );
