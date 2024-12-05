@@ -7,6 +7,7 @@ import Image from "next/image";
 import Mountains from "../../../public/Mountains-darkmode.png";
 import LogoFull from "../../../public/logo-full.svg";
 import BarChartComponent from "../components/barChart";
+import RadarComponent from "../components/radarChart";
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
@@ -47,6 +48,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-screen bg-[#141414]">
       <BarChartComponent />
+      <RadarComponent />
     </div>
   );
 }

@@ -46,7 +46,7 @@ const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
 const RadarComponent = () => {
   const [cardsData, setCardsData] = useState<Card[]>([]);
   const [userData, setUserData] = useState<Record<string, number[]>>({});
-  const xpEquipe = [0, 0, 0, 0, 0, 0];
+  const [equipeData, setEquipeData] = useState<number[]>([]);
   useEffect(() => {
     axios
       .get<Card[]>(`${apiUrl}/cards`)
@@ -60,6 +60,9 @@ const RadarComponent = () => {
           if (!acc[card.assigned]) {
             acc[card.assigned] = [0, 0, 0, 0, 0, 0];
           }
+          if (!acc.equipe) {
+            acc.equipe = [0, 0, 0, 0, 0, 0];
+          }
 
           acc[card.assigned][0] += card.xp_arquitetura || 0;
           acc[card.assigned][1] += card.xp_backend || 0;
@@ -68,18 +71,19 @@ const RadarComponent = () => {
           acc[card.assigned][4] += card.xp_frontend || 0;
           acc[card.assigned][5] += card.xp_negocios || 0;
 
-          xpEquipe[0] += card.xp_arquitetura || 0;
-          xpEquipe[1] += card.xp_backend || 0;
-          xpEquipe[2] += card.xp_datalytics || 0;
-          xpEquipe[3] += card.xp_design || 0;
-          xpEquipe[4] += card.xp_frontend || 0;
-          xpEquipe[5] += card.xp_negocios || 0;
+          acc.equipe[0] += card.xp_arquitetura || 0;
+          acc.equipe[1] += card.xp_backend || 0;
+          acc.equipe[2] += card.xp_datalytics || 0;
+          acc.equipe[3] += card.xp_design || 0;
+          acc.equipe[4] += card.xp_frontend || 0;
+          acc.equipe[5] += card.xp_negocios || 0;
 
           return acc;
         }, {} as Record<string, number[]>);
 
         setCardsData(filteredCards);
         setUserData(conglomeradoData);
+        setEquipeData(conglomeradoData.equipe);
       })
       .catch((error) => {
         console.error("Erro ao buscar Cards:", error);
@@ -87,18 +91,20 @@ const RadarComponent = () => {
   }, []);
 
   const datasets = [
-    ...Object.entries(userData).map(([user, xpData], index) => ({
-      label: user,
-      data: xpData,
-      fill: true,
-      backgroundColor: `rgba(${index * 100}, 60, 300, 0.5)`,
-      borderColor: `rgba(${index * 100}, 60, 300, 1)`,
-      pointRadius: 4,
-      tension: 0,
-    })),
+    ...Object.entries(userData)
+      .filter(([user]) => user !== "equipe")
+      .map(([user, xpData], index) => ({
+        label: user,
+        data: xpData,
+        fill: true,
+        backgroundColor: `rgba(${index * 100}, 60, 300, 0.5)`,
+        borderColor: `rgba(${index * 100}, 60, 300, 1)`,
+        pointRadius: 4,
+        tension: 0,
+      })),
     {
       label: "Equipe",
-      data: xpEquipe,
+      data: equipeData,
       fill: true,
       backgroundColor: `rgba(236, 240, 38, 0.5)`,
       borderColor: `rgba(236, 240, 38, 1)`,
