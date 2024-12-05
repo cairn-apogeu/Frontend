@@ -10,35 +10,69 @@ import {
 
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
+import { Card } from "./radarChart";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
+
 const BarChartComponent = () => {
-  const labels = ["1", "2", "3", "4", "5", "6", "7"];
+  const [cardsData, setCardsData] = useState<Card[]>([]);
+  const [userData, setUserData] = useState<Record<string, number[]>>({});
+  const [equipeData, setEquipeData] = useState<number[]>([0, 0]);
+
+  axios
+    .get<Card[]>(`${apiUrl}/cards`)
+    .then((response) => {
+      setCardsData(response.data);
+
+      const filteredCards = response.data.filter(
+        (card) =>
+          card.status === "done" && card.projeto === 1 && card.sprint === 1
+      );
+
+      const usersTime = filteredCards.reduce(
+        (acc, card) => {
+          if (!acc[card.assigned]) {
+            acc[card.assigned] = [0, 0];
+          }
+          acc[card.assigned][0] += card.tempo_estimado || 0;
+          acc[card.assigned][1] += card.tempo || 0;
+
+          acc.equipe[0] += card.tempo_estimado || 0;
+          acc.equipe[1] += card.tempo || 0;
+
+          return acc;
+        },
+        { equipe: [0, 0] } as Record<string, number[]>
+      );
+
+      setUserData(usersTime);
+      setEquipeData(usersTime.equipe);
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar cards:", error);
+    });
+
+  const labels = Object.keys(userData).filter((key) => key !== "equipe");
+  const estimatedData = labels.map((user) => userData[user][0]);
+  const realData = labels.map((user) => userData[user][1]);
+
   const data = {
-    labels: labels,
+    labels: [...labels, "Equipe"],
     datasets: [
       {
-        label: "My First Dataset",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
-          "rgba(255, 205, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(201, 203, 207, 0.2)",
-        ],
-        borderColor: [
-          "rgb(255, 99, 132)",
-          "rgb(255, 159, 64)",
-          "rgb(255, 205, 86)",
-          "rgb(75, 192, 192)",
-          "rgb(54, 162, 235)",
-          "rgb(153, 102, 255)",
-          "rgb(201, 203, 207)",
-        ],
+        label: "Tempo estimado",
+        data: [...estimatedData, equipeData[0]],
+        backgroundColor: "rgba(30,100,255,255)",
+        borderColor: "rgba(30,100,255,255)",
+        borderWidth: 1,
+      },
+      {
+        label: "Tempo real",
+        data: [...realData, equipeData[1]],
+        backgroundColor: "rgba(77,184,255,255)",
+        borderColor: "rgba(77,184,255,255)",
         borderWidth: 1,
       },
     ],

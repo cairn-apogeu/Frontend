@@ -20,7 +20,7 @@ ChartJS.register(
   Filler
 );
 
-interface Card {
+export interface Card {
   id: number;
   titulo: string;
   status: string;
@@ -38,6 +38,7 @@ interface Card {
   xp_design: number;
   xp_datalytics: number;
   indicacao_conteudo: string;
+  data_criacao: string;
 }
 
 const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
