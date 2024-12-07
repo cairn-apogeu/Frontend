@@ -50,7 +50,28 @@ export default function Kanban() {
     setDraggedOverColumn(null);
   };
 
-  const handleDrop = (e: React.DragEvent, targetColumn: string) => {
+  const handleDragEnd = async (cardId: number, targetColumn: string) => {
+    try {
+      const response = await fetch(`/cards/${cardId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ column: targetColumn }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update card');
+      }
+  
+      const updatedCard = await response.json();
+      console.log('Card successfully updated:', updatedCard);
+    } catch (error) {
+      console.error('Error updating card:', error);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetColumn: string) => {
     e.preventDefault();
     setDraggedOverColumn(null);
 
@@ -71,7 +92,7 @@ export default function Kanban() {
         console.error("Cartão não encontrado:", cardId);
         return;
       }
-
+      
       setColumns((prev) => {
         const updatedColumns = { ...prev };
         updatedColumns[columnName as keyof ColumnsType] = prev[
@@ -83,7 +104,9 @@ export default function Kanban() {
         ];
         return updatedColumns;
       });
-    } catch (error) {
+      await handleDragEnd(cardId, targetColumn);
+    } 
+    catch (error) {
       console.error("Erro ao processar o drop:", error);
     }
   };
