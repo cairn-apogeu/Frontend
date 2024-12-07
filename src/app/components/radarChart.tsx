@@ -8,6 +8,7 @@ import {
   RadialLinearScale,
   Filler,
 } from "chart.js";
+import { ChartOptions } from "chart.js";
 import { Radar } from "react-chartjs-2";
 import axios from "axios";
 
@@ -98,19 +99,10 @@ const RadarComponent = () => {
         data: xpData,
         fill: true,
         backgroundColor: `rgba(${index * 100}, 60, 300, 0.5)`,
-        borderColor: `rgba(${index * 100}, 60, 300, 1)`,
-        pointRadius: 4,
+        borderColor: `rgba(${index * 100}, 60, 300, 0.5)`,
+        pointRadius: 0,
         tension: 0,
       })),
-    {
-      label: "Equipe",
-      data: equipeData,
-      fill: true,
-      backgroundColor: `rgba(236, 240, 38, 0.5)`,
-      borderColor: `rgba(236, 240, 38, 1)`,
-      pointRadius: 4,
-      tension: 0,
-    },
   ];
 
   const data = {
@@ -125,9 +117,48 @@ const RadarComponent = () => {
     datasets,
   };
 
+  const options: ChartOptions<"radar"> = {
+    maintainAspectRatio: false,
+    responsive: true,
+    scales: {
+      r: {
+        angleLines: {
+          color: "rgba(255, 255, 255, 0.2)",
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.1)",
+        },
+        pointLabels: {
+          color: "gray",
+          font: {
+            size: 10,
+          },
+        },
+        ticks: {
+          backdropColor: "rgba(30, 30, 30, 0.8)",
+          color: "gray",
+          font: {
+            size: 10,
+          },
+          showLabelBackdrop: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        position: "right",
+        labels: {
+          boxWidth: 10,
+          boxHeight: 10,
+          borderRadius: 5,
+        },
+      },
+    },
+  };
+
   return (
-    <div style={{ width: "500px" }}>
-      <Radar data={data}></Radar>
+    <div className="h-[90%]">
+      <Radar data={data} options={options}></Radar>
     </div>
   );
 };
