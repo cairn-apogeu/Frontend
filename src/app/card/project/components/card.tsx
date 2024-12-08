@@ -35,7 +35,7 @@ const MinhaPagina: React.FC = () => {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [assignedTo, setAssignedTo] = useState<string | null>(null);
     const [userName, setUserName] = useState<string | null>(null);
-
+    console.log(assignedTo)
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {

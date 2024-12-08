@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
 import axios from "axios";
+import Image from "next/image";
 
 interface CardData {
   id: number;
@@ -104,11 +105,11 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
         <span className="text-white text-sm">16/11/2024</span>
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-            <img
+            {userData?.profileImageUrl && <Image
               className="rounded-full"
               src={userData?.profileImageUrl}
               alt={`Foto de ${userData?.name}`}
-            />
+            />}
           </div>
           <span className="text-white text-sm">{userData?.name}</span>
         </div>

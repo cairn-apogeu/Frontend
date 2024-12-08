@@ -46,6 +46,7 @@ const RadarComponent = () => {
   const [cardsData, setCardsData] = useState<Card[]>([]);
   const [userData, setUserData] = useState<Record<string, number[]>>({});
   const xpEquipe = [0, 0, 0, 0, 0, 0];
+  console.log(cardsData)
   useEffect(() => {
     axios
       .get<Card[]>(`${apiUrl}/cards`)
@@ -83,7 +84,7 @@ const RadarComponent = () => {
       .catch((error) => {
         console.error("Erro ao buscar Cards:", error);
       });
-  }, []);
+  }, [userData, cardsData, xpEquipe]);
 
   const datasets = [
     ...Object.entries(userData).map(([user, xpData], index) => ({
