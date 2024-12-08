@@ -1,14 +1,85 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SideNav from "@/app/components/sideNav";
 import Timeline from "./components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
 import Card from "./components/card";
+import axios from "axios";
+
+interface Card {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  status: "to do" | "doing" | "done" | "prevented";
+  tempo_estimado?: number;
+  tempo?: number;
+  assigned?: string;
+  sprint?: number;
+  projeto?: number;
+  dod?: string[];
+  dor?: string[];
+  xp_frontend?: number;
+  xp_backend?: number;
+  xp_negocios?: number;
+  xp_arquitetura?: number;
+  xp_design?: number;
+  xp_datalytics?: number;
+  indicacao_conteudo?: string;
+}
+
+
+
+
+
 
 export default function Kanban() {
   const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
+  const [cards, setCards] = useState<any[]>([]); // Estado para armazenar os cards
+  const [filteredCards, setFilteredCards] = useState<{
+    toDo: Card[];
+    doing: Card[];
+    done: Card[];
+    prevented: Card[];
+  }>({
+    toDo: [],
+    doing: [],
+    done: [],
+    prevented: [],
+  });
+  
+
+  // Função para buscar os cards da sprint selecionada
+  useEffect(() => {
+    async function fetchCards() {
+      try {
+        const response = await axios.get(`http://0.0.0.0:3333/cards/project/1`);
+        setCards(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar cards:", error);
+      }
+    }
+
+    if (sprintSelected) {
+      fetchCards();
+    }
+  });
+
+  // Filtra os cards por status
+  useEffect(() => {
+    const toDo = cards.filter((card) => card.status === "to do");
+    const doing = cards.filter((card) => card.status === "doing");
+    const done = cards.filter((card) => card.status === "done");
+    const prevented = cards.filter((card) => card.status === "prevented");
+
+    setFilteredCards({ toDo, doing, done, prevented });
+  }, [cards]);
+
+
+
+
+
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -61,9 +132,15 @@ export default function Kanban() {
                 <div className="flex items-center justify-center w-32 h-12 bg-[#F14646] mt-4 ml-4 rounded-md shadow-md text-white text-2xl font-fustat">
                   Prevented
                 </div>
+
               </div>
               <div className="flex-1 overflow-x-scroll">
                 {/* Conteúdo da área scrollável */}
+                {/* CARDS IRÃO AQUI */}
+              {filteredCards.prevented.map((card) => (
+                <Card key={card.id} {...card} />
+              ))}
+
               </div>
             </div>
 
@@ -73,11 +150,12 @@ export default function Kanban() {
                 <div className="flex w-32 h-12 bg-[#F17C46] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 To do
                 </div>
+                  {/* CARDS IRÃO AQUI */}
 
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-
+              {filteredCards.toDo.map((card) => (
+                <Card card={}/>
+              ))}
+                
                 <div className="flex items-center justify-center w-full" >
                   <button >
                     <IoAddCircleOutline size={36}  />
@@ -96,6 +174,10 @@ export default function Kanban() {
                 <div className="flex w-32 h-12 bg-[#F1C946] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 Doing
                 </div>
+                  {/* CARDS IRÃO AQUI */}
+              {filteredCards.doing.map((card) => (
+                <Card key={card.id} {...card} />
+              ))}
 
               </div>
               {/* Done */}
@@ -103,7 +185,10 @@ export default function Kanban() {
                 <div className="flex w-32 h-12 bg-[#51F146] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
                 Done
                 </div>
-
+                  {/* CARDS IRÃO AQUI */}
+              {filteredCards.done.map((card) => (
+                <Card key={card.id} {...card} />
+              ))}
               </div>
 
             </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
-import axios from "axios";
+
+
 
 interface CardData {
   id: number;
@@ -11,31 +12,30 @@ interface CardData {
   tempo?: number;
   assigned?: string;
   sprint?: number;
-  dod: string[];
-  dor: string[];
+  projeto?: number;
+  dod?: string[];
+  dor?: string[];
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
   xp_arquitetura?: number;
   xp_design?: number;
   xp_datalytics?: number;
-  tipo: string;
   indicacao_conteudo?: string;
 }
 
-interface CardProps {
-  idAluno: string;
-  idCard: number;
+interface CardProps{
+  card: CardData;
 }
+
 
 interface UserData {
   name: string;
   profileImageUrl: string;
 }
 
-const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
+const Card: React.FC<CardProps> = ( card ) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [cardData, setCardData] = useState<CardData | null>(null);
   const [maxXp, setMaxXp] = useState<{ area: string; value: number } | null>(null);
 
   // Função para calcular o maior XP
@@ -61,9 +61,16 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
   }
 
   useEffect(() => {
+    setMaxXp(calculateMaxXp(card.card))
+  }, []);
+
+
+
+
+  useEffect(() => {
     async function fetchUserData() {
       try {
-        const response = await fetch(`/api/getUser?userId=${idAluno}`);
+        const response = await fetch(`/api/getUser?userId=${card.card.assigned}`);
         const data = await response.json();
         setUserData(data);
       } catch (error) {
@@ -71,31 +78,12 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
       }
     }
 
-    if (idAluno) {
+    if (card.card.assigned) {
       fetchUserData();
     }
-  }, [idAluno]);
+  }, [card]);
 
-  useEffect(() => {
-    async function fetchCardData() {
-      try {
-        const response = await axios.get<CardData>(`http://localhost:3333/cards/${idCard}`);
-        const card = response.data;
 
-        setCardData(card);
-
-        // Calcula o maior XP e define no estado
-        const maxXp = calculateMaxXp(card);
-        setMaxXp(maxXp);
-      } catch (error) {
-        console.error("Erro ao buscar dados do card:", error);
-      }
-    }
-
-    if (idCard) {
-      fetchCardData();
-    }
-  }, [idCard]);
 
   return (
     <div className="w-[360px] h-[152px] bg-[#2D2D2D] rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4">
@@ -116,7 +104,7 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
 
       {/* Middle Section */}
       <div>
-        <h2 className="text-white text-lg font-semibold">{cardData?.titulo}</h2>
+        <h2 className="text-white text-lg font-semibold">{card.card.titulo}</h2>
       </div>
 
       {/* Bottom Section */}
@@ -124,7 +112,7 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard }) => {
         {/* Time Badge */}
         <div className="flex items-center space-x-1 px-2 py-1 bg-[#2D2D2D] border border-[#F1C946] text-[#F1C946] rounded-lg text-sm">
           <IoHourglassOutline />
-          <span>{cardData?.tempo_estimado || "N/A"}</span>
+          <span>{card.card.tempo_estimado || "N/A"}</span>
         </div>
 
         {/* XP Badge */}
