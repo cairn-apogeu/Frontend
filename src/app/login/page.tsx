@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useSignIn, useClerk } from "@clerk/nextjs";
 import Image from "next/image";
-import Mountains from "../../../public/Mountains-darkmode.png";
+import Mountains from "../../../public/Dark-Montain-SVG.svg";
 import LogoFull from "../../../public/logo-full.svg";
 
 export default function LoginPage() {
@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen bg-[#141414]">
-      <Image src={Mountains} fill className="absolute z-0" alt="montain" />
+      <Image src={Mountains} className=" absolute bottom-0 z-0" alt="montain" />
       <div className="flex flex-col justify-around items-center w-1/2 p-10 z-10 bg-[#1b1b1b] rounded-r-3xl shadow-2xl">
         <Image src={LogoFull} className="w-60" alt="logo-full" />
         <form className="flex flex-col gap-5 w-96  " onSubmit={handleSubmit}>
