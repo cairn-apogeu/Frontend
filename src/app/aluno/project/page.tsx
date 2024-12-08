@@ -7,8 +7,147 @@ import { IoChevronBack } from "react-icons/io5";
 import { IoAddCircleOutline } from "react-icons/io5";
 import Card from "./components/card";
 
+interface CardType {
+  id: number;
+  idAluno: string;
+}
+
+interface ColumnsType {
+  todo: CardType[];
+  doing: CardType[];
+  done: CardType[];
+  prevented: CardType[];
+}
+
 export default function Kanban() {
-  const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
+  const [sprintSelected, setSprintSelected] = useState<number>(2);
+  const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
+
+  const [columns, setColumns] = useState<ColumnsType>({
+    todo: [
+      { id: 1, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+      { id: 2, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+      { id: 3, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+      { id: 4, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+      { id: 5, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+    ],
+    doing: [],
+    done: [],
+    prevented: [],
+  });
+
+  const handleDragStart = (e: React.DragEvent, columnName: string, cardId: number) => {
+    const data = JSON.stringify({ columnName, cardId });
+    e.dataTransfer.setData("text/plain", data);
+  };
+
+  const handleDragOver = (e: React.DragEvent, columnName: string) => {
+    e.preventDefault();
+    setDraggedOverColumn(columnName);
+  };
+
+  const handleDragLeave = () => {
+    setDraggedOverColumn(null);
+  };
+
+  const handleDragEnd = async (cardId: number, targetColumn: string) => {
+    try {
+      const response = await fetch(`/cards/${cardId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ column: targetColumn }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update card');
+      }
+  
+      const updatedCard = await response.json();
+      console.log('Card successfully updated:', updatedCard);
+    } catch (error) {
+      console.error('Error updating card:', error);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetColumn: string) => {
+    e.preventDefault();
+    setDraggedOverColumn(null);
+
+    try {
+      const draggedData = JSON.parse(e.dataTransfer.getData("text/plain"));
+      const { columnName, cardId } = draggedData;
+
+      if (!columns[columnName as keyof ColumnsType]) {
+        console.error("Coluna inválida:", columnName);
+        return;
+      }
+
+      const cardToMove = columns[columnName as keyof ColumnsType].find(
+        (card) => card.id === cardId
+      );
+
+      if (!cardToMove) {
+        console.error("Cartão não encontrado:", cardId);
+        return;
+      }
+      
+      setColumns((prev) => {
+        const updatedColumns = { ...prev };
+        updatedColumns[columnName as keyof ColumnsType] = prev[
+          columnName as keyof ColumnsType
+        ].filter((card) => card.id !== cardId);
+        updatedColumns[targetColumn as keyof ColumnsType] = [
+          ...prev[targetColumn as keyof ColumnsType],
+          cardToMove,
+        ];
+        return updatedColumns;
+      });
+      await handleDragEnd(cardId, targetColumn);
+    } 
+    catch (error) {
+      console.error("Erro ao processar o drop:", error);
+    }
+  };
+
+  const columnConfigs = {
+    prevented: { title: "Prevented", bgColor: "bg-[#F14646]" },
+    todo: { title: "To do", bgColor: "bg-[#F17C46]" },
+    doing: { title: "Doing", bgColor: "bg-[#F1C946]" },
+    done: { title: "Done", bgColor: "bg-[#51F146]" },
+  };
+
+  const renderColumn = (columnName: keyof ColumnsType) => {
+    const config = columnConfigs[columnName];
+    const isPrevented = columnName === "prevented";
+
+    return (
+      <div
+        className={`flex ${isPrevented ? "flex-wrap gap-4" : "flex-col"} w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
+          ${draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""}`}
+        onDragOver={(e) => handleDragOver(e, columnName)}
+        onDragLeave={handleDragLeave}
+        onDrop={(e) => handleDrop(e, columnName)}
+      >
+        <div
+          className={`flex w-32 h-12 ${config.bgColor} rounded-md shadow-md self-center 
+            justify-center items-center text-2xl font-fustat mb-4 text-white ${isPrevented ? "w-full" : ""}`}
+        >
+          {config.title}
+        </div>
+        {columns[columnName].map((card) => (
+          <Card
+            key={card.id}
+            idAluno={card.idAluno}
+            idCard={card.id}
+            draggable
+            onDragStart={(e) => handleDragStart(e, columnName, card.id)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -24,13 +163,11 @@ export default function Kanban() {
         <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
           <Timeline
             totalSprints={5}
-            currentSprint={4} // Atualize conforme o sprint atual
+            currentSprint={4}
             sprintProgress={0.3}
-            sprintSelected={sprintSelected} // Passa o estado atual da sprint selecionada
-            setSprintSelected={setSprintSelected} // Passa o método para alterar o estado
+            sprintSelected={sprintSelected}
+            setSprintSelected={setSprintSelected}
           />
-
-          {/* Sprint Labels */}
           <div className="w-full flex justify-between mt-4">
             {["All", "1", "2", "3", "4", "5", "Fim"].map((label, index) => (
               <p key={index} className="font-fustat w-4 text-center text-[#eee]">
@@ -38,8 +175,6 @@ export default function Kanban() {
               </p>
             ))}
           </div>
-
-          {/* Buttons */}
           <div className="flex mt-12 w-full justify-between">
             {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map((btnLabel, index) => (
               <button
@@ -54,59 +189,12 @@ export default function Kanban() {
 
         {/* Kanban Section */}
         <div className="flex flex-col mt-6 w-full items-center">
-
-            {/* Prevented */}
-            <div className="flex flex-col w-full bg-[#1B1B1B] h-64 rounded-xl shadow-md">
-              <div className="flex w-full">
-                <div className="flex items-center justify-center w-32 h-12 bg-[#F14646] mt-4 ml-4 rounded-md shadow-md text-white text-2xl font-fustat">
-                  Prevented
-                </div>
-              </div>
-              <div className="flex-1 overflow-x-scroll">
-                {/* Conteúdo da área scrollável */}
-              </div>
-            </div>
-
-            <div className="w-full flex justify-center h-fit align-middle mt-9">
-              {/* To do */}
-              <div className=" flex flex-col w-full min-h-64 h-fit mr-9 bg-[#1B1B1B] rounded-xl shadow-md p-4 justify-center">
-                <div className="flex w-32 h-12 bg-[#F17C46] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
-                To do
-                </div>
-
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-                <Card idAluno="user_2pBA4hytOytbJV2TctifDjXM7ad" idCard={1}></Card>
-
-                <div className="flex items-center justify-center w-full" >
-                  <button >
-                    <IoAddCircleOutline size={36}  />
-                  </button>
-                </div>
-
-
-
-
-
-
-
-              </div >
-              {/* Doing */}
-              <div className="flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4">
-                <div className="flex w-32 h-12 bg-[#F1C946] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
-                Doing
-                </div>
-
-              </div>
-              {/* Done */}
-              <div className="flex flex-col w-full min-h-64 h-fit ml-9 bg-[#1B1B1B] rounded-xl shadow-md p-4">
-                <div className="flex w-32 h-12 bg-[#51F146] rounded-md shadow-md self-center justify-center items-center text-2xl font-fustat mb-4">
-                Done
-                </div>
-
-              </div>
-
-            </div>
+          {renderColumn("prevented")}
+          <div className="w-full flex justify-center gap-9 h-fit align-middle mt-9">
+            {renderColumn("todo")}
+            {renderColumn("doing")}
+            {renderColumn("done")}
+          </div>
         </div>
       </div>
     </div>
