@@ -1,15 +1,11 @@
-import { ClerkProvider } from "@clerk/nextjs";
+// src/pages/_app.tsx
+import { ClerkProvider } from '@clerk/nextjs';
+import type { AppProps } from 'next/app';
 
-const clerkPublishableKey = "YOUR_PUBLISHABLE_KEY"; // Substitua pelo seu publishable key do Clerk
-
-import { AppProps } from "next/app";
-
-function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ClerkProvider publishableKey={clerkPublishableKey}>
+    <ClerkProvider>
       <Component {...pageProps} />
     </ClerkProvider>
   );
 }
-
-export default MyApp;
