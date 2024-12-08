@@ -12,51 +12,26 @@ import {
 import { ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
+import { Card, paramsGraphsProps } from "./graphsTypes";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
 
-interface Card {
-  status: string;
-  projeto: number;
-  sprint: number;
-  assigned: string;
-  tempo: number;
-}
-
-const ThroughputComponent = () => {
-  const [cardsData, setCardsData] = useState<Card[]>([]);
+const ThroughputComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
   const [userData, setUserData] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    axios
-      .get<Card[]>(`${apiUrl}/cards`)
-      .then((response) => {
-        setCardsData(response.data);
+    const usersTime = AllCards.reduce<Record<string, number>>((acc, card) => {
+      if (!acc[card.assigned]) {
+        acc[card.assigned] = 0;
+      }
+      acc[card.assigned] += card.tempo || 0;
+      return acc;
+    }, {});
 
-        const filteredCards = response.data.filter(
-          (card) =>
-            card.status === "done" && card.projeto === 1 && card.sprint === 1
-        );
-
-        const usersTime = filteredCards.reduce<Record<string, number>>(
-          (acc, card) => {
-            if (!acc[card.assigned]) {
-              acc[card.assigned] = 0;
-            }
-            acc[card.assigned] += card.tempo || 0;
-            return acc;
-          },
-          {}
-        );
-
-        setUserData(usersTime);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar cards:", error);
-      });
-  }, []);
+    setUserData(usersTime);
+  }, [AllCards]);
 
   const labels = Object.keys(userData).filter((key) => key !== "equipe");
   const realData = labels.map((user) => userData[user]);
