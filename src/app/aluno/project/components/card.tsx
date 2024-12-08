@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
 import axios from "axios";
+import Image from "next/image";
 
 interface CardData {
   id: number;

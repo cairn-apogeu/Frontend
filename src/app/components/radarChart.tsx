@@ -26,6 +26,16 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
   const [userData, setUserData] = useState<Record<string, number[]>>({});
 
   useEffect(() => {
+    axios
+      .get<Card[]>(`${apiUrl}/cards`)
+      .then((response) => {
+        setCardsData(response.data);
+        const filteredCards = response.data.filter(
+          (card) => card.status === "done" && card.projeto === 1
+        );
+
+
+  useEffect(() => {
     const conglomeradoData = AllCards.reduce((acc, card) => {
       if (!acc[card.assigned]) {
         acc[card.assigned] = [0, 0, 0, 0, 0, 0];
