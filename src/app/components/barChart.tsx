@@ -23,10 +23,7 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData })
       return "Usuário não encontrado";
     }
 
-    const user = usersData.find((user: UserData) => {
-      console.log("AAAAAA",user);
-      
-      return user.id === userId});
+    const user = usersData.find((user: UserData) => user.id === userId);
     return user ? user.name : "Usuário não encontrado"; // Retorna o nome ou uma mensagem padrão
   };
 
@@ -47,7 +44,7 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData })
     );
 
     setUserData(usersTime);
-  }, [AllCards]);
+  }, [AllCards, usersData]); // Adicionando usersData na lista de dependências
 
   // Mapeia os IDs dos usuários para os nomes
   const labels = Object.keys(userData).map((userId) => getUserName(userId));

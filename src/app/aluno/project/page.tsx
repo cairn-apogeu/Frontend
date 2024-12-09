@@ -99,7 +99,7 @@ export default function Project() {
         </div>
 
         {viewSelected === "Kanban" && <Kanban statusChanged={() => setStatusChanged(!statusChanged)} cards={sprintCards} />}
-        {viewSelected === "Estatísticas" && <Estatisticas cardsProject={cards.filter((card) => card.status === "done")} />}
+        {viewSelected === "Estatísticas" && <Estatisticas cardsProject={sprintCards.filter((card) => card.status === "done")} />}
       </div>
     </div>
   );
