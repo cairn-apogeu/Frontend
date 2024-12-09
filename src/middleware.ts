@@ -106,7 +106,7 @@ export default clerkMiddleware(async (auth, req) => {
       console.log("USER ID COOKIE DO NOT EXISTS");
       
       
-      return NextResponse.redirect(new URL('/login', req.url))
+      // return NextResponse.redirect(new URL('/login', req.url))
       
     }
 

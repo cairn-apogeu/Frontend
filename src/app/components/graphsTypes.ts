@@ -18,7 +18,12 @@ export interface Card {
   indicacao_conteudo: string;
   data_criacao: string;
 }
-
+export interface UserData {
+  id: string;
+  name: string;
+  profileImageUrl: string;
+}
 export interface paramsGraphsProps {
   AllCards: Card[];
+  usersData: UserData[];
 }

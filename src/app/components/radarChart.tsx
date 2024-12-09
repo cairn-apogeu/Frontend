@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { ChartOptions } from "chart.js";
 import { Radar } from "react-chartjs-2";
-import { paramsGraphsProps } from "./graphsTypes";
+import { paramsGraphsProps, UserData } from "./graphsTypes";
 
 ChartJS.register(
   LineElement,
@@ -21,10 +21,19 @@ ChartJS.register(
   Filler
 );
 
-const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
+const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData }) => {
   const [userData, setUserData] = useState<Record<string, number[]>>({});
 
-  
+  // Função para buscar o nome do usuário com base no ID
+  const getUserName = (userId: string): string => {
+    // Verificar se usersData está disponível e se não está vazio
+    if (!usersData || usersData.length === 0) {
+      return "Usuário não encontrado";
+    }
+
+    const user = usersData.find((user: UserData) => user.id === userId);
+    return user ? user.name : "Usuário não encontrado"; // Retorna o nome ou uma mensagem padrão
+  };
 
   useEffect(() => {
     const conglomeradoData = AllCards.reduce((acc, card) => {
@@ -45,8 +54,9 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
     setUserData(conglomeradoData);
   }, [AllCards]);
 
-  const datasets = Object.entries(userData).map(([user, xpData], index) => ({
-    label: user,
+  // Mapeia os IDs dos usuários para os nomes
+  const datasets = Object.entries(userData).map(([userId, xpData], index) => ({
+    label: getUserName(userId), // Usa o nome do usuário ao invés do ID
     data: xpData,
     fill: true,
     backgroundColor: `rgba(${index * 50}, 100, 200, 0.5)`, // Valores RGBA corrigidos

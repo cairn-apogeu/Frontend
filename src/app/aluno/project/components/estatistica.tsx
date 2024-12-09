@@ -4,32 +4,60 @@ import RadarComponent from "@/app/components/radarChart";
 import BarChartComponent from "@/app/components/barChart";
 import ThroughputComponent from "@/app/components/throughputChart";
 
-import { Card } from "@/app/components/graphsTypes";
-import axiosInstance from "@/app/api/axiosInstance";
+interface Card {
+  id: number;
+  titulo: string;
+  descricao?: string;
+  status: "toDo" | "doing" | "done" | "prevented";
+  tempo_estimado?: number;
+  tempo?: number;
+  assigned?: string;
+  sprint?: number;
+  projeto?: number;
+  dod?: string[];
+  dor?: string[];
+  xp_frontend?: number;
+  xp_backend?: number;
+  xp_negocios?: number;
+  xp_arquitetura?: number;
+  xp_design?: number;
+  xp_datalytics?: number;
+  indicacao_conteudo?: string;
+}
 
+interface StatisticProps {
+  cardsProject: Card[];
+}
 
-const Estatisticas = () => {
-  const sprint = 8;
-  const projeto = 11;
-  const [cardsProject, setCardsProject] = useState<Card[]>([]);
+const Estatisticas: React.FC<StatisticProps> = ({ cardsProject }) => {
   const [throughput, setThroughput] = useState<number>(0);
   const [numUsers, setNumUsers] = useState<number>(0);
+  const [userData, setUserData] = useState<any[]>([]);
 
   useEffect(() => {
-    axiosInstance
-      .get<Card[]>(`/cards/project/${projeto}`)
-      .then((response) => {
+    async function fetchUserData() {
+      try {
+        const usersData: any[] = [];
+
+        for (const card of cardsProject) {
+          if (card.assigned && !usersData.some(user => user.id === card.assigned)) {
+            const response = await fetch(`/api/getUser?userId=${card.assigned}`);
+            const data = await response.json();
+            usersData.push(data);
+          }
+        }
+
+        setUserData(usersData);
         
-        const allCards = response.data.filter(
-          (card) => card.status === "done" && card.sprint === sprint
-        );
-        console.log(response.data);
-        setCardsProject(allCards);
-      })
-      .catch((error) => {
-        console.error("Error fetching cards:", error);
-      });
-  }, [sprint]);
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+      }
+    }
+
+    if (cardsProject.length > 0) {
+      fetchUserData();
+    }
+  }, [cardsProject]); // Remover a dependência de 'usersData' aqui
 
   useEffect(() => {
     if (cardsProject.length > 0) {
@@ -37,9 +65,9 @@ const Estatisticas = () => {
       const users: string[] = [];
 
       cardsProject.forEach((card) => {
-        mequeinha += card.tempo;
+        mequeinha += card.tempo || 0;
 
-        if (!users.includes(card.assigned)) {
+        if (card.assigned && !users.includes(card.assigned)) {
           users.push(card.assigned);
         }
       });
@@ -48,7 +76,9 @@ const Estatisticas = () => {
       setThroughput(mequeinha);
       console.log(users);
     }
-  }, [cardsProject]);
+  }, [cardsProject]); // Dependência em cardsProject
+
+
 
   const capacity = numUsers * 960;
   const averageThroughput = throughput / numUsers;
@@ -75,19 +105,19 @@ const Estatisticas = () => {
 
         <div className="flex-[8] bg-[#1b1b1b] rounded-md shadow-md m-4 w-full h-min-full p-4 overflow-hidden">
           <p className="text-sm font-extralight mb-3">Individual Throughput</p>
-          <ThroughputComponent AllCards={cardsProject} />
+          <ThroughputComponent usersData={userData} AllCards={cardsProject} />
         </div>
       </div>
 
       <div className="flex overflow-hidden h-[50%]">
         <div className="flex-[1.8] bg-[#1b1b1b] rounded-md shadow-md m-4 w-full h-min-full p-4 overflow-hidden">
           <p className="text-sm font-extralight mb-3">Delta Time Predict</p>
-          <BarChartComponent AllCards={cardsProject} />
+          <BarChartComponent usersData={userData} AllCards={cardsProject} />
         </div>
 
         <div className="flex-[1.2] flex-row bg-[#1b1b1b] rounded-md shadow-md m-4 w-full p-4 overflow-hidden">
           <p className="text-sm font-extralight ">Skills</p>
-          <RadarComponent AllCards={cardsProject} />
+          <RadarComponent usersData={userData} AllCards={cardsProject} />
         </div>
       </div>
     </div>
