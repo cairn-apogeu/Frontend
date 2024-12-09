@@ -67,14 +67,14 @@ export default clerkMiddleware(async (auth, req) => {
   
         } 
         else {
-          return NextResponse.redirect(new URL('/', req.url))
+          // return NextResponse.redirect(new URL('/', req.url))
         }
       } 
       
       else if (isManagerRoute(req)){
         console.log("VERIFY IF USER ID COOKIE IS OF A MANAGER")
         if (userRole == "manager"){
-          // console.log(`User cookie: ${userId}\n\nUser role: ${userRole}`);
+          console.log(`User cookie: ${userId}\n\nUser role: ${userRole}`);
           return NextResponse.next();
           
         } 
@@ -88,7 +88,7 @@ export default clerkMiddleware(async (auth, req) => {
         console.log("VERIFY IF USER ID COOKIE IS OF A CLIENT")
   
         if (userRole == "client"){
-          // console.log(`User cookie: ${userId}\n\nUser role: ${userRole}`);
+          console.log(`User cookie: ${userId}\n\nUser role: ${userRole}`);
           return NextResponse.next();
           
         } 
@@ -106,7 +106,7 @@ export default clerkMiddleware(async (auth, req) => {
       console.log("USER ID COOKIE DO NOT EXISTS");
       
       
-      return NextResponse.redirect(new URL('/login', req.url))
+      // return NextResponse.redirect(new URL('/login', req.url))
       
     }
 

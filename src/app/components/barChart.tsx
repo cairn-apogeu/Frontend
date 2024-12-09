@@ -8,19 +8,28 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
-
 import { Bar } from "react-chartjs-2";
-import axios from "axios";
-import { Card, paramsGraphsProps } from "./graphsTypes";
+import { paramsGraphsProps, UserData } from "./graphsTypes";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
-
-const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
+const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData }) => {
   const [userData, setUserData] = useState<Record<string, number>>({});
 
+  // Função para buscar o nome do usuário com base no ID
+  const getUserName = (userId: string): string => {
+    // Verificar se usersData está disponível e se não está vazio
+    if (!usersData || usersData.length === 0) {
+      return "Usuário não encontrado";
+    }
+
+    const user = usersData.find((user: UserData) => user.id === userId);
+    return user ? user.name : "Usuário não encontrado"; // Retorna o nome ou uma mensagem padrão
+  };
+
   useEffect(() => {
+    console.log("UserData: ", usersData);
+
     const usersTime = AllCards.reduce(
       (acc, card) => {
         if (!acc[card.assigned]) {
@@ -35,13 +44,14 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
     );
 
     setUserData(usersTime);
-  }, [AllCards]);
+  }, [AllCards, usersData]); // Adicionando usersData na lista de dependências
 
-  const labels = Object.keys(userData);
+  // Mapeia os IDs dos usuários para os nomes
+  const labels = Object.keys(userData).map((userId) => getUserName(userId));
   const realData = labels.map((user) => userData[user]);
 
   const data = {
-    labels: [...labels],
+    labels: [...labels], // Usando os nomes na legenda
     datasets: [
       {
         label: "Delta tempo",
@@ -65,7 +75,7 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
     plugins: {
       legend: {
         position: "bottom",
-        display: false,
+        display: true, // Exibindo a legenda
       },
     },
   };

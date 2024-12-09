@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
 
     // Retorna os dados do usuário
     return NextResponse.json({
+      id: userId,
       name: `${user.firstName} ${user.lastName}`,
       profileImageUrl: user.imageUrl,
     });

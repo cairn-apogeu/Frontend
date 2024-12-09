@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Chart as ChartJS,
   BarElement,
@@ -8,18 +7,24 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-
 import { ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import axios from "axios";
-import { Card, paramsGraphsProps } from "./graphsTypes";
+import { paramsGraphsProps, UserData } from "./graphsTypes";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
-
-const ThroughputComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
+const ThroughputComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData }) => {
   const [userData, setUserData] = useState<Record<string, number>>({});
+
+  // Função para buscar o nome do usuário com base no ID
+  const getUserName = (userId: string): string => {
+    if (!usersData || usersData.length === 0) {
+      return "Usuário não encontrado";
+    }
+
+    const user = usersData.find((user: UserData) => user.id === userId);
+    return user ? user.name : "Usuário não encontrado";
+  };
 
   useEffect(() => {
     const usersTime = AllCards.reduce<Record<string, number>>((acc, card) => {
@@ -33,11 +38,16 @@ const ThroughputComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
     setUserData(usersTime);
   }, [AllCards]);
 
-  const labels = Object.keys(userData).filter((key) => key !== "equipe");
-  const realData = labels.map((user) => userData[user]);
+  // Labels agora usando o nome do usuário, mas mantendo o ID para os dados
+  const labels = Object.keys(userData)
+    .filter((key) => key !== "equipe")
+    .map((userId) => getUserName(userId)); // Usando getUserName para pegar o nome
+  const realData = Object.keys(userData)
+    .filter((key) => key !== "equipe")
+    .map((userId) => userData[userId]); // Dados mantidos com o ID original
 
   const data = {
-    labels: [...labels],
+    labels: [...labels], // Usando os nomes na legenda
     datasets: [
       {
         label: "Individual ThroughPut",
