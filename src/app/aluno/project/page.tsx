@@ -4,8 +4,8 @@ import { useState } from "react";
 import SideNav from "@/app/components/sideNav";
 import Timeline from "./components/timeline";
 import { IoChevronBack } from "react-icons/io5";
-import { IoAddCircleOutline } from "react-icons/io5";
 import Card from "./components/card";
+import axiosInstance from "@/app/api/axiosInstance";
 
 interface CardType {
   id: number;
@@ -25,18 +25,22 @@ export default function Kanban() {
 
   const [columns, setColumns] = useState<ColumnsType>({
     todo: [
-      { id: 1, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
-      { id: 2, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
-      { id: 3, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
-      { id: 4, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
-      { id: 5, idAluno: "user_2pBA4hytOytbJV2TctifDjXM7ad" },
+      { id: 1, idAluno: "user_2pPbWrKiNVfCPZEjIU8RL3zwA1e" },
+      { id: 2, idAluno: "user_2pPbWrKiNVfCPZEjIU8RL3zwA1e" },
+      { id: 3, idAluno: "user_2pPbWrKiNVfCPZEjIU8RL3zwA1e" },
+      { id: 4, idAluno: "user_2pPbWrKiNVfCPZEjIU8RL3zwA1e" },
+      { id: 5, idAluno: "user_2pPbWrKiNVfCPZEjIU8RL3zwA1e" },
     ],
     doing: [],
     done: [],
     prevented: [],
   });
 
-  const handleDragStart = (e: React.DragEvent, columnName: string, cardId: number) => {
+  const handleDragStart = (
+    e: React.DragEvent,
+    columnName: string,
+    cardId: number
+  ) => {
     const data = JSON.stringify({ columnName, cardId });
     e.dataTransfer.setData("text/plain", data);
   };
@@ -50,27 +54,6 @@ export default function Kanban() {
     setDraggedOverColumn(null);
   };
 
-  const handleDragEnd = async (cardId: number, targetColumn: string) => {
-    try {
-      const response = await fetch(`/cards/${cardId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ column: targetColumn }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to update card');
-      }
-  
-      const updatedCard = await response.json();
-      console.log('Card successfully updated:', updatedCard);
-    } catch (error) {
-      console.error('Error updating card:', error);
-    }
-  };
-
   const handleDrop = async (e: React.DragEvent, targetColumn: string) => {
     e.preventDefault();
     setDraggedOverColumn(null);
@@ -80,7 +63,12 @@ export default function Kanban() {
       const { columnName, cardId } = draggedData;
 
       if (!columns[columnName as keyof ColumnsType]) {
-        console.error("Coluna inválida:", columnName);
+        console.error("Invalid column:", columnName);
+        return;
+      }
+
+      if (columnName === targetColumn) {
+        console.log("Card dropped in the same column. No changes made.");
         return;
       }
 
@@ -89,10 +77,10 @@ export default function Kanban() {
       );
 
       if (!cardToMove) {
-        console.error("Cartão não encontrado:", cardId);
+        console.error("Card not found:", cardId);
         return;
       }
-      
+
       setColumns((prev) => {
         const updatedColumns = { ...prev };
         updatedColumns[columnName as keyof ColumnsType] = prev[
@@ -104,10 +92,27 @@ export default function Kanban() {
         ];
         return updatedColumns;
       });
-      await handleDragEnd(cardId, targetColumn);
-    } 
-    catch (error) {
-      console.error("Erro ao processar o drop:", error);
+
+      await updateCardColumn(cardId, targetColumn);
+    } catch (error) {
+      console.error("Error processing drop:", error);
+    }
+  };
+
+  const updateCardColumn = async (cardId: number, targetColumn: string) => {
+    try {
+      const response = await axiosInstance.put(`/cards/${cardId}`, {
+        status: targetColumn,
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update card");
+      }
+
+      const updatedCard = response.data;
+      console.log("Card successfully updated:", updatedCard);
+    } catch (error) {
+      console.error("Error updating card:", error);
     }
   };
 
@@ -124,17 +129,25 @@ export default function Kanban() {
 
     return (
       <div
-        className={`flex ${isPrevented ? "flex-wrap gap-4" : "flex-col"} w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
-          ${draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""}`}
+        className={`flex ${
+          isPrevented ? "flex-wrap gap-4" : "flex-col"
+        } w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
+          ${
+            draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""
+          }`}
         onDragOver={(e) => handleDragOver(e, columnName)}
         onDragLeave={handleDragLeave}
         onDrop={(e) => handleDrop(e, columnName)}
-      >
-        <div
-          className={`flex w-32 h-12 ${config.bgColor} rounded-md shadow-md self-center 
-            justify-center items-center text-2xl font-fustat mb-4 text-white ${isPrevented ? "w-full" : ""}`}
-        >
-          {config.title}
+      > 
+        <div className={`flex w-full ${isPrevented ? "items-start justify-start": "justify-center"}`}>
+          <div
+            className={`flex ${
+              config.bgColor
+            } rounded-md shadow-md self-start 
+              justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
+          >
+            {config.title}
+          </div>
         </div>
         {columns[columnName].map((card) => (
           <Card
@@ -170,20 +183,25 @@ export default function Kanban() {
           />
           <div className="w-full flex justify-between mt-4">
             {["All", "1", "2", "3", "4", "5", "Fim"].map((label, index) => (
-              <p key={index} className="font-fustat w-4 text-center text-[#eee]">
+              <p
+                key={index}
+                className="font-fustat w-4 text-center text-[#eee]"
+              >
                 {label}
               </p>
             ))}
           </div>
           <div className="flex mt-12 w-full justify-between">
-            {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map((btnLabel, index) => (
-              <button
-                key={index}
-                className="bg-[#2D2D2D] font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]"
-              >
-                {btnLabel}
-              </button>
-            ))}
+            {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map(
+              (btnLabel, index) => (
+                <button
+                  key={index}
+                  className="bg-[#2D2D2D] font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]"
+                >
+                  {btnLabel}
+                </button>
+              )
+            )}
           </div>
         </div>
 

@@ -4,25 +4,26 @@ import RadarComponent from "@/app/components/radarChart";
 import BarChartComponent from "@/app/components/barChart";
 import ThroughputComponent from "@/app/components/throughputChart";
 
-import axios from "axios";
 import { Card } from "@/app/components/graphsTypes";
+import axiosInstance from "@/app/api/axiosInstance";
 
-const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
 
 const Estatisticas = () => {
-  const sprint = 1;
-  const projeto = 1;
+  const sprint = 8;
+  const projeto = 11;
   const [cardsProject, setCardsProject] = useState<Card[]>([]);
   const [throughput, setThroughput] = useState<number>(0);
   const [numUsers, setNumUsers] = useState<number>(0);
 
   useEffect(() => {
-    axios
-      .get<Card[]>(`${apiUrl}/cards/project/${projeto}`)
+    axiosInstance
+      .get<Card[]>(`/cards/project/${projeto}`)
       .then((response) => {
+        
         const allCards = response.data.filter(
           (card) => card.status === "done" && card.sprint === sprint
         );
+        console.log(response.data);
         setCardsProject(allCards);
       })
       .catch((error) => {

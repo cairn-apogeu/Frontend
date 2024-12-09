@@ -10,8 +10,7 @@ import {
 } from "chart.js";
 import { ChartOptions } from "chart.js";
 import { Radar } from "react-chartjs-2";
-import axios from "axios";
-import { Card, paramsGraphsProps } from "./graphsTypes";
+import { paramsGraphsProps } from "./graphsTypes";
 
 ChartJS.register(
   LineElement,
@@ -25,15 +24,7 @@ ChartJS.register(
 const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
   const [userData, setUserData] = useState<Record<string, number[]>>({});
 
-  useEffect(() => {
-    axios
-      .get<Card[]>(`${apiUrl}/cards`)
-      .then((response) => {
-        setCardsData(response.data);
-        const filteredCards = response.data.filter(
-          (card) => card.status === "done" && card.projeto === 1
-        );
-
+  
 
   useEffect(() => {
     const conglomeradoData = AllCards.reduce((acc, card) => {
@@ -54,17 +45,15 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
     setUserData(conglomeradoData);
   }, [AllCards]);
 
-  const datasets = [
-    ...Object.entries(userData).map(([user, xpData], index) => ({
-      label: user,
-      data: xpData,
-      fill: true,
-      backgroundColor: `rgba(${index * 100}, 60, 300, 0.5)`,
-      borderColor: `rgba(${index * 100}, 60, 300, 0.5)`,
-      pointRadius: 0,
-      tension: 0,
-    })),
-  ];
+  const datasets = Object.entries(userData).map(([user, xpData], index) => ({
+    label: user,
+    data: xpData,
+    fill: true,
+    backgroundColor: `rgba(${index * 50}, 100, 200, 0.5)`, // Valores RGBA corrigidos
+    borderColor: `rgba(${index * 50}, 100, 200, 1)`,
+    pointRadius: 3,
+    tension: 0.4,
+  }));
 
   const data = {
     labels: [
@@ -119,7 +108,7 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
 
   return (
     <div className="h-[90%]">
-      <Radar data={data} options={options}></Radar>
+      <Radar data={data} options={options} />
     </div>
   );
 };

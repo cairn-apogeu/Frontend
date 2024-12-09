@@ -10,12 +10,9 @@ import {
 } from "chart.js";
 
 import { Bar } from "react-chartjs-2";
-import axios from "axios";
-import { Card, paramsGraphsProps } from "./graphsTypes";
+import { paramsGraphsProps } from "./graphsTypes";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-const apiUrl = process.env.NEXT_PUBLIC_SERVER_API;
 
 const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards }) => {
   const [userData, setUserData] = useState<Record<string, number>>({});

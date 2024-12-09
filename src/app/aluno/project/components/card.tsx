@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
 import axios from "axios";
-import Image from "next/image";
 
 interface CardData {
   id: number;
@@ -28,6 +27,7 @@ interface CardProps {
   idAluno: string;
   idCard: number;
   onDragStart: (e: React.DragEvent) => void;
+  draggable: boolean
 }
 
 interface UserData {
@@ -35,11 +35,12 @@ interface UserData {
   profileImageUrl: string;
 }
 
-const Card: React.FC<CardProps> = ({ idAluno, idCard, onDragStart }) => {
+const Card: React.FC<CardProps> = ({ idAluno, idCard, onDragStart, draggable }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [cardData, setCardData] = useState<CardData | null>(null);
   const [maxXp, setMaxXp] = useState<{ area: string; value: number } | null>(null);
-
+  console.log(draggable);
+  
   const calculateMaxXp = (card: CardData) => {
     const xpAreas = [
       { area: "Frontend", value: card.xp_frontend ?? 0 },
@@ -62,6 +63,8 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard, onDragStart }) => {
         const response = await fetch(`/api/getUser?userId=${idAluno}`);
         const data = await response.json();
         setUserData(data);
+        console.log(data.profileUrl);
+        
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
       }
@@ -95,11 +98,7 @@ const Card: React.FC<CardProps> = ({ idAluno, idCard, onDragStart }) => {
       <div className="flex justify-between items-center">
         <span className="text-white text-sm">16/11/2024</span>
         <div className="flex items-center space-x-2">
-          <img
-            className="w-8 h-8 rounded-full"
-            src={userData?.profileImageUrl}
-            alt={`Foto de ${userData?.name}`}
-          />
+
           <span className="text-white text-sm">{userData?.name}</span>
         </div>
       </div>

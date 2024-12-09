@@ -13,7 +13,7 @@ export default function ClientLayout({
 }>) {
   const pathname = usePathname(); // Get current path
 
-  const isPublicPage = ["/", "/login", "/aluno"].includes(pathname); // Define public pages
+  const isPublicPage = ["/", "/api", "/login", "/aluno"].includes(pathname); // Define public pages
 
   return (
     <ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}>

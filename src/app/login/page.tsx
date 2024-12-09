@@ -6,8 +6,7 @@ import { useSignIn, useClerk } from "@clerk/nextjs";
 import Image from "next/image";
 import Mountains from "../../../public/Dark-Montain-SVG.svg";
 import LogoFull from "../../../public/logo-full.svg";
-import Estatisticas from "../aluno/project/components/estatistica";
-import SideNav from "../components/sideNav";
+
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
