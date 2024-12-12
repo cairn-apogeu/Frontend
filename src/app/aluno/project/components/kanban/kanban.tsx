@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Card from "./card";
 import axiosInstance from "@/app/api/axiosInstance";
+import { IoAddCircleOutline } from "react-icons/io5";
+import ModalCard from "@/app/card/project/components/card";
 
 interface Card {
   id: number;
@@ -26,12 +28,11 @@ interface Card {
 }
 
 interface KanbanProps {
-    cards: Card[];
-    statusChanged: () => void
+  cards: Card[];
+  statusChanged: () => void;
 }
 
-const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
-  
+const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
     null
   );
@@ -46,6 +47,7 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
     done: [],
     prevented: [],
   });
+  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false)
 
   // Filtra os cards por status
   useEffect(() => {
@@ -102,7 +104,7 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
         card.id === cardId ? { ...card, status: targetColumn } : card
       );
 
-      cards = updatedCards
+      cards = updatedCards;
 
       await updateCardColumn(cardId, targetColumn);
     } catch (error) {
@@ -115,8 +117,8 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
       const response = await axiosInstance.put(`/cards/${cardId}`, {
         status: targetColumn,
       });
-      
-      statusChanged()
+
+      statusChanged();
       if (response.status !== 200) {
         throw new Error("Failed to update card");
       }
@@ -149,9 +151,14 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
       >
         <div className={`flex w-full justify-center`}>
           <div
-            className={`flex ${config.bgColor} rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
+            className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
-            {config.title}
+            {config.title}{" "}
+            {columnName === "toDo" && (
+              <button onClick={() => setModalCardIsVisible(true)} className="hover:opacity-70">
+                <IoAddCircleOutline className="w-7 h-7" />
+              </button>
+            )}
           </div>
         </div>
         {filteredCards[columnName].map((card) => (
@@ -174,7 +181,8 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
         {renderColumn("doing")}
         {renderColumn("done")}
       </div>
+      {modalCardIsVisible && <ModalCard />}
     </div>
   );
-}
-export default Kanban
+};
+export default Kanban;

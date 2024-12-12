@@ -16,7 +16,7 @@ interface FormData {
     dor: string;
 }
 
-const MinhaPagina: React.FC = () => {
+const ModalCard: React.FC = () => {
     const [formData, setFormData] = useState<FormData>({
         descricao: "",
         tempo: "",
@@ -96,7 +96,7 @@ const MinhaPagina: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#1F1F1F] text-gray-300">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="flex-grow ml-16 py-8 px-8">
                 <div className="max-w-[1200px] mx-auto">
                     <form
@@ -298,4 +298,4 @@ const MinhaPagina: React.FC = () => {
     );
 };
 
-export default MinhaPagina;
+export default ModalCard;

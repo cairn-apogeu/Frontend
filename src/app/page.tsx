@@ -146,14 +146,13 @@ export default function InteractivePage() {
 
       <div className="new-content  inset-0 flex flex-wrap flex-col mb-[41vh] items-center justify-center text-center z-10 scale-75">
         <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">
-          Criação de <span className="text-[#4DB8FF]">design e brandkit </span>
-          caso necessário
+          Criação de <span className="text-[#4DB8FF]">design e brandkit profissional</span>
         </h2>
       </div>
 
       <div className="new-content  inset-0 flex flex-wrap flex-col mb-[41vh] items-center justify-center text-center z-10 scale-75">
         <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">
-          Apresentções periódicas da{" "}
+          Apresentações periódicas da{" "}
           <span className="text-[#4DB8FF]">evolução do seu projeto</span>
         </h2>
       </div>
