@@ -181,7 +181,14 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
         {renderColumn("doing")}
         {renderColumn("done")}
       </div>
-      {modalCardIsVisible && <ModalCard />}
+      {modalCardIsVisible && (
+        <ModalCard
+          cardId={0} 
+          initialData={{}} 
+          onClose={() => setModalCardIsVisible(false)}
+          onSaveSuccess={statusChanged}
+        />
+      )}
     </div>
   );
 };

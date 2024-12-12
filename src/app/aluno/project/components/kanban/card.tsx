@@ -34,6 +34,7 @@ interface CardProps {
 interface UserData {
   name: string;
   profileImageUrl: string;
+  tipo_perfil: string;
 }
 
 const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => {
