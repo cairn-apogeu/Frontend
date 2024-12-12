@@ -31,7 +31,7 @@ interface Card {
 }
 
 export default function Project() {
-  const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
+  const [sprintSelected, setSprintSelected] = useState<number>(2);
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
   const [sprintCards, setSprintCards] = useState<Card[]>([])
@@ -41,6 +41,7 @@ export default function Project() {
     async function fetchCards() {
       try {
         const response = await axiosInstance.get(`/cards/project/1`);
+        console.log (response.data)
         setCards(response.data);
       } catch (error) {
         console.error("Erro ao buscar cards:", error);

@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
 
 interface FormData {
-  titulo: string; // Adicionado campo titulo
+  titulo: string;
   descricao: string;
   tempo: string;
   conteudoDeApoio: string;
@@ -26,7 +28,7 @@ interface UserData {
 }
 
 interface ModalCardProps {
-  cardId: number;
+  cardId?: number;
   initialData: Partial<FormData>;
   onClose: () => void;
   onSaveSuccess: () => void;
@@ -134,28 +136,32 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Preparar os dados a serem enviados com base no tipo_perfil
     const dadosParaEnviar: Partial<FormData> = {
       titulo: formData.titulo,
       descricao: formData.descricao,
       dod: formData.dod,
       dor: formData.dor,
       tempo: formData.tempo,
+      conteudoDeApoio: formData.conteudoDeApoio,
     };
 
     if (userData?.tipo_perfil === 'gestor') {
-      // Gestores podem editar todos os campos
       Object.assign(dadosParaEnviar, formData);
     }
 
     try {
-      await axios.put(`/cards/${cardId}`, dadosParaEnviar);
-      console.log("Card atualizado com sucesso");
+      if (cardId) {
+        await axios.put(`/cards/${cardId}`, dadosParaEnviar);
+        console.log("Card atualizado com sucesso");
+      } else {
+        await axios.post(`/cards`, dadosParaEnviar);
+        console.log("Card criado com sucesso");
+      }
       onSaveSuccess();
       onClose();
     } catch (error: any) {
-      console.error("Erro ao atualizar o card:", error);
-      alert("Falha ao atualizar o card. Tente novamente.");
+      console.error("Erro ao salvar o card:", error);
+      alert("Falha ao salvar o card. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -234,7 +240,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                     style={{ width: "140%" }}
                     value={formData.descricao}
                     onChange={handleChange}
-                    disabled={userData?.tipo_perfil === 'aluno' || userData?.tipo_perfil === 'gestor' ? false : true}
+                    disabled={userData?.tipo_perfil !== 'gestor'}
                   />
                 </div>
 
@@ -259,7 +265,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                       onChange={handleChange}
                       onKeyDown={handleKeyDown}
                       onFocus={handleFocus}
-                      disabled={userData?.tipo_perfil === 'aluno' || userData?.tipo_perfil === 'gestor' ? false : true}
+                      disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                   </div>
                   <div>
@@ -278,7 +284,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                       onChange={handleChange}
                       onKeyDown={handleKeyDown}
                       onFocus={handleFocus}
-                      disabled={userData?.tipo_perfil === 'aluno' || userData?.tipo_perfil === 'gestor' ? false : true}
+                      disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                   </div>
                 </div>
@@ -309,7 +315,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                     className="bg-[#404040] p-2 rounded-md w-full text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
                     value={formData.tempo}
                     onChange={handleChange}
-                    disabled={userData?.tipo_perfil === 'aluno' || userData?.tipo_perfil === 'gestor' ? false : true}
+                    disabled={userData?.tipo_perfil !== 'gestor'}
                   />
                 </div>
                 <div>
@@ -326,7 +332,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                     className="bg-[#404040] p-2 rounded-md w-full h-[60px] text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
                     value={formData.conteudoDeApoio}
                     onChange={handleChange}
-                    disabled={userData?.tipo_perfil === 'gestor' ? false : true}
+                    disabled={userData?.tipo_perfil !== 'gestor'}
                   />
                 </div>
                 <div>
@@ -361,7 +367,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                             ]
                           }
                           onChange={handleChange}
-                          disabled={userData?.tipo_perfil === 'gestor' ? false : true} // Apenas gestores podem editar
+                          disabled={userData?.tipo_perfil !== 'gestor'}
                         />
                       </div>
                     ))}
