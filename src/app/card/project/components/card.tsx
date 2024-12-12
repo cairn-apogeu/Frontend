@@ -4,12 +4,15 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
+import { IoHourglass, IoLink } from 'react-icons/io5';
 
 interface FormData {
+  tempoExecutado: string | number | readonly string[] | undefined;
   titulo: string;
   descricao: string;
   tempo: string;
   conteudoDeApoio: string;
+  tempoPrevisto: string;
   negocios: string;
   arquitetura: string;
   frontend: string;
@@ -36,10 +39,12 @@ interface ModalCardProps {
 
 const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onSaveSuccess }) => {
   const [formData, setFormData] = useState<FormData>({
+    tempoExecutado: initialData.tempoExecutado || "",
     titulo: initialData.titulo || "Diagrama de sequência Kanban",
     descricao: initialData.descricao || "",
     tempo: initialData.tempo || "",
     conteudoDeApoio: initialData.conteudoDeApoio || "",
+    tempoPrevisto: initialData.tempoPrevisto || "",
     negocios: initialData.negocios || "",
     arquitetura: initialData.arquitetura || "",
     frontend: initialData.frontend || "",
@@ -300,46 +305,63 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                   paddingLeft: "20%",
                 }}
               >
-                <div>
-                  <label
-                    htmlFor="tempo"
-                    className="block text-sm font-medium text-gray-300 mb-1"
-                  >
-                    Tempo
-                  </label>
-                  <input
-                    type="text"
-                    id="tempo"
-                    name="tempo"
-                    placeholder="Tempo (ex: 2d 4h)"
-                    className="bg-[#404040] p-2 rounded-md w-full text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                    value={formData.tempo}
-                    onChange={handleChange}
-                    disabled={userData?.tipo_perfil !== 'gestor'}
-                  />
+                <div className="grid gap-1">
+                    <label
+                    htmlFor="tempoPrevisto"
+                     className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                     Tempo
+                    </label>
+                    <div className="flex items-center">
+                    <IoHourglass className="text-yellow-500 w-6 h-6 ml-16" />
+                    <input
+                        type="text"
+                        id="tempoPrevisto"
+                        name="tempoPrevisto"
+                        placeholder="Em minutos"
+                        className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm" 
+                        value={formData.tempoPrevisto} 
+                        onChange={handleChange}
+                        disabled={userData?.tipo_perfil !== 'gestor'}
+                     />
+                    
+                    <span className="text-gray-300 text-lg ml-2">Previstos</span> 
+                    </div>
+
+                    <div className="flex items-center mt-1">
+                    <IoHourglass className="text-green-500 w-6 h-6 ml-12" />
+                    <input
+                        type="text"
+                        id="tempoExecutado"
+                        name="tempoExecutado"
+                        placeholder="Em minutos"
+                        className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm " 
+                        value={formData.tempoExecutado}
+                        onChange={handleChange}
+                        disabled={userData?.tipo_perfil !== 'gestor'}
+                    />
+                    <span className="text-gray-300 text-lg ml-2">Executados</span>
+                    </div>
+                    <p className="mt-2">Conteúdo de Apoio</p>
                 </div>
-                <div>
-                  <label
-                    htmlFor="conteudoDeApoio"
-                    className="block text-sm font-medium text-gray-300 mb-1"
-                  >
-                    Conteúdo de Apoio
-                  </label>
-                  <textarea
-                    id="conteudoDeApoio"
-                    name="conteudoDeApoio"
-                    placeholder="Link ou detalhes do conteúdo de apoio"
-                    className="bg-[#404040] p-2 rounded-md w-full h-[60px] text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                    value={formData.conteudoDeApoio}
-                    onChange={handleChange}
-                    disabled={userData?.tipo_perfil !== 'gestor'}
-                  />
+                <div className="flex items-center">
+                    <IoLink className="text-gray-400 w-6 h-7 mr-2" />
+                    <textarea
+                        id="conteudoDeApoio"
+                        name="conteudoDeApoio"
+                        placeholder="Conteúdo de apoio"
+                        className="bg-[#404040] p-2 rounded-md w-60 h-[39px] text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
+                        value={formData.conteudoDeApoio}
+                        onChange={handleChange}
+                        disabled={userData?.tipo_perfil !== 'gestor'}
+                    />
                 </div>
+                <p className="mt-2">Atributos</p>
                 <div>
-                  <p className="text-md font-semibold text-gray-200 mb-2">
-                    Atributos
-                  </p>
-                  <div className="grid gap-1">
+                    <p className="text-lg font-semibold text-gray-200 atributos-title -mb-6">
+                     
+                    </p>
+                  <div className=" grid gap-1 ">
                     {[
                       "Negócios",
                       "Arquitetura",
@@ -351,7 +373,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                       <div key={item} className="flex items-center">
                         <label
                           htmlFor={item.toLowerCase()}
-                          className="text-gray-400 mr-2 w-16 shrink-0 text-right text-xs"
+                          className="text-gray-400 ml-12 w-16 text-right text-xs mr-2 "
                         >
                           {item}:
                         </label>
@@ -360,7 +382,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                           id={item.toLowerCase()}
                           name={item.toLowerCase()}
                           placeholder={`Digite ${item}`}
-                          className="bg-[#404040] p-2 rounded-md w-full text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-xs"
+                          className="bg-[#404040] p-2 rounded-md w-40 text-gray-300 border-none  focus:ring focus:ring-blue-500 text-xs"
                           value={
                             formData[
                               item.toLowerCase() as keyof FormData
