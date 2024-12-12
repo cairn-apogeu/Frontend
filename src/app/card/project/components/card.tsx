@@ -1,99 +1,112 @@
-// card.tsx
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 
 interface FormData {
-    descricao: string;
-    tempo: string;
-    conteudoDeApoio: string;
-    negocios: string;
-    arquitetura: string;
-    frontend: string;
-    backend: string;
-    design: string;
-    dataAnalytics: string;
-    dod: string;
-    dor: string;
+  descricao: string;
+  tempo: string;
+  conteudoDeApoio: string;
+  negocios: string;
+  arquitetura: string;
+  frontend: string;
+  backend: string;
+  design: string;
+  dataAnalytics: string;
+  dod: string;
+  dor: string;
 }
 
 const ModalCard: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
-        descricao: "",
-        tempo: "",
-        conteudoDeApoio: "",
-        negocios: "",
-        arquitetura: "",
-        frontend: "",
-        backend: "",
-        design: "",
-        dataAnalytics: "",
-        dod: "",
-        dor: "",
-    });
+  const [formData, setFormData] = useState<FormData>({
+    descricao: "",
+    tempo: "",
+    conteudoDeApoio: "",
+    negocios: "",
+    arquitetura: "",
+    frontend: "",
+    backend: "",
+    design: "",
+    dataAnalytics: "",
+    dod: "",
+    dor: "",
+  });
 
-    const [title, setTitle] = useState("Diagrama de sequência Kanban");
-    const [isEditingTitle, setIsEditingTitle] = useState(false);
-    const [assignedTo, setAssignedTo] = useState<string | null>(null);
-    const [userName, setUserName] = useState<string | null>(null);
-    console.log(assignedTo)
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const [title, setTitle] = useState("Diagrama de sequência Kanban");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [assignedTo, setAssignedTo] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            const { name, value } = e.currentTarget;
-            setFormData({
-                ...formData,
-                [name]: value + "\n- "
-            });
-        }
-    };
+  // Obtém o usuário atual
+  const { user } = useUser();
 
-    const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-        const { name, value } = e.currentTarget;
-        if (value === "") {
-            setFormData({
-                ...formData,
-                [name]: "- "
-            });
-        }
-    };
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log(formData);
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const { name, value } = e.currentTarget;
+      setFormData({
+        ...formData,
+        [name]: value + "\n- ",
+      });
+    }
+  };
 
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    };
+  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.currentTarget;
+    if (value === "") {
+      setFormData({
+        ...formData,
+        [name]: "- ",
+      });
+    }
+  };
 
-    const handleTitleBlur = () => {
-        setIsEditingTitle(false);
-    };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(formData);
+  };
 
-    // Função mock para obter o nome do usuário a partir do ID
-    const getUserName = (userId: string): string => {
-        const userMap: { [key: string]: string } = {
-            'user_2pMMcELGJus08M5j1n0cIrCac4X': 'ArthurFelipeVaz',
-            // Adicione mais mapeamentos conforme necessário
-        };
-        return userMap[userId] || 'Usuário Desconhecido';
-    };
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
 
-    const handleAssignClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        e.preventDefault();
-        // Atribui o usuário fixo
-        const userId = 'user_2pMMcELGJus08M5j1n0cIrCac4X';
-        setAssignedTo(userId);
-        const name = getUserName(userId);
-        setUserName(name);
-        // Aqui vai adicionar lógica para chamar o endpoint 
-    };
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+  };
+
+  // Nova função para buscar o nome do usuário da API
+  const fetchUserName = async (userId: string): Promise<string> => {
+    try {
+      const response = await fetch(`/api/getUser?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar usuário: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.name;
+    } catch (error) {
+      console.error("Erro ao obter nome do usuário:", error);
+      return "Usuário Desconhecido";
+    }
+  };
+
+  const handleAssignClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    if (user) {
+      const userId = user.id;
+      setAssignedTo(userId);
+      const name = await fetchUserName(userId);
+      setUserName(name);
+      console.log(`Usuário atribuído: ${name}`);
+    } else {
+      console.error("Usuário não logado");
+    }
+  };
+
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -287,6 +300,7 @@ const ModalCard: React.FC = () => {
                             <button
                                 type="button"
                                 className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={() => window.location.href = '/aluno/project'}
                             >
                                 Fechar
                             </button>
