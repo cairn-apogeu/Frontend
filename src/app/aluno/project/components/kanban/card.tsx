@@ -36,9 +36,15 @@ interface UserData {
   profileImageUrl: string;
 }
 
-const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => {
+const Card: React.FC<CardProps> = ({
+  card,
+  draggable = false,
+  onDragStart,
+}) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [maxXp, setMaxXp] = useState<{ area: string; value: number } | null>(null);
+  const [maxXp, setMaxXp] = useState<{ area: string; value: number } | null>(
+    null
+  );
 
   // Função para calcular o maior XP
   function calculateMaxXp(card: CardData) {
@@ -73,7 +79,6 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
         const data = await response.json();
         console.log(response);
         setUserData(data);
-        
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
       }
@@ -92,7 +97,7 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
 
   return (
     <div
-      className=" bg-[#2D2D2D] w-full max-w-80 gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4"
+      className="bg-[#2D2D2D] w-full sm:max-w-[300px] lg:max-w-[350px] gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4"
       draggable={draggable}
       onDragStart={handleDragStart}
     >
@@ -109,7 +114,9 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
               alt={`Foto de ${userData.name}`}
             />
           )}
-          <span className="text-white text-sm">{userData?.name || "Usuário"}</span>
+          <span className="text-white text-sm">
+            {userData?.name || "Usuário"}
+          </span>
         </div>
       </div>
 

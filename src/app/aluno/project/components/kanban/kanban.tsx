@@ -26,12 +26,11 @@ interface Card {
 }
 
 interface KanbanProps {
-    cards: Card[];
-    statusChanged: () => void
+  cards: Card[];
+  statusChanged: () => void;
 }
 
-const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
-  
+const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
     null
   );
@@ -102,7 +101,7 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
         card.id === cardId ? { ...card, status: targetColumn } : card
       );
 
-      cards = updatedCards
+      cards = updatedCards;
 
       await updateCardColumn(cardId, targetColumn);
     } catch (error) {
@@ -115,8 +114,8 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
       const response = await axiosInstance.put(`/cards/${cardId}`, {
         status: targetColumn,
       });
-      
-      statusChanged()
+
+      statusChanged();
       if (response.status !== 200) {
         throw new Error("Failed to update card");
       }
@@ -128,10 +127,26 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
   };
 
   const columnConfigs = {
-    prevented: { title: "Prevented", bgColor: "bg-[#F14646]" },
-    toDo: { title: "To do", bgColor: "bg-[#F17C46]" },
-    doing: { title: "Doing", bgColor: "bg-[#F1C946]" },
-    done: { title: "Done", bgColor: "bg-[#51F146]" },
+    prevented: {
+      title: "Prevented",
+      bgColor: "bg-[#F14646]",
+      responsive: "w-full 2xl:w-9/12",
+    },
+    toDo: {
+      title: "To do",
+      bgColor: "bg-[#F17C46]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
+    doing: {
+      title: "Doing",
+      bgColor: "bg-[#F1C946]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
+    done: {
+      title: "Done",
+      bgColor: "bg-[#51F146]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
   };
 
   const renderColumn = (columnName: keyof typeof filteredCards) => {
@@ -139,10 +154,10 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
 
     return (
       <div
-        className={`flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
-          ${
-            draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""
-          }`}
+        className={`flex flex-col w-full ${
+          config.responsive
+        } min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
+    ${draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""}`}
         onDragOver={(e) => handleDragOver(e, columnName)}
         onDragLeave={handleDragLeave}
         onDrop={(e) => handleDrop(e, columnName)}
@@ -167,14 +182,14 @@ const Kanban: React.FC<KanbanProps> = ({cards, statusChanged}) => {
   };
 
   return (
-    <div className="flex flex-col mt-6 w-full items-center gap-9">
+    <div className="flex flex-wrap lg:flex-nowrap flex-col lg:flex-col mt-6 w-full items-center gap-9">
       {renderColumn("prevented")}
-      <div className="w-full flex justify-center gap-9 h-fit align-middle mt-9">
+      <div className="w-full flex flex-col sm:flex-row justify-center gap-9 h-fit align-middle mt-9">
         {renderColumn("toDo")}
         {renderColumn("doing")}
         {renderColumn("done")}
       </div>
     </div>
   );
-}
-export default Kanban
+};
+export default Kanban;

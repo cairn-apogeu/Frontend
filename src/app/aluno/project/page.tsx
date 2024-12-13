@@ -34,8 +34,8 @@ export default function Project() {
   const [sprintSelected, setSprintSelected] = useState<number>(2); // Estado inicial igual ao currentSprint
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
-  const [sprintCards, setSprintCards] = useState<Card[]>([])
-  const [statusChanged, setStatusChanged] = useState<boolean>(true)
+  const [sprintCards, setSprintCards] = useState<Card[]>([]);
+  const [statusChanged, setStatusChanged] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchCards() {
@@ -46,20 +46,21 @@ export default function Project() {
         console.error("Erro ao buscar cards:", error);
       }
     }
-    fetchCards()
-
+    fetchCards();
   }, [statusChanged]);
 
   useEffect(() => {
-    setSprintCards(cards && cards.filter((card) => {
-      if(sprintSelected !== 0) {
-        return card.sprint === sprintSelected
-      } else {
-        return true
-      }
-
-    }))
-  }, [sprintSelected, cards])
+    setSprintCards(
+      cards &&
+        cards.filter((card) => {
+          if (sprintSelected !== 0) {
+            return card.sprint === sprintSelected;
+          } else {
+            return true;
+          }
+        })
+    );
+  }, [sprintSelected, cards]);
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -98,8 +99,17 @@ export default function Project() {
           </div>
         </div>
 
-        {viewSelected === "Kanban" && <Kanban statusChanged={() => setStatusChanged(!statusChanged)} cards={sprintCards} />}
-        {viewSelected === "Estatísticas" && <Estatisticas cardsProject={sprintCards.filter((card) => card.status === "done")} />}
+        {viewSelected === "Kanban" && (
+          <Kanban
+            statusChanged={() => setStatusChanged(!statusChanged)}
+            cards={sprintCards}
+          />
+        )}
+        {viewSelected === "Estatísticas" && (
+          <Estatisticas
+            cardsProject={sprintCards.filter((card) => card.status === "done")}
+          />
+        )}
       </div>
     </div>
   );
