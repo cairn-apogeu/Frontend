@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import axios from 'axios';
 import { IoHourglass, IoLink } from 'react-icons/io5';
+import axiosInstance from '@/app/api/axiosInstance';
 
 interface FormData {
+  status?: string;
   tempoExecutado: string | number | readonly string[] | undefined;
   titulo: string;
   descricao: string;
-  tempo: string;
+  tempo: number;
   conteudoDeApoio: string;
   tempoPrevisto: string;
   negocios: string;
@@ -27,7 +29,6 @@ interface UserData {
   id: string;
   name: string;
   profileImageUrl: string;
-  tipo_perfil: string;
 }
 
 interface ModalCardProps {
@@ -39,10 +40,11 @@ interface ModalCardProps {
 
 const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onSaveSuccess }) => {
   const [formData, setFormData] = useState<FormData>({
+    status: initialData.status || "toDo",
     tempoExecutado: initialData.tempoExecutado || "",
-    titulo: initialData.titulo || "Diagrama de sequência Kanban",
+    titulo: initialData.titulo || " Kanban",
     descricao: initialData.descricao || "",
-    tempo: initialData.tempo || "",
+    tempo: initialData.tempo || 0,
     conteudoDeApoio: initialData.conteudoDeApoio || "",
     tempoPrevisto: initialData.tempoPrevisto || "",
     negocios: initialData.negocios || "",
@@ -66,6 +68,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  console.log(formData);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -96,7 +99,6 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
     setIsEditingTitle(false);
   };
 
-  // Função para buscar dados do usuário
   const fetchUserData = async (userId: string): Promise<UserData> => {
     try {
       const response = await fetch(`/api/getUser?userId=${userId}`);
@@ -107,11 +109,10 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
       return data;
     } catch (error) {
       console.error("Erro ao obter dados do usuário:", error);
-      return { id: userId, name: "Usuário Desconhecido", profileImageUrl: "", tipo_perfil: "aluno" };
+      return { id: userId, name: "Usuário Desconhecido", profileImageUrl: "" };
     }
   };
 
-  // useEffect para buscar dados do usuário quando assignedTo é atualizado
   useEffect(() => {
     if (assignedTo) {
       fetchUserData(assignedTo).then((data) => {
@@ -150,16 +151,14 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
       conteudoDeApoio: formData.conteudoDeApoio,
     };
 
-    if (userData?.tipo_perfil === 'gestor') {
-      Object.assign(dadosParaEnviar, formData);
-    }
+    Object.assign(dadosParaEnviar, formData);
 
     try {
       if (cardId) {
-        await axios.put(`/cards/${cardId}`, dadosParaEnviar);
+        await axiosInstance.put(`/cards/${cardId}`, dadosParaEnviar);
         console.log("Card atualizado com sucesso");
       } else {
-        await axios.post(`/cards`, dadosParaEnviar);
+        await axiosInstance.post(`/cards`, dadosParaEnviar);
         console.log("Card criado com sucesso");
       }
       onSaveSuccess();
@@ -245,7 +244,6 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                     style={{ width: "140%" }}
                     value={formData.descricao}
                     onChange={handleChange}
-                    disabled={userData?.tipo_perfil !== 'gestor'}
                   />
                 </div>
 
@@ -270,7 +268,6 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                       onChange={handleChange}
                       onKeyDown={handleKeyDown}
                       onFocus={handleFocus}
-                      disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                   </div>
                   <div>
@@ -289,7 +286,6 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                       onChange={handleChange}
                       onKeyDown={handleKeyDown}
                       onFocus={handleFocus}
-                      disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                   </div>
                 </div>
@@ -320,9 +316,8 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                         name="tempoPrevisto"
                         placeholder="Em minutos"
                         className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm" 
-                        value={formData.tempoPrevisto} 
+                        value={formData.tempoPrevisto || ""}
                         onChange={handleChange}
-                        disabled={userData?.tipo_perfil !== 'gestor'}
                      />
                     
                     <span className="text-gray-300 text-lg ml-2">Previstos</span> 
@@ -336,9 +331,8 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                         name="tempoExecutado"
                         placeholder="Em minutos"
                         className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm " 
-                        value={formData.tempoExecutado}
+                        value={formData.tempoExecutado || ""}
                         onChange={handleChange}
-                        disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                     <span className="text-gray-300 text-lg ml-2">Executados</span>
                     </div>
@@ -351,9 +345,8 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                         name="conteudoDeApoio"
                         placeholder="Conteúdo de apoio"
                         className="bg-[#404040] p-2 rounded-md w-60 h-[39px] text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                        value={formData.conteudoDeApoio}
+                        value={formData.conteudoDeApoio || ""}
                         onChange={handleChange}
-                        disabled={userData?.tipo_perfil !== 'gestor'}
                     />
                 </div>
                 <p className="mt-2">Atributos</p>
@@ -383,13 +376,8 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
                           name={item.toLowerCase()}
                           placeholder={`Digite ${item}`}
                           className="bg-[#404040] p-2 rounded-md w-40 text-gray-300 border-none  focus:ring focus:ring-blue-500 text-xs"
-                          value={
-                            formData[
-                              item.toLowerCase() as keyof FormData
-                            ]
-                          }
+                          value={formData[item.toLowerCase() as keyof FormData] || ""}
                           onChange={handleChange}
-                          disabled={userData?.tipo_perfil !== 'gestor'}
                         />
                       </div>
                     ))}
@@ -399,7 +387,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
             </div>
 
             {/* Botões no canto inferior direito */}
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end  gap-4 ">
               <button
                 type="submit"
                 className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
@@ -410,7 +398,7 @@ const ModalCard: React.FC<ModalCardProps> = ({ cardId, initialData, onClose, onS
               </button>
               <button
                 type="button"
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded"
                 onClick={onClose}
               >
                 Fechar
