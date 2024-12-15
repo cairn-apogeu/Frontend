@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axiosInstance from '@/app/api/axiosInstance';
-import { encryptData } from '../criptografia/encryptData'; // Atualize o caminho conforme necessário
 
 interface DescricaoProps {
   id: number;
@@ -15,7 +14,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
   const [owner, setOwner] = useState<string>('');
   const [repo, setRepo] = useState<string>('');
   const [token, setToken] = useState<string>('');
-  const [filePath, setFilePath] = useState<'saep.md' | 'descricao.md' | 'saep.md' | 'README.md'>('saep.md');
+  const [filePath, setFilePath] = useState<'saep.md' | 'descricao.md' | 'saep.md' | 'README.md'>('README.md');
   const [branch, setBranch] = useState<string>('main');
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -36,29 +35,29 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
         setError(err.response?.data?.message || 'Erro ao carregar os dados');
       }
     };
-    const fetchContent = async (owner: string, repo: string, token: string) => {
-      try {
-        console.log(owner, repo, token);
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-        const response = await axiosInstance.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github.v3.raw',
-          },
-          params: {
-            ref: branch,
-          },
-        });
-        const content = response.data;
-        const absoluteContent = transformRelativeUrlsToAbsolute(content, owner, repo, branch);
-        setDescricaoContent(absoluteContent);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Erro ao carregar o arquivo');
-      }
-    };
 
     fetchDescricao();
   }, [id, filePath, branch]);
+
+  const fetchContent = async (owner: string, repo: string, token: string) => {
+    try {
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+      const response = await axiosInstance.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github.v3.raw',
+        },
+        params: {
+          ref: branch,
+        },
+      });
+      const content = response.data;
+      const absoluteContent = transformRelativeUrlsToAbsolute(content, owner, repo, branch);
+      setDescricaoContent(absoluteContent);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erro ao carregar o arquivo');
+    }
+  };
 
   const transformRelativeUrlsToAbsolute = (content: string, owner: string, repo: string, branch: string) => {
     const baseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/`;
@@ -72,15 +71,21 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
 
   const handleSave = async () => {
     try {
-      const encryptedToken = await encryptData(token); // Criptografa o token
-      await axiosInstance.put(`/projetos/${id}`, {
+      setError(null);
+      const response = await axiosInstance.put(`/projetos/${id}`, {
         owner,
         repositorio: repo,
-        token: encryptedToken, // Usa o token criptografado
+        token,
       });
-      setIsEditing(false);
-      fetchContent(owner, repo, token);
+      if (response.status === 200) {
+        setIsEditing(false);
+        fetchContent(owner, repo, token);
+      } else {
+        console.error('Erro ao salvar os dados:', response);
+        setError('Erro ao salvar os dados');
+      }
     } catch (err: any) {
+      console.error('Erro ao salvar os dados:', err);
       setError(err.response?.data?.message || 'Erro ao salvar os dados');
     }
   };
@@ -124,7 +129,3 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
 };
 
 export default Descricao;
-function fetchContent(owner: string, repo: string, token: string) {
-  throw new Error('Function not implemented.');
-}
-
