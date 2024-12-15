@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DarkMontainSVG from "../../public/Dark-Montain-SVG.svg";
+import MinDarkMontainSVG from "../../public/Dark-Montain-SVG-min.svg";
 import Image from "next/image";
 import LogoFull from "../../public/logo-full.svg";
 
@@ -22,7 +23,7 @@ export default function InteractivePage() {
     // Animação da montanha
     gsap.to(".mountain-image", {
       scale: isMobile ? 2 : 1.5,
-      y: isMobile ? "20%" : "50%",
+      y: isMobile ? "100%" : "100%",
       ease: "power3.out",
       scrollTrigger: {
         trigger: ".container",
@@ -101,7 +102,7 @@ export default function InteractivePage() {
         } h-auto`}
       >
         <Image
-          src={DarkMontainSVG}
+          src={MinDarkMontainSVG}
           alt="Montanha"
           layout="intrinsic"
           objectFit="cover"
