@@ -100,10 +100,7 @@ export default function Project() {
         </div>
 
         {viewSelected === "Descrição" && <Descricao
-        owner="JOTAPEnvz" 
-        repo="Joao_Paulo_de_Morais_Pereira_Saep" 
-        filePath="saep.md" 
-        token="f"/>}
+        id={2}/>}
         {viewSelected === "Kanban" && <Kanban statusChanged={() => setStatusChanged(!statusChanged)} cards={sprintCards} />}
         {viewSelected === "Estatísticas" && <Estatisticas cardsProject={sprintCards.filter((card) => card.status === "done")} />}
       </div>
