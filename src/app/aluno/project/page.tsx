@@ -8,6 +8,7 @@ import Kanban from "./components/kanban/kanban";
 import Estatisticas from "./components/estatistica";
 
 import axiosInstance from "@/app/api/axiosInstance";
+import Descricao from "./components/kanban/descricao";
 
 interface Card {
   id: number;
@@ -98,6 +99,7 @@ export default function Project() {
           </div>
         </div>
 
+        {viewSelected === "Descrição" && <Descricao id={2}/>} {/* passar o id do projeto aqui */}
         {viewSelected === "Kanban" && <Kanban statusChanged={() => setStatusChanged(!statusChanged)} cards={sprintCards} />}
         {viewSelected === "Estatísticas" && <Estatisticas cardsProject={sprintCards.filter((card) => card.status === "done")} />}
       </div>
