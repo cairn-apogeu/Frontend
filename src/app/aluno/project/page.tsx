@@ -65,7 +65,7 @@ export default function Project() {
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
       <SideNav />
-      <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
+      <div className="flex flex-col gap-11 w-full h-fit ml-16 p-6 md:p-14">
         {/* Header */}
         <div className="flex items-center gap-5">
           <IoChevronBack size={28} />
@@ -74,15 +74,15 @@ export default function Project() {
 
         {/* Timeline Section */}
         <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
-          <Timeline
+          {/* <Timeline
             totalSprints={5}
             currentSprint={4}
             sprintProgress={0.3}
             sprintSelected={sprintSelected}
             setSprintSelected={setSprintSelected}
-          />
+          /> */}
 
-          <div className="flex mt-12 w-full justify-between">
+          <div className="flex flex-col md:flex-row mt-12 w-full justify-between">
             {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map(
               (btnLabel, index) => (
                 <button
@@ -90,7 +90,7 @@ export default function Project() {
                   onClick={() => setViewSelected(btnLabel)}
                   className={`${
                     viewSelected === btnLabel ? "bg-[#4DB8FF]" : "bg-[#2D2D2D]"
-                  } font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]`}
+                  } font-light mt-1 rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]`}
                 >
                   {btnLabel}
                 </button>
