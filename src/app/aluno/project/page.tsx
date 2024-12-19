@@ -74,13 +74,13 @@ export default function Project() {
 
         {/* Timeline Section */}
         <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
-          {/* <Timeline
+          <Timeline
             totalSprints={5}
             currentSprint={4}
             sprintProgress={0.3}
             sprintSelected={sprintSelected}
             setSprintSelected={setSprintSelected}
-          /> */}
+          />
 
           <div className="flex flex-col md:flex-row mt-12 w-full justify-between">
             {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map(
