@@ -1,25 +1,20 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 interface TimelineProps {
-  totalSprints: number; // Número total de sprints
-  currentSprint: number; // Sprint atual
-  sprintProgress: number; // Progresso da sprint atual (0 a 1)
-  sprintSelected: number; // Sprint atualmente selecionada
-  setSprintSelected: (sprint: number) => void; // Função para alterar a sprint selecionada
+  projectId: number;
 }
 
-const Timeline: React.FC<TimelineProps> = ({
-  totalSprints,
-  currentSprint,
-  sprintProgress,
-  sprintSelected,
-  setSprintSelected,
-}) => {
+const Timeline: React.FC<TimelineProps> = ({ projectId }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [divSize, setDivSize] = useState<{ width: number; height: number }>({
     width: 0,
     height: 0,
   });
+  const [projectProgress, setProjectProgress] = useState(0);
+  const [sprints, setSprints] = useState<any[]>([]);
 
   useEffect(() => {
     if (divRef.current) {
@@ -28,10 +23,27 @@ const Timeline: React.FC<TimelineProps> = ({
     }
   }, []);
 
-  let lastSprintProgress: number = 0;
-  if (currentSprint > 5) lastSprintProgress = 1;
-  if (currentSprint < 5) lastSprintProgress = 0;
-  if (currentSprint === 5) lastSprintProgress = sprintProgress;
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        const response = await axios.get(`/api/projectData?projectId=${projectId}`);
+        const project = response.data;
+
+        const now = new Date();
+        const projectDuration =
+          new Date(project.data_fim).getTime() - new Date(project.data_inicio).getTime();
+        const projectElapsed = now.getTime() - new Date(project.data_inicio).getTime();
+        const progress = Math.min(Math.max(projectElapsed / projectDuration, 0), 1);
+
+        setProjectProgress(progress);
+        setSprints(project.sprints);
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      }
+    };
+
+    fetchProjectData();
+  }, [projectId]);
 
   return (
     <div
@@ -39,95 +51,42 @@ const Timeline: React.FC<TimelineProps> = ({
       ref={divRef}
     >
       <div
-        style={{ width: `${(divSize.width) / (totalSprints + 2)}px` }}
+        style={{ width: `${divSize.width / (sprints.length + 2)}px` }}
         className={`flex flex-row items-center`}
       >
-        <div 
-        onClick={() => setSprintSelected(0)} // Atualiza o estado no componente pai
-        className="flex items-center justify-center w-4 h-4 rounded-full bg-[#4DB8FF]">
-          {sprintSelected === 0 && (
-            <div className="w-2 h-2 rounded-full bg-[#eee]" />
-          )}
+        <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#4DB8FF]">
+          <div
+            style={{ width: `${projectProgress * 100}%` }}
+            className="h-1 bg-[#4DB8FF]"
+          />
         </div>
-        <div className="h-1 w-full bg-[#4DB8FF]" />
       </div>
-      {Array.from({ length: totalSprints - 1 }).map((_, index) => {
-        const sprint = index + 1;
-        let progress: number = 0;
-        if (currentSprint > sprint) progress = 1;
-        if (currentSprint < sprint) progress = 0;
-        if (currentSprint === sprint) progress = sprintProgress;
+      {sprints.map((sprint) => {
+        const sprintDuration =
+          new Date(sprint.data_fim).getTime() - new Date(sprint.data_inicio).getTime();
+        const sprintElapsed = new Date().getTime() - new Date(sprint.data_inicio).getTime();
+        const sprintProgress = Math.min(Math.max(sprintElapsed / sprintDuration, 0), 1);
 
         return (
           <div
-            key={index}
-            style={{ width: `${(divSize.width) / (totalSprints + 1)}px` }}
-            className={`flex flex-row items-center`}
+            key={sprint.id}
+            style={{ width: `${divSize.width / (sprints.length + 2)}px` }}
+            className="flex flex-row items-center"
           >
             <button
-              style={{ backgroundColor: progress !== 0 ? "#4DB8FF" : "#eee" }}
+              style={{
+                backgroundColor: sprintProgress > 0 ? "#4DB8FF" : "#eee",
+              }}
               className="flex items-center justify-center min-w-4 min-h-4 rounded-full"
-              onClick={() => setSprintSelected(sprint)} // Atualiza o estado no componente pai
             >
-              {sprintSelected === sprint && (
-                <div className="w-2 h-2 rounded-full bg-[#eee]" />
-              )}
+              <div
+                style={{ width: `${sprintProgress * 100}%` }}
+                className="h-1 bg-[#4DB8FF]"
+              />
             </button>
-            <div
-              style={{
-                width: `${
-                  ((divSize.width) / (totalSprints + 1) - 16) * progress
-                }px`,
-              }}
-              className="h-1 bg-[#4DB8FF]"
-            />
-            <div
-              style={{
-                width: `${
-                  ((divSize.width) / (totalSprints + 1) - 16) *
-                  (1 - progress)
-                }px`,
-              }}
-              className="h-1 bg-[#eee]"
-            />
           </div>
         );
       })}
-      <div
-        style={{ width: `${(divSize.width - 80) / (totalSprints + 1)}px` }}
-        className={`flex flex-row items-center`}
-      >
-        <button
-          onClick={() => setSprintSelected(5)} // Atualiza o estado no componente pai
-          style={{
-            backgroundColor: lastSprintProgress !== 0 ? "#4DB8FF" : "#eee",
-          }}
-          className="flex items-center justify-center min-w-4 min-h-4 rounded-full"
-        >
-          {sprintSelected === 5 && (
-            <div className="w-2 h-2 rounded-full bg-[#eee]" />
-          )}
-        </button>
-        <div
-          style={{
-            width: `${
-              ((divSize.width - 80) / (totalSprints + 1) - 16) *
-              lastSprintProgress
-            }px`,
-          }}
-          className="h-1 bg-[#4DB8FF]"
-        />
-        <div
-          style={{
-            width: `${
-              ((divSize.width - 80) / (totalSprints + 1) - 16) *
-              (1 - lastSprintProgress)
-            }px`,
-          }}
-          className="h-1 bg-[#eee]"
-        />
-        <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#4DB8FF]" />
-      </div>
     </div>
   );
 };
