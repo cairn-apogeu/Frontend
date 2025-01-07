@@ -14,8 +14,8 @@ interface CardData {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
@@ -115,7 +115,7 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
       </div>
 
       {/* Middle Section */}
-      <div>
+      <div className="flex w-full">
         <h2 className="text-white text-lg font-semibold">{card.titulo}</h2>
       </div>
 

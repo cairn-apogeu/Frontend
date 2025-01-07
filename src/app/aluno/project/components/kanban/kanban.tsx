@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Card from "./card";
 import axiosInstance from "@/app/api/axiosInstance";
 import { IoAddCircleOutline } from "react-icons/io5";
-import ModalCard from "@/app/card/project/components/card";
+import ModalCard from "@/app/aluno/project/components/kanban/Modalcard";
+import Card from "./card";
 
-interface Card {
+interface CardType {
   id: number;
   titulo: string;
   descricao?: string;
@@ -16,8 +16,8 @@ interface Card {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
@@ -28,26 +28,34 @@ interface Card {
 }
 
 interface KanbanProps {
-  cards: Card[];
+  cards: CardType[];
   statusChanged: () => void;
+  sprint: number;
+  project: number;
 }
 
-const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
+const Kanban: React.FC<KanbanProps> = ({
+  cards,
+  statusChanged,
+  sprint,
+  project,
+}) => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
     null
   );
   const [filteredCards, setFilteredCards] = useState<{
-    toDo: Card[];
-    doing: Card[];
-    done: Card[];
-    prevented: Card[];
+    toDo: CardType[];
+    doing: CardType[];
+    done: CardType[];
+    prevented: CardType[];
   }>({
     toDo: [],
     doing: [],
     done: [],
     prevented: [],
   });
-  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false)
+  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false);
+  const [cardSelected, setCardSelected] = useState<CardType | null>();
 
   // Filtra os cards por status
   useEffect(() => {
@@ -103,9 +111,25 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
       const updatedCards = cards.map((card) =>
         card.id === cardId ? { ...card, status: targetColumn } : card
       );
-
+      
       cards = updatedCards;
+      if (
+        !cardToMove.dod ||
+        !cardToMove.assigned ||
+        !cardToMove.tempo_estimado
+      ) {
+        console.warn("Card move canceled: missing required fields.");
+        alert("Cannot move the card. Please complete all required fields.");
+        return;
+      }
 
+      if (
+        targetColumn === "done" && !cardToMove.tempo
+      ) {
+        console.warn("Card move canceled: missing required fields.");
+        alert("Cannot move the card. Please complete all required fields.");
+        return;
+      }
       await updateCardColumn(cardId, targetColumn);
     } catch (error) {
       console.error("Error processing drop:", error);
@@ -155,19 +179,30 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
           >
             {config.title}{" "}
             {columnName === "toDo" && (
-              <button onClick={() => setModalCardIsVisible(true)} className="hover:opacity-70">
+              <button
+                onClick={() => setModalCardIsVisible(true)}
+                className="hover:opacity-70"
+              >
                 <IoAddCircleOutline className="w-7 h-7" />
               </button>
             )}
           </div>
         </div>
-        {filteredCards[columnName].map((card) => (
-          <Card
+        {filteredCards[columnName].map((card: CardType) => (
+          <button
             key={card.id}
-            card={card}
-            draggable
-            onDragStart={(e) => handleDragStart(e, columnName, card.id)}
-          />
+            onClick={() => {
+              setCardSelected(card);
+              setModalCardIsVisible(true);
+            }}
+            className="flex w-full items-center justify-center"
+          >
+            <Card
+              card={card}
+              draggable
+              onDragStart={(e) => handleDragStart(e, columnName, card.id)}
+            />
+          </button>
         ))}
       </div>
     );
@@ -183,10 +218,17 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
       </div>
       {modalCardIsVisible && (
         <ModalCard
-          cardId={0} 
-          initialData={{}} 
-          onClose={() => setModalCardIsVisible(false)}
-          onSaveSuccess={statusChanged}
+          initialData={cardSelected ? cardSelected : {}}
+          onClose={() => {
+            setModalCardIsVisible(false);
+            setCardSelected(null);
+          }}
+          onSaveSuccess={() => {
+            setCardSelected(null);
+            return statusChanged;
+          }}
+          sprint={sprint}
+          project={project}
         />
       )}
     </div>

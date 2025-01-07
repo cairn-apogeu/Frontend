@@ -19,8 +19,8 @@ interface Card {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
@@ -34,33 +34,34 @@ export default function Project() {
   const [sprintSelected, setSprintSelected] = useState<number>(2);
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
-  const [sprintCards, setSprintCards] = useState<Card[]>([])
-  const [statusChanged, setStatusChanged] = useState<boolean>(true)
+  const [sprintCards, setSprintCards] = useState<Card[]>([]);
+  const [statusChanged, setStatusChanged] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchCards() {
       try {
         const response = await axiosInstance.get(`/cards/project/1`);
-        console.log (response.data)
+        console.log(response.data);
         setCards(response.data);
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
       }
     }
-    fetchCards()
-
+    fetchCards();
   }, [statusChanged]);
 
   useEffect(() => {
-    setSprintCards(cards && cards.filter((card) => {
-      if(sprintSelected !== 0) {
-        return card.sprint === sprintSelected
-      } else {
-        return true
-      }
-
-    }))
-  }, [sprintSelected, cards])
+    setSprintCards(
+      cards &&
+        cards.filter((card) => {
+          if (sprintSelected !== 0) {
+            return card.sprint === sprintSelected;
+          } else {
+            return true;
+          }
+        })
+    );
+  }, [sprintSelected, cards]);
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -99,8 +100,19 @@ export default function Project() {
           </div>
         </div>
 
-        {viewSelected === "Kanban" && <Kanban statusChanged={() => setStatusChanged(!statusChanged)} cards={sprintCards} />}
-        {viewSelected === "Estatísticas" && <Estatisticas cardsProject={sprintCards.filter((card) => card.status === "done")} />}
+        {viewSelected === "Kanban" && (
+          <Kanban
+            statusChanged={() => setStatusChanged(!statusChanged)}
+            cards={sprintCards}
+            sprint={sprintSelected}
+            project={1}
+          />
+        )}
+        {viewSelected === "Estatísticas" && (
+          <Estatisticas
+            cardsProject={sprintCards.filter((card) => card.status === "done")}
+          />
+        )}
       </div>
     </div>
   );
