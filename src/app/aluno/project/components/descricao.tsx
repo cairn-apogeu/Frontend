@@ -11,7 +11,7 @@ interface DescricaoProps {
 const Descricao: React.FC<DescricaoProps> = ({ id }) => {
   const [descricaoContent, setDescricaoContent] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [filePath, setFilePath] = useState<"README.md" | "descricao.md" | "saep.md">("saep.md");
+  const [filePath, setFilePath] = useState<"README.md" | "descricao.md" | "saep.md">("README.md");
   const [branch, setBranch] = useState<string>("main");
   const [projeto, setProjeto] = useState<any>(null);
   const [carregando, setCarregando] = useState<boolean>(true);
