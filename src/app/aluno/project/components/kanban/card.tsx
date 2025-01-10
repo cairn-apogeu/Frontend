@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
+import axios from "axios";
 
 interface CardData {
   id: number;
@@ -23,6 +24,7 @@ interface CardData {
   xp_design?: number;
   xp_datalytics?: number;
   indicacao_conteudo?: string;
+  data_criacao: string; // Adicione o campo data_criacao
 }
 
 interface CardProps {
@@ -92,13 +94,13 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
 
   return (
     <div
-      className=" bg-[#2D2D2D] w-full max-w-80 gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4"
+      className="bg-[#2D2D2D] w-full max-w-[320px] gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4"
       draggable={draggable}
       onDragStart={handleDragStart}
     >
       {/* Top Section */}
       <div className="flex justify-between items-center">
-        <span className="text-white text-sm">16/11/2024</span>
+        <span className="text-white text-sm">{new Date(card.data_criacao).toLocaleDateString()}</span>
         <div className="flex items-center space-x-2">
           {userData?.profileImageUrl && (
             <Image

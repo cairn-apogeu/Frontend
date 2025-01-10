@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         { error: 'Parâmetro userId é obrigatório' },
         { status: 400 }
       );
-    }
+    } 
 
     // Busca o usuário pelo Clerk
     const user = await clerkClient.users.getUser(userId);

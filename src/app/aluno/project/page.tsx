@@ -6,8 +6,7 @@ import Timeline from "./components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import Kanban from "./components/kanban/kanban";
 import Estatisticas from "./components/estatistica";
-
-import axiosInstance from "@/app/api/axiosInstance";
+import axiosInstance from "@/app/api/axiosInstance";  
 
 interface Card {
   id: number;
