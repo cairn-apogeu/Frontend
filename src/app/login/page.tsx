@@ -89,7 +89,6 @@ export default function LoginPage() {
     //       </button>
     //     </form>
     //   </div>
-
     // </div>
     <DadosUsuario id="user_2pUqnvfyJ2kqy6lBgHru21pSNEg" />
   );
