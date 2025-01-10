@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import SideNav from "@/app/components/sideNav";
 import Card from "../aluno/project/components/kanban/card";
 import axiosInstance from "@/app/api/axiosInstance";
@@ -25,38 +24,32 @@ interface CardData {
   xp_design?: number;
   xp_datalytics?: number;
   indicacao_conteudo?: string;
-  data_criacao: string;
+  data_criacao: string; // Adicione o campo data_criacao
 }
 
-export default function UserCardPage() {
-  const { userId } = useAuth();
-  const [userCards, setUserCards] = useState<CardData[]>([]);
+export default function DoingCardPage() {
+  const [doingCards, setDoingCards] = useState<CardData[]>([]);
 
   useEffect(() => {
-    async function fetchUserCards() {
+    async function fetchDoingCards() {
       try {
-        const response = await axiosInstance.get(`/cards/user/${userId}`);
-        setUserCards(response.data);
+        const response = await axiosInstance.get(`/cards/project/1`);
+        const cards = response.data.filter((card: CardData) => card.status === "doing");
+        setDoingCards(cards);
       } catch (error) {
-        console.error("Erro ao buscar cards do usuário logado:", error);
+        console.error("Erro ao buscar cards:", error);
       }
     }
-
-    if (userId) {
-      fetchUserCards();
-    }
-  }, [userId]);
-
-  // Separar os cards com status "Doing" (exemplo)
-  const doingCards = userCards.filter((card) => card.status === "Doing");
+    fetchDoingCards();
+  }, []);
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414] relative">
       <SideNav />
       <div className="flex flex-col w-full p-8">
         
-      <div className="absolute top-28 right-16 w-[300px] space-y-4">
-          <div className="bg-yellow-500 font-bold text-center  py-2 ml-24 rounded w-[100px]">
+        <div className="absolute top-36 right-16 w-[300px] space-y-4">
+          <div className="bg-yellow-500 font-bold text-center py-2 rounded">
             Doing
           </div>
           {userCards.map((card) => (

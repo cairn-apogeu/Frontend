@@ -47,10 +47,11 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
     done: [],
     prevented: [],
   });
-  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false)
+  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false);
 
   // Filtra os cards por status
   useEffect(() => {
+    console.log("Cards recebidos:", cards); // Adicione esta linha para verificar os dados dos cards
     const toDo = cards.filter((card) => card.status === "toDo");
     const doing = cards.filter((card) => card.status === "doing");
     const done = cards.filter((card) => card.status === "done");
@@ -70,14 +71,13 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
 
   const handleDragOver = (e: React.DragEvent, columnName: string) => {
     e.preventDefault();
-    
     setDraggedOverColumn(columnName);
   };
-  
+
   const handleDragLeave = () => {
     setDraggedOverColumn(null);
   };
-  
+
   const handleDrop = async (
     e: React.DragEvent,
     targetColumn: "toDo" | "doing" | "done" | "prevented"
@@ -102,13 +102,18 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
         return;
       }
 
+      await updateCardColumn(cardId, targetColumn);
+
       const updatedCards = cards.map((card) =>
         card.id === cardId ? { ...card, status: targetColumn } : card
       );
 
-      cards = updatedCards;
-
-      await updateCardColumn(cardId, targetColumn);
+      setFilteredCards({
+        toDo: updatedCards.filter((card) => card.status === "toDo"),
+        doing: updatedCards.filter((card) => card.status === "doing"),
+        done: updatedCards.filter((card) => card.status === "done"),
+        prevented: updatedCards.filter((card) => card.status === "prevented"),
+      });
     } catch (error) {
       console.error("Error processing drop:", error);
     }
@@ -120,12 +125,12 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
         status: targetColumn,
       });
 
-      statusChanged();
       if (response.status !== 200) {
         throw new Error("Failed to update card");
       }
 
       console.log("Card successfully updated:", response.data);
+      statusChanged();
     } catch (error) {
       console.error("Error updating card:", error);
     }
@@ -157,7 +162,10 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
           >
             {config.title}{" "}
             {columnName === "toDo" && (
-              <button onClick={() => setModalCardIsVisible(true)} className="hover:opacity-70">
+              <button
+                onClick={() => setModalCardIsVisible(true)}
+                className="hover:opacity-70"
+              >
                 <IoAddCircleOutline className="w-7 h-7" />
               </button>
             )}
@@ -187,4 +195,5 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
     </div>
   );
 };
+
 export default Kanban;
