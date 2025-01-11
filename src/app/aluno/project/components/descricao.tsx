@@ -2,99 +2,62 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import axiosInstance from "@/app/api/axiosInstance";
+import Sidebar from "./descricao/descricaoSideBar";
 
 interface DescricaoProps {
   id: number;
 }
 
 const Descricao: React.FC<DescricaoProps> = ({ id }) => {
-  const [descricaoContent, setDescricaoContent] = useState<string>("");
+  const [jsonData, setJsonData] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<{ content: string; name: string } | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
-  const [filePath, setFilePath] = useState<"README.md" | "descricao.md" | "saep.md">("README.md");
-  const [branch, setBranch] = useState<string>("main");
-  const [projeto, setProjeto] = useState<any>(null);
   const [carregando, setCarregando] = useState<boolean>(true);
-  const [formData, setFormData] = useState<{
-    token: string;
-    repositorio: string;
-    owner: string;
-  }>({
-    token: "",
-    repositorio: "",
-    owner: "",
-  });
 
   useEffect(() => {
-    const verificarProjeto = async () => {
+    const fetchJsonData = async () => {
       try {
-        // Busca o projeto pelo ID
-        const response = await axiosInstance.get(`/projetos/${id}`);
-        const data = response.data;
-        setProjeto(data);
-
-        // Verifica os campos
-        if (!data.token || !data.repositorio || !data.owner) {
-          setCarregando(false);
-          return;
-        }
-
-        // Carrega o conteúdo do GitHub
-        await fetchContent();
+        const response = await axiosInstance.get(`/projetos/${id}/github-content`);
+        setJsonData(response.data);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Erro ao carregar o projeto");
+        setError(err.response?.data?.message || "Erro ao carregar o conteúdo");
         console.error("Detalhes do erro:", err);
       } finally {
         setCarregando(false);
       }
     };
 
-    const fetchContent = async () => {
-      try {
-        const url = `/projetos/${id}/github-content`;
-        const response = await axiosInstance.get(url, {
-          params: { filePath, branch },
-        });
-        const content = response.data.content;
-        const absoluteContent = transformRelativeUrlsToAbsolute(content, filePath, branch);
-        setDescricaoContent(absoluteContent);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Erro ao carregar o arquivo");
-        console.error("Detalhes do erro:", err);
-      }
-    };
+    fetchJsonData();
+  }, [id]);
 
-    verificarProjeto();
-  }, [id, filePath, branch]);
+  const getFileOrder = (content: string): number => {
+    const match = content.match(/<!--(\d+)-->/);
+    return match ? parseInt(match[1], 10) : Infinity;
+  };
 
-  const transformRelativeUrlsToAbsolute = (content: string, filePath: string, branch: string) => {
-    const baseUrl = `https://raw.githubusercontent.com/owner/repo/${branch}/`;
-    return content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
-      if (!url.startsWith("http")) {
-        return `![${alt}](${baseUrl}${url})`;
+  const processJson = (data: any): any[] => {
+    const processedData: any[] = [];
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "object") {
+        const subDirectory = processJson(value);
+        const order = parseInt(value["Order.md"] || "Infinity", 10);
+        processedData.push({ name: key, type: "directory", order, children: subDirectory });
+      } else if (key.endsWith(".md") && key !== "Order.md") {
+        const order = getFileOrder(value);
+        processedData.push({ name: key, type: "file", order, content: value });
       }
-      return match;
     });
+
+    return processedData.sort((a, b) => a.order - b.order);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Envia os dados via PUT
-      await axiosInstance.put(`/projetos/${id}`, formData);
-      window.location.reload(); // Recarrega a página para refletir os novos dados
-    } catch (err: any) {
-      console.error("Erro ao salvar os dados:", err);
-      alert("Erro ao salvar os dados");
-    }
+  const handleFileSelect = (content: string, name: string) => {
+    setSelectedFile({ content, name });
   };
 
   if (carregando) {
@@ -105,53 +68,23 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
     return <div className="error">Erro: {error}</div>;
   }
 
-  // Se os campos obrigatórios estão ausentes, exibe o formulário
-  if (!projeto?.token || !projeto?.repositorio || !projeto?.owner) {
-    return (
-      <div className="formulario-cadastro">
-        <h2>Cadastro de Projeto</h2>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Token:
-            <input
-              type="text"
-              name="token"
-              value={formData.token}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            Repositório:
-            <input
-              type="text"
-              name="repositorio"
-              value={formData.repositorio}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            Owner:
-            <input
-              type="text"
-              name="owner"
-              value={formData.owner}
-              onChange={handleInputChange}
-            />
-          </label>
-          <button type="submit">Salvar</button>
-        </form>
-      </div>
-    );
-  }
+  const processedData = processJson(jsonData || {});
 
-  // Fluxo principal
   return (
-    <div className="descricao-container">
-      {descricaoContent ? (
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{descricaoContent}</ReactMarkdown>
-      ) : (
-        <p>Carregando descrição...</p>
-      )}
+    <div className="descricao-container" style={{ display: "flex" }}>
+      <Sidebar data={processedData} onSelectFile={handleFileSelect} />
+      <div className="content-area" style={{ flex: 1, padding: "16px" }}>
+        {selectedFile ? (
+          <>
+            <h1>{selectedFile.name}</h1>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {selectedFile.content}
+            </ReactMarkdown>
+          </>
+        ) : (
+          <p>Selecione um arquivo para visualizar o conteúdo.</p>
+        )}
+      </div>
     </div>
   );
 };
