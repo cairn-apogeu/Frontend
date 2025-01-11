@@ -91,7 +91,7 @@ const DadosUsuario = ({ id }: { id: string }) => {
       setUploading(true);
       try {
         const base64String = await fileToBase64(file);
-
+        console.log(base64String);
         // Faz upload da foto para o seu servidor
         const response = await fetch(`/api/postProfilePic/${userId}`, {
           method: "POST",
@@ -106,7 +106,7 @@ const DadosUsuario = ({ id }: { id: string }) => {
         }
 
         const data = await response.json();
-
+        console.log(data);
         // Atualiza a foto de perfil localmente (dados retornados do servidor)
         setUserData((prev) => ({
           ...prev!,

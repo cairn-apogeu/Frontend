@@ -1,72 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { useAuth } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/nextjs/server";
 
+/**
+ * Exemplo de rota:
+ * POST /api/postProfilePic/[userId]
+ * Body esperado: { "file": "<stringBase64>" }
+ */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  context: { params: { userId: string } }
 ) {
   try {
-    // 1) Extrai cabeçalhos da requisição
-
-    // 2) Usa getAuth(...) com esses cabeçalhos para obter userId
-
-    const userId = params.userId; // Vem diretamente do nome da pasta: [userId]
+    // 1) Pegar o userId dos parâmetros da rota [userId]
+    const { userId } = context.params;
     if (!userId) {
       return NextResponse.json(
-        { message: "Usuário não autenticado." },
-        { status: 401 }
-      );
-    }
-
-    // 3) Lê o body da requisição (JSON), onde esperamos { file: base64String }
-    const body = await req.json();
-    const base64File = body?.file;
-
-    if (!base64File) {
-      return NextResponse.json(
-        { message: "Nenhum arquivo enviado." },
+        { message: "Nenhum userId fornecido na rota." },
         { status: 400 }
       );
     }
 
-    // 4) Converte a string base64 em Buffer
-    const fileBuffer = Buffer.from(base64File, "base64");
-
-    // 5) Faz a requisição para a API do Clerk atualizando a foto
-    const clerkResponse = await fetch(
-      `https://api.clerk.dev/v1/users/${userId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // Clerk espera um Data URL em `profile_image`
-          profile_image: `data:image/jpeg;base64,${fileBuffer.toString(
-            "base64"
-          )}`,
-        }),
-      }
-    );
-
-    if (!clerkResponse.ok) {
-      const errorData = await clerkResponse.json();
-      throw new Error(
-        errorData.message || "Erro ao atualizar a foto no Clerk."
+    // 2) Ler o JSON do body
+    // Exemplo de body: { file: "<stringBase64>" }
+    const body = await req.json();
+    const base64File = body?.file;
+    if (!base64File) {
+      return NextResponse.json(
+        { message: "Nenhum arquivo enviado (file base64)." },
+        { status: 400 }
       );
     }
 
-    const updatedUser = await clerkResponse.json();
+    // 3) Converter a string base64 em Data URL
+    //    O Clerk espera o formato "data:image/jpeg;base64,SUQz..." em `profile_image`.
+    //    Se você quiser suportar PNG, verifique o "data:image/png;..." conforme o caso.
+    const dataUrl = `data:image/jpeg;base64,${base64File}`;
 
-    // 6) Retorna sucesso ao front-end
+    // 4) Atualizar o usuário via Clerk Client
+    //    (em vez de fazer manualmente fetch para a API do Clerk)
+    const clientClerk = clerkClient();
+    const updatedUser = await (
+      await clientClerk
+    ).users.updateUser(userId, {
+      profile_image_url: dataUrl,
+    });
+
+    // 5) Retornar sucesso ao front-end
     return NextResponse.json({
       message: "Foto de perfil atualizada com sucesso!",
       newProfileImageUrl: updatedUser.profile_image_url,
     });
   } catch (error: any) {
-    console.error("Erro ao atualizar a foto:", error);
+    console.error("Erro ao atualizar a foto no Clerk:", error);
     return NextResponse.json(
       { message: error.message || "Erro interno do servidor." },
       { status: 500 }
