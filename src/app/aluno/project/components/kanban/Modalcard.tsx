@@ -243,10 +243,9 @@ const ModalCard: React.FC<ModalCardProps> = ({
                   className="text-blue-400 hover:underline"
                   onClick={handleAssignClick}
                 >
-                  Assign to
+                  <span className="text-blue-400 text-sm">{userData?.name || "Assign to user"}</span>
                 </Link>
               )}
-              <span className="text-blue-400 text-sm">{userData?.name || "Assign to user"}</span>
             </div>
           </div>
 

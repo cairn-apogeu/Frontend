@@ -111,7 +111,7 @@ const Kanban: React.FC<KanbanProps> = ({
       const updatedCards = cards.map((card) =>
         card.id === cardId ? { ...card, status: targetColumn } : card
       );
-      
+
       cards = updatedCards;
       if (
         !cardToMove.dod ||
@@ -123,9 +123,7 @@ const Kanban: React.FC<KanbanProps> = ({
         return;
       }
 
-      if (
-        targetColumn === "done" && !cardToMove.tempo
-      ) {
+      if (targetColumn === "done" && !cardToMove.tempo) {
         console.warn("Card move canceled: missing required fields.");
         alert("Cannot move the card. Please complete all required fields.");
         return;
@@ -164,20 +162,12 @@ const Kanban: React.FC<KanbanProps> = ({
     const config = columnConfigs[columnName];
 
     return (
-      <div
-        className={`flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
-          ${
-            draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""
-          }`}
-        onDragOver={(e) => handleDragOver(e, columnName)}
-        onDragLeave={handleDragLeave}
-        onDrop={(e) => handleDrop(e, columnName)}
-      >
-        <div className={`flex w-full justify-center`}>
+      <div className="flex w-full flex-col min-h-44 bg-[#1B1B1B] rounded-xl shadow-md p-4">
+        <div className={`flex w-full ${columnName !== "prevented" ? "justify-center" : "justify-start"}`}>
           <div
             className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
-            {config.title}{" "}
+            {config.title} {" "}
             {columnName === "toDo" && (
               <button
                 onClick={() => setModalCardIsVisible(true)}
@@ -188,25 +178,71 @@ const Kanban: React.FC<KanbanProps> = ({
             )}
           </div>
         </div>
-        {filteredCards[columnName].map((card: CardType) => (
-          <button
-            key={card.id}
-            onClick={() => {
-              setCardSelected(card);
-              setModalCardIsVisible(true);
-            }}
-            className="flex w-full items-center justify-center"
+        <div
+          className={`flex ${
+            columnName === "prevented"
+              ? "w-full justify-center overflow-x-auto h-44"
+              : "flex-1 flex-col w-full justify-center"
+          } `}
+          style={
+            columnName === "prevented"
+              ? { whiteSpace: "nowrap", justifyContent: "center", overflowY: "hidden", display: "flex" }
+              : {justifyContent: "center",}
+          }
+          onDragOver={(e) => handleDragOver(e, columnName)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, columnName)}
+        >
+          <div
+            className={`flex justify-center ${
+              columnName === "prevented" ? "gap-4" : "flex-col gap-2"
+            }`}
+            style={
+              columnName === "prevented"
+                ? {
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    alignItems: "start",
+                    justifyContent: "space-around",
+                    height: "100%",
+                    width: "100%",
+                    gap: "16px"
+                  }
+                : {justifyContent: "center",}
+            }
           >
-            <Card
-              card={card}
-              draggable
-              onDragStart={(e) => handleDragStart(e, columnName, card.id)}
-            />
-          </button>
-        ))}
+            {filteredCards[columnName].map((card: CardType) => (
+              <button
+                
+                key={card.id}
+                onClick={() => {
+                  setCardSelected(card);
+                  setModalCardIsVisible(true);
+                }}
+                className={`${
+                  columnName === "prevented" ? "inline-block" : "flex justify-center"
+                }`}
+                style={
+                  columnName === "prevented"
+                    ? { flexShrink: 0 }
+                    : {width: "100%"}
+                }
+              >
+                <Card
+                  card={card}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, columnName, card.id)}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
+
 
   return (
     <div className="flex flex-col mt-6 w-full items-center gap-9">
