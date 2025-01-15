@@ -29,9 +29,9 @@ const Timeline: React.FC<TimelineProps> = ({
   }, []);
 
   let lastSprintProgress: number = 0;
-  if (currentSprint > 5) lastSprintProgress = 1;
-  if (currentSprint < 5) lastSprintProgress = 0;
-  if (currentSprint === 5) lastSprintProgress = sprintProgress;
+  if (currentSprint > totalSprints) lastSprintProgress = 1;
+  if (currentSprint < totalSprints) lastSprintProgress = 0;
+  if (currentSprint === totalSprints) lastSprintProgress = sprintProgress;
 
   return (
     <div

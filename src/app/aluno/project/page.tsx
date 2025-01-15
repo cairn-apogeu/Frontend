@@ -36,12 +36,14 @@ export default function Project() {
   const [cards, setCards] = useState<Card[]>([]);
   const [sprintCards, setSprintCards] = useState<Card[]>([]);
   const [statusChanged, setStatusChanged] = useState<boolean>(true);
+  const [sprints, setSprints] = useState<any>([]);
+  const [currentSprint, setCurrentSprint] = useState<any>(null);
+  const [currentSprintPercentage, setCurrentSprintPercentage] = useState<number>(0);
 
   useEffect(() => {
     async function fetchCards() {
       try {
         const response = await axiosInstance.get(`/cards/project/1`);
-        console.log(response.data);
         setCards(response.data);
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
@@ -51,17 +53,60 @@ export default function Project() {
   }, [statusChanged]);
 
   useEffect(() => {
+    async function fetchProject() {
+      try {
+        const response = await axiosInstance.get("/projetos/1");
+        setSprints(response.data.sprints);
+
+        // Encontrar a sprint atual
+        const hoje = new Date();
+        const sprintAtual = response.data.sprints.find((sprint: any) => {
+          const diaInicio = new Date(sprint.dia_inicio);
+          const diaFim = new Date(sprint.dia_fim);
+          return hoje >= diaInicio && hoje <= diaFim;
+        });
+
+        if (sprintAtual) {
+          
+          setCurrentSprint(sprintAtual.numero);
+
+          // Calcular a porcentagem concluída da sprint atual
+          const diaInicio = new Date(sprintAtual.dia_inicio);
+          const diaFim = new Date(sprintAtual.dia_fim);
+          const duracaoTotal = diaFim.getTime() - diaInicio.getTime();
+          const duracaoAtual = hoje.getTime() - diaInicio.getTime();
+          const progresso = (duracaoAtual / duracaoTotal);
+          console.log(Math.min(100, Math.max(0, progresso)));
+          
+          setCurrentSprintPercentage(Math.min(100, Math.max(0, progresso)));
+        } else {
+          setCurrentSprint(null);
+          setCurrentSprintPercentage(0);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar projeto:", error);
+      }
+    }
+
+    
+    
+    fetchProject();
+  }, []);
+
+  useEffect(() => {
     setSprintCards(
-      cards &&
-        cards.filter((card) => {
-          if (sprintSelected !== 0) {
-            return card.sprint === sprintSelected;
-          } else {
-            return true;
-          }
-        })
+      cards.filter((card) => {
+        if (sprintSelected !== 0) {
+          return card.sprint === sprintSelected;
+        }
+        return true;
+      })
     );
   }, [sprintSelected, cards]);
+
+  useEffect(() => {
+    console.log(currentSprint, " ", currentSprintPercentage)
+  }, [currentSprint, currentSprintPercentage])
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -76,27 +121,30 @@ export default function Project() {
         {/* Timeline Section */}
         <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
           <Timeline
-            totalSprints={5}
-            currentSprint={4}
-            sprintProgress={0.3}
+            totalSprints={sprints.length}
+            currentSprint={currentSprint}
+            sprintProgress={currentSprintPercentage}
             sprintSelected={sprintSelected}
             setSprintSelected={setSprintSelected}
           />
 
           <div className="flex mt-12 w-full justify-between">
-            {["Kanban", "Descrição", "Estatísticas", "Chat AI"].map(
-              (btnLabel, index) => (
-                <button
-                  key={index}
-                  onClick={() => setViewSelected(btnLabel)}
-                  className={`${
-                    viewSelected === btnLabel ? "bg-[#4DB8FF]" : "bg-[#2D2D2D]"
-                  } font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]`}
-                >
-                  {btnLabel}
-                </button>
-              )
-            )}
+            {[
+              "Kanban",
+              "Descrição",
+              "Estatísticas",
+              "Chat AI",
+            ].map((btnLabel, index) => (
+              <button
+                key={index}
+                onClick={() => setViewSelected(btnLabel)}
+                className={`${
+                  viewSelected === btnLabel ? "bg-[#4DB8FF]" : "bg-[#2D2D2D]"
+                } font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]`}
+              >
+                {btnLabel}
+              </button>
+            ))}
           </div>
         </div>
 
