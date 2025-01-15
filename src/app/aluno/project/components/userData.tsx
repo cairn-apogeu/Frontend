@@ -49,20 +49,6 @@ const DadosUsuario = ({ id }: { id: string }) => {
     setEditedValue(value);
   };
 
-  function fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        // Remove cabeçalho "data:image/..." se quiser
-        const base64 = result.replace(/^data:\w+\/\w+;base64,/, "");
-        resolve(base64);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
   const handleSave = (field: string) => {
     // Atualiza localmente
     setUserDataServer((prev: any) => ({
@@ -90,15 +76,14 @@ const DadosUsuario = ({ id }: { id: string }) => {
     if (file) {
       setUploading(true);
       try {
-        const base64String = await fileToBase64(file);
-        console.log(base64String);
+        // Crie um FormData e adicione o arquivo
+        const formData = new FormData();
+        formData.append("file", file);
+
         // Faz upload da foto para o seu servidor
         const response = await fetch(`/api/postProfilePic/${userId}`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ file: base64String }),
+          body: formData,
         });
 
         if (!response.ok) {
@@ -107,6 +92,7 @@ const DadosUsuario = ({ id }: { id: string }) => {
 
         const data = await response.json();
         console.log(data);
+
         // Atualiza a foto de perfil localmente (dados retornados do servidor)
         setUserData((prev) => ({
           ...prev!,

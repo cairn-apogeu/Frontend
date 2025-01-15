@@ -1,18 +1,20 @@
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { NextRequest, NextResponse } from "next/server";
-import { clerkClient } from "@clerk/nextjs/server";
+import multer from "multer";
+import React from "react";
 
-/**
- * Exemplo de rota:
- * POST /api/postProfilePic/[userId]
- * Body esperado: { "file": "<stringBase64>" }
- */
-export async function POST(
-  req: NextRequest,
-  context: { params: { userId: string } }
-) {
+const upload = multer();
+
+export const config = {
+  api: {
+    bodyParser: false, // Necessário para processar multipart/form-data
+  },
+};
+
+export async function POST(req: NextRequest, context: any) {
   try {
-    // 1) Pegar o userId dos parâmetros da rota [userId]
-    const { userId } = context.params;
+    const { userId } = await context.params;
+
     if (!userId) {
       return NextResponse.json(
         { message: "Nenhum userId fornecido na rota." },
@@ -20,40 +22,40 @@ export async function POST(
       );
     }
 
-    // 2) Ler o JSON do body
-    // Exemplo de body: { file: "<stringBase64>" }
-    const body = await req.json();
-    const base64File = body?.file;
-    if (!base64File) {
+    const uploadedFile = await new Promise((resolve, reject) => {
+      upload.single("file")(req as any, {} as any, (err: any) => {
+        if (err) return reject(err);
+        resolve((req as any).file);
+      });
+    });
+
+    if (!uploadedFile) {
       return NextResponse.json(
-        { message: "Nenhum arquivo enviado (file base64)." },
+        { message: "Nenhum arquivo enviado." },
         { status: 400 }
       );
     }
 
-    // 3) Converter a string base64 em Data URL
-    //    O Clerk espera o formato "data:image/jpeg;base64,SUQz..." em `profile_image`.
-    //    Se você quiser suportar PNG, verifique o "data:image/png;..." conforme o caso.
-    const dataUrl = `data:image/jpeg;base64,${base64File}`;
+    const fileBuffer = (uploadedFile as any).buffer;
+    const fileMimeType = (uploadedFile as any).mimetype;
+    const fileOriginalName = (uploadedFile as any).originalname;
 
-    // 4) Atualizar o usuário via Clerk Client
-    //    (em vez de fazer manualmente fetch para a API do Clerk)
-    const clientClerk = clerkClient();
-    const updatedUser = await (
-      await clientClerk
-    ).users.updateUser(userId, {
-      profile_image_url: dataUrl,
+    const file = new File([fileBuffer], fileOriginalName, {
+      type: fileMimeType,
     });
 
-    // 5) Retornar sucesso ao front-end
+    const updatedUser = await clerkClient.users.updateUserProfileImage(userId, {
+      file,
+    });
+
     return NextResponse.json({
-      message: "Foto de perfil atualizada com sucesso!",
-      newProfileImageUrl: updatedUser.profile_image_url,
+      message: "Imagem de perfil atualizada com sucesso!",
+      newProfileImageUrl: updatedUser.imageUrl,
     });
   } catch (error: any) {
-    console.error("Erro ao atualizar a foto no Clerk:", error);
+    console.error("Erro ao atualizar a imagem:", error);
     return NextResponse.json(
-      { message: error.message || "Erro interno do servidor." },
+      { message: "Erro interno ao atualizar a imagem.", error: error.message },
       { status: 500 }
     );
   }
