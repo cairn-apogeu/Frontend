@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { IoHourglass, IoLink } from "react-icons/io5";
+import { IoHourglassOutline, IoLinkOutline } from "react-icons/io5";
 import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
 
@@ -26,6 +26,8 @@ interface FormData {
   id?: number;
   indicacao_conteudo?: string;
   tempo_estimado?: number;
+  prova_pr?: string;
+  data_criacao: string;
 }
 
 interface UserData {
@@ -55,7 +57,8 @@ const ModalCard: React.FC<ModalCardProps> = ({
     titulo: initialData.titulo || " Kanban",
     descricao: initialData.descricao || "",
     tempo: initialData.tempo || 0,
-    conteudoDeApoio: initialData.indicacao_conteudo || initialData.conteudoDeApoio || "",
+    conteudoDeApoio:
+      initialData.indicacao_conteudo || initialData.conteudoDeApoio || "",
     xp_negocios: initialData.xp_negocios || 0,
     xp_arquitetura: initialData.xp_arquitetura || 0,
     xp_frontend: initialData.xp_frontend || 0,
@@ -68,6 +71,8 @@ const ModalCard: React.FC<ModalCardProps> = ({
     sprint: initialData.sprint || sprint,
     indicacao_conteudo: initialData.indicacao_conteudo || "",
     tempo_estimado: initialData.tempo_estimado || 0,
+    prova_pr: initialData.prova_pr || "",
+    data_criacao: initialData.data_criacao || `${new Date()}`,
   });
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -170,7 +175,9 @@ const ModalCard: React.FC<ModalCardProps> = ({
 
     // Validations for required fields
     if (!formData.dor || !formData.tempo_estimado) {
-      alert("Por favor, preencha o campo DOR e Tempo Estimado antes de salvar.");
+      alert(
+        "Por favor, preencha o campo DOR e Tempo Estimado antes de salvar."
+      );
       return;
     }
 
@@ -183,7 +190,10 @@ const ModalCard: React.FC<ModalCardProps> = ({
 
     try {
       if (formData.id) {
-        const response = await axiosInstance.put(`/cards/${formData.id}`, requestBody);
+        const response = await axiosInstance.put(
+          `/cards/${formData.id}`,
+          requestBody
+        );
         console.log("Card atualizado com sucesso:", response.data);
       } else {
         const response = await axiosInstance.post(`/cards`, requestBody);
@@ -199,161 +209,221 @@ const ModalCard: React.FC<ModalCardProps> = ({
     }
   };
 
+  useEffect(() => {}, []);
+  const formattedDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).slice(-2)}`;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="w-full max-w-4xl mx-auto px-4 py-8">
-        <form
-          className="bg-[#2D2D2D] p-6 rounded-md shadow-md space-y-6"
-          onSubmit={handleSubmit}
-        >
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <div>
+      <form
+        className="bg-[rgb(27,27,27)] flex flex-col gap-4 p-4 md:p-6 rounded-md shadow-md w-11/12 max-w-5xl"
+        onSubmit={handleSubmit}
+      >
+        {/* Header */}
+        <div className="flex justify-between w-full items-start">
+          <div>
+            <div className="flex flex-row gap-4 items-center">
+              <div
+                className={`w-4 h-4 md:w-6 md:h-6 rounded-full ${
+                  formData.status === "doing"
+                    ? "bg-[#F1C946]"
+                    : formData.status === "done"
+                    ? "bg-[#51F146]"
+                    : formData.status === "prevented"
+                    ? "bg-[#F14646]"
+                    : "bg-[#F17C46]"
+                }`}
+              ></div>
               {isEditingTitle ? (
                 <input
                   type="text"
                   value={formData.titulo}
                   onChange={handleTitleChange}
                   onBlur={handleTitleBlur}
-                  className="bg-[#404040] p-2 rounded-md text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 w-full text-xl"
+                  className="bg-[#2d2d2d] p-2 rounded-md text-[#eee] border-none focus:outline-none w-full text-lg md:text-xl"
                   autoFocus
                 />
               ) : (
                 <h2
-                  className="text-xl font-bold text-white cursor-pointer"
+                  className="text-xl md:text-2xl font-bold text-white cursor-pointer"
                   onClick={() => setIsEditingTitle(true)}
                 >
                   {formData.titulo}
                 </h2>
               )}
-              <p className="text-sm text-gray-400">17/11/2024</p>
             </div>
-            <div className="flex items-center gap-2">
-              {userData?.profileImageUrl ? (
-                <Image
-                  src={userData.profileImageUrl}
-                  alt={userData.name}
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-              ) : (
-                <Link
-                  href="#"
-                  className="text-blue-400 hover:underline"
-                  onClick={handleAssignClick}
+            <p className="text-sm md:text-lg font-light text-[#eee]">
+              {formattedDate(formData.data_criacao)}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {userData?.profileImageUrl ? (
+              <Image
+                src={userData.profileImageUrl}
+                alt={userData.name}
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
+            ) : (
+              <Link
+                href="#"
+                className="text-blue-400 hover:underline"
+                onClick={handleAssignClick}
+              >
+                <span className="text-blue-400 text-base md:text-lg font-light">
+                  {userData?.name || "Assign to"}
+                </span>
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Campos principais */}
+        <div className="flex flex-col md:flex-row justify-between gap-4">
+          {/* Esquerda */}
+          <div className="flex flex-col gap-4 w-full md:w-9/12">
+            <label
+              htmlFor="descricao"
+              className="block text-base md:text-lg font-light text-[#eee]"
+            >
+              Descrição
+            </label>
+            <textarea
+              id="descricao"
+              name="descricao"
+              className="bg-[#2d2d2d] p-2 rounded-md w-full h-full md:h-full text-[#eee] resize-none border-none focus:outline-none"
+              value={formData.descricao}
+              onChange={handleChange}
+            />
+
+            <div className="flex flex-col md:flex-row h-full gap-4 w-full">
+              <div className="flex flex-col gap-2 h-full w-full">
+                <label
+                  htmlFor="dod"
+                  className="block text-base md:text-lg font-normal text-[#eee]"
                 >
-                  <span className="text-blue-400 text-sm">{userData?.name || "Assign to user"}</span>
-                </Link>
-              )}
+                  DOD
+                </label>
+                <textarea
+                  id="dod"
+                  name="dod"
+                  className="bg-[#2d2d2d] p-2 rounded-md w-full h-full text-[#eee] resize-none border-none focus:outline-none"
+                  value={formData.dod}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={handleFocus}
+                />
+              </div>
+              <div className="flex flex-col gap-2 h-full w-full">
+                <label
+                  htmlFor="dor"
+                  className="block text-base md:text-lg font-normal text-[#eee]"
+                >
+                  DOR
+                </label>
+                <textarea
+                  id="dor"
+                  name="dor"
+                  className="bg-[#2d2d2d] p-2 rounded-md w-full h-full text-[#eee] resize-none border-none focus:outline-none"
+                  value={formData.dor}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={handleFocus}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Campos principais */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Esquerda */}
-            <div className="space-y-4">
-              <label htmlFor="descricao" className="block text-sm font-medium text-gray-300">
-                Descrição
+          {/* Direita */}
+          <div className="flex flex-col gap-6 w-full md:w-3/12">
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="tempoPrevisto"
+                className="text-base md:text-lg font-normal text-[#eee]"
+              >
+                Tempo
               </label>
-              <textarea
-                id="descricao"
-                name="descricao"
-                placeholder="Descrição"
-                className="bg-[#404040] p-3 rounded-md w-full h-32 text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500"
-                value={formData.descricao}
-                onChange={handleChange}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="dod" className="block text-sm font-medium text-gray-300">
-                    DOD
-                  </label>
-                  <textarea
-                    id="dod"
-                    name="dod"
-                    placeholder="Definição de pronto"
-                    className="bg-[#404040] p-3 rounded-md w-full h-24 text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500"
-                    value={formData.dod}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={handleFocus}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="dor" className="block text-sm font-medium text-gray-300">
-                    DOR
-                  </label>
-                  <textarea
-                    id="dor"
-                    name="dor"
-                    placeholder="Definição de iniciado"
-                    className="bg-[#404040] p-3 rounded-md w-full h-24 text-gray-300 resize-none border-none focus:outline-none focus:ring focus:ring-blue-500"
-                    value={formData.dor}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={handleFocus}
-                  />
-                </div>
+              <div className="flex w-full justify-end items-center gap-2">
+                <IoHourglassOutline className="text-yellow-500 w-4 h-4 md:w-5 md:h-5" />
+                <input
+                  type="number"
+                  id="tempoPrevisto"
+                  name="tempo_estimado"
+                  placeholder="min"
+                  className="bg-[#2d2d2d] p-1 w-16 md:w-20 text-right shadow-inner rounded-md text-[#eeee] border-none focus:outline-none text-xs md:text-sm"
+                  value={formData.tempo_estimado || ""}
+                  onChange={handleChange}
+                />
+                <label
+                  htmlFor="tempoPrevisto"
+                  className="text-base md:text-lg font-light text-[#eee]"
+                >
+                  Previsto
+                </label>
+              </div>
+              <div className="flex w-full justify-end items-center gap-2">
+                <IoHourglassOutline className="text-green-500 w-4 h-4 md:w-5 md:h-5" />
+                <input
+                  type="number"
+                  id="tempo"
+                  name="tempo"
+                  placeholder="min"
+                  className="bg-[#2d2d2d] p-1 w-16 md:w-20 text-right shadow-inner rounded-md text-[#eeee] border-none focus:outline-none text-xs md:text-sm"
+                  value={formData.tempo || ""}
+                  onChange={handleChange}
+                />
+                <label
+                  htmlFor="tempoExecutado"
+                  className="text-base md:text-lg font-light text-[#eee]"
+                >
+                  Executados
+                </label>
               </div>
             </div>
-
-            {/* Direita */}
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="tempoPrevisto" className="block text-sm font-medium text-gray-300">
-                  Tempo Previsto
-                </label>
-                <div className="flex items-center gap-2">
-                  <IoHourglass className="text-yellow-500 w-6 h-6" />
-                  <input
-                    type="number"
-                    id="tempoPrevisto"
-                    name="tempo_estimado"
-                    placeholder="Minutos"
-                    className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                    value={formData.tempo_estimado || ""}
-                    onChange={handleChange}
-                  />
-                </div>
+            {/* Conteúdo de Apoio */}
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="conteudoDeApoio"
+                className="text-base md:text-lg font-normal text-[#eee]"
+              >
+                Conteúdo de Apoio
+              </label>
+              <div className="flex items-center justify-end gap-4">
+                <IoLinkOutline className="text-[#4DB8FF] w-5 h-5" />
+                <input
+                  type="text"
+                  id="conteudoDeApoio"
+                  name="conteudoDeApoio"
+                  placeholder="Link de apoio"
+                  className="bg-transparent w-full md:w-2/3 rounded-md text-[#eeee] border-none focus:outline-none font-extralight text-sm md:text-base"
+                  value={formData.conteudoDeApoio || ""}
+                  onChange={handleChange}
+                />
               </div>
-              <div>
-                <label htmlFor="tempoExecutado" className="block text-sm font-medium text-gray-300">
-                  Tempo Executado
-                </label>
-                <div className="flex items-center gap-2">
-                  <IoHourglass className="text-green-500 w-6 h-6" />
-                  <input
-                    type="number"
-                    id="tempoExecutado"
-                    name="tempo"
-                    placeholder="Minutos"
-                    className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                    value={formData.tempo || ""}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div className="flex items-center justify-end gap-4">
+                <IoLinkOutline className="text-green-500 w-5 h-5" />
+                <input
+                  type="text"
+                  id="conteudoDeApoio"
+                  name="conteudoDeApoio"
+                  placeholder="Prova de PR"
+                  className="bg-transparent w-full md:w-2/3 rounded-md text-[#eeee] border-none focus:outline-none font-extralight text-sm md:text-base"
+                  value={formData.prova_pr || ""}
+                  onChange={handleChange}
+                />
               </div>
-              <div>
-                <label htmlFor="conteudoDeApoio" className="block text-sm font-medium text-gray-300">
-                  Conteúdo de Apoio
-                </label>
-                <div className="flex items-center gap-2">
-                  <IoLink className="text-gray-400 w-6 h-6" />
-                  <input
-                    type="text"
-                    id="conteudoDeApoio"
-                    name="conteudoDeApoio"
-                    placeholder="Link de apoio"
-                    className="bg-[#404040] p-2 rounded-md w-full text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
-                    value={formData.conteudoDeApoio || ""}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-300">Atributos</p>
+            </div>
+            <div>
+              <label
+                htmlFor="tempoPrevisto"
+                className="text-lg md:text-xl font-normal text-[#eee]"
+              >
+                Atributos
+              </label>
+              <div className="flex flex-col w-full gap-2 overflow-y-auto max-h-32 ">
                 {[
                   { label: "Negócios", name: "xp_negocios" },
                   { label: "Arquitetura", name: "xp_arquitetura" },
@@ -361,20 +431,23 @@ const ModalCard: React.FC<ModalCardProps> = ({
                   { label: "BackEnd", name: "xp_backend" },
                   { label: "Design", name: "xp_design" },
                   { label: "Data Analytics", name: "xp_dataAnalytics" },
-                ].map(({ label, name }) => (
-                  <div key={name} className="flex items-center gap-4">
+                ].map(({ label, name }: { label: string; name: string }) => (
+                  <div
+                    key={name}
+                    className="flex items-center w-full justify-end space-y-2 gap-2 md:gap-4"
+                  >
                     <label
                       htmlFor={name}
-                      className="text-gray-400 w-24 text-right text-sm"
+                      className="text-[#eee] text-sm md:text-base text-right font-extralight"
                     >
-                      {label}:
+                      {label}
                     </label>
                     <input
                       type="number"
                       id={name}
                       name={name}
-                      placeholder="XP"
-                      className="bg-[#404040] p-2 rounded-md w-28 text-gray-300 border-none focus:outline-none focus:ring focus:ring-blue-500 text-sm"
+                      placeholder="xp"
+                      className="bg-[#2d2d2d] p-1 w-16 md:w-20 text-right shadow-inner rounded-md text-[#eeee] border-none focus:outline-none text-xs md:text-sm"
                       value={formData[name] || ""}
                       onChange={handleChange}
                     />
@@ -383,28 +456,28 @@ const ModalCard: React.FC<ModalCardProps> = ({
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Botões */}
-          <div className="flex justify-end gap-4">
-            <button
-              type="submit"
-              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Salvando..." : "Salvar"}
-            </button>
-            <button
-              type="button"
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-              onClick={onClose}
-            >
-              Fechar
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Botões */}
+        <div className="flex mt-6 justify-end gap-4">
+          <button
+            type="submit"
+            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Salvando..." : "Salvar"}
+          </button>
+          <button
+            type="button"
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base"
+            onClick={onClose}
+          >
+            Fechar
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

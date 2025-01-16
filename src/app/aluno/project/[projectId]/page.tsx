@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import SideNav from "@/app/components/sideNav";
-import Timeline from "./components/timeline";
+import Timeline from "../components/timeline";
 import { IoChevronBack } from "react-icons/io5";
-import Kanban from "./components/kanban/kanban";
-import Estatisticas from "./components/estatistica";
+import Kanban from "../components/kanban/kanban";
+import Estatisticas from "../components/estatistica";
 
 import axiosInstance from "@/app/api/axiosInstance";
+import { useParams } from "next/navigation";
 
 interface Card {
   id: number;
@@ -31,32 +32,35 @@ interface Card {
 }
 
 export default function Project() {
-  const [sprintSelected, setSprintSelected] = useState<number>(2);
+  const { projectId } = useParams(); 
+  const [sprintSelected, setSprintSelected] = useState<number>(0);
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
   const [sprintCards, setSprintCards] = useState<Card[]>([]);
   const [statusChanged, setStatusChanged] = useState<boolean>(true);
   const [sprints, setSprints] = useState<any>([]);
+  const [project, setProject] = useState<any>([])
   const [currentSprint, setCurrentSprint] = useState<any>(null);
   const [currentSprintPercentage, setCurrentSprintPercentage] = useState<number>(0);
 
   useEffect(() => {
     async function fetchCards() {
       try {
-        const response = await axiosInstance.get(`/cards/project/1`);
+        const response = await axiosInstance.get(`/cards/project/${projectId}`);
         setCards(response.data);
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
       }
     }
     fetchCards();
-  }, [statusChanged]);
+  }, [statusChanged, projectId]);
 
   useEffect(() => {
     async function fetchProject() {
       try {
-        const response = await axiosInstance.get("/projetos/1");
+        const response = await axiosInstance.get(`/projetos/${projectId}`);
         setSprints(response.data.sprints);
+        setProject(response.data)
 
         // Encontrar a sprint atual
         const hoje = new Date();
@@ -91,7 +95,7 @@ export default function Project() {
     
     
     fetchProject();
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     setSprintCards(
@@ -115,7 +119,7 @@ export default function Project() {
         {/* Header */}
         <div className="flex items-center gap-5">
           <IoChevronBack size={28} />
-          <p className="font-fustat text-[#eee] text-2xl">Project Name</p>
+          <p className="font-fustat text-[#eee] text-2xl">{project.nome}</p>
         </div>
 
         {/* Timeline Section */}
@@ -123,7 +127,7 @@ export default function Project() {
           <Timeline
             totalSprints={sprints.length}
             currentSprint={currentSprint}
-            sprintProgress={currentSprintPercentage}
+            sprintProgress={currentSprintPercentage }
             sprintSelected={sprintSelected}
             setSprintSelected={setSprintSelected}
           />
@@ -153,7 +157,7 @@ export default function Project() {
             statusChanged={() => setStatusChanged(!statusChanged)}
             cards={sprintCards}
             sprint={sprintSelected}
-            project={1}
+            project={Number(projectId)}
           />
         )}
         {viewSelected === "Estatísticas" && (
