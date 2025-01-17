@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
       id: userId,
       name: `${user.firstName} ${user.lastName}`,
       profileImageUrl: user.imageUrl,
+      
     });
   } catch (error) {
     console.error('Erro interno no servidor:', error);
