@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Card from "./card";
 import axiosInstance from "@/app/api/axiosInstance";
 import { IoAddCircleOutline } from "react-icons/io5";
-import ModalCard from "@/app/card/project/components/card";
+import ModalCard from "@/app/aluno/project/components/kanban/Modalcard";
+import Card from "./card";
 
-interface Card {
+interface CardType {
   id: number;
   titulo: string;
   descricao?: string;
@@ -16,8 +16,8 @@ interface Card {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
@@ -28,26 +28,34 @@ interface Card {
 }
 
 interface KanbanProps {
-  cards: Card[];
+  cards: CardType[];
   statusChanged: () => void;
+  sprint: number;
+  project: number;
 }
 
-const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
+const Kanban: React.FC<KanbanProps> = ({
+  cards,
+  statusChanged,
+  sprint,
+  project,
+}) => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
     null
   );
   const [filteredCards, setFilteredCards] = useState<{
-    toDo: Card[];
-    doing: Card[];
-    done: Card[];
-    prevented: Card[];
+    toDo: CardType[];
+    doing: CardType[];
+    done: CardType[];
+    prevented: CardType[];
   }>({
     toDo: [],
     doing: [],
     done: [],
     prevented: [],
   });
-  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false)
+  const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false);
+  const [cardSelected, setCardSelected] = useState<CardType | null>();
 
   // Filtra os cards por status
   useEffect(() => {
@@ -107,7 +115,21 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
       );
 
       cards = updatedCards;
+      if (
+        !cardToMove.dod ||
+        !cardToMove.assigned ||
+        !cardToMove.tempo_estimado
+      ) {
+        console.warn("Card move canceled: missing required fields.");
+        alert("Cannot move the card. Please complete all required fields.");
+        return;
+      }
 
+      if (targetColumn === "done" && !cardToMove.tempo) {
+        console.warn("Card move canceled: missing required fields.");
+        alert("Cannot move the card. Please complete all required fields.");
+        return;
+      }
       await updateCardColumn(cardId, targetColumn);
     } catch (error) {
       console.error("Error processing drop:", error);
@@ -142,38 +164,87 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
     const config = columnConfigs[columnName];
 
     return (
-      <div
-        className={`flex flex-col w-full min-h-64 h-fit bg-[#1B1B1B] rounded-xl shadow-md p-4 
-          ${
-            draggedOverColumn === columnName ? "border-2 border-[#4DB8FF]" : ""
-          }`}
-        onDragOver={(e) => handleDragOver(e, columnName)}
-        onDragLeave={handleDragLeave}
-        onDrop={(e) => handleDrop(e, columnName)}
-      >
-        <div className={`flex w-full justify-center`}>
+      <div className="flex w-full flex-col min-h-44 bg-[#1B1B1B] rounded-xl shadow-md p-4">
+        <div className={`flex w-full ${columnName !== "prevented" ? "justify-center" : "justify-start"}`}>
           <div
             className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
-            {config.title}{" "}
+            {config.title} {" "}
             {columnName === "toDo" && (
-              <button onClick={() => setModalCardIsVisible(true)} className="hover:opacity-70">
+              <button
+                onClick={() => setModalCardIsVisible(true)}
+                className="hover:opacity-70"
+              >
                 <IoAddCircleOutline className="w-7 h-7" />
               </button>
             )}
           </div>
         </div>
-        {filteredCards[columnName].map((card) => (
-          <Card
-            key={card.id}
-            card={card}
-            draggable
-            onDragStart={(e) => handleDragStart(e, columnName, card.id)}
-          />
-        ))}
+        <div
+          className={`flex ${
+            columnName === "prevented"
+              ? "w-full justify-center overflow-x-auto h-44"
+              : "flex-1 flex-col w-full justify-center"
+          } `}
+          style={
+            columnName === "prevented"
+              ? { whiteSpace: "nowrap", justifyContent: "center", overflowY: "hidden", display: "flex" }
+              : {justifyContent: "center",}
+          }
+          onDragOver={(e) => handleDragOver(e, columnName)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, columnName)}
+        >
+          <div
+            className={`flex justify-center ${
+              columnName === "prevented" ? "gap-4" : "flex-col gap-2"
+            }`}
+            style={
+              columnName === "prevented"
+                ? {
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    alignItems: "start",
+                    justifyContent: "space-around",
+                    height: "100%",
+                    width: "100%",
+                    gap: "16px"
+                  }
+                : {justifyContent: "center",}
+            }
+          >
+            {filteredCards[columnName].map((card: CardType) => (
+              <button
+                
+                key={card.id}
+                onClick={() => {
+                  setCardSelected(card);
+                  setModalCardIsVisible(true);
+                }}
+                className={`${
+                  columnName === "prevented" ? "inline-block" : "flex justify-center"
+                }`}
+                style={
+                  columnName === "prevented"
+                    ? { flexShrink: 0 }
+                    : {width: "100%"}
+                }
+              >
+                <Card
+                  card={card}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, columnName, card.id)}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
+
 
   return (
     <div className="flex flex-col mt-6 w-full items-center gap-9">
@@ -183,7 +254,21 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
         {renderColumn("doing")}
         {renderColumn("done")}
       </div>
-      {modalCardIsVisible && <ModalCard />}
+      {modalCardIsVisible && (
+        <ModalCard
+          initialData={cardSelected ? cardSelected : {}}
+          onClose={() => {
+            setModalCardIsVisible(false);
+            setCardSelected(null);
+          }}
+          onSaveSuccess={() => {
+            setCardSelected(null);
+            return statusChanged;
+          }}
+          sprint={sprint}
+          project={project}
+        />
+      )}
     </div>
   );
 };
