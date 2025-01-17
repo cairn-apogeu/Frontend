@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import SearchIcon from "@/public/search-icon.svg";
 
 interface SearchBarProps {
   onSearch: (username: string) => void;
@@ -25,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         className="flex-grow bg-transparent text-white outline-none"
       />
       <button type="submit" className="w-6 h-6">
-        <img src={SearchIcon} alt="Buscar" />
+        <img src="/search-icon.svg" alt="Buscar" />
       </button>
     </form>
   );
