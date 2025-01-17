@@ -98,7 +98,7 @@ const FinalPage: React.FC = () => {
         const usersWithDetailsArea = await Promise.all(userDetailsPromisesArea);
 
         // Adiciona o usuário atual se ele não estiver na lista
-        if (userId && !usersWithDetailsTotal.some(user => user.userId === userId)) {
+        if (userId && !usersWithDetailsTotal.some(user => user.userId === userId) || userId && !usersWithDetailsArea.some(user => user.userId === userId)) {
           const currentUserResponse = await fetch(`/api/getUser?userId=${userId}`);
           const currentUserData = await currentUserResponse.json();
           usersWithDetailsTotal.push({
@@ -108,11 +108,6 @@ const FinalPage: React.FC = () => {
             profileImageUrl: currentUserData.profileImageUrl,
             rank: usersWithDetailsTotal.length + 1,
           });
-        }
-
-        if (userId && !usersWithDetailsArea.some(user => user.userId === userId)) {
-          const currentUserResponse = await fetch(`/api/getUser?userId=${userId}`);
-          const currentUserData = await currentUserResponse.json();
           usersWithDetailsArea.push({
             userId,
             xp: 0,
