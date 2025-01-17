@@ -6,6 +6,7 @@ interface UserXP {
   name?: string;
   profileImageUrl?: string;
   rank?: number;
+  area?: string;
 }
 
 interface TopUsersByXPProps {
@@ -49,7 +50,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                     <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
                       #{index + 1}
                     </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
+                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose w-full truncate">
                       {user.name || "Usuário"}
                     </div>
                   </div>
@@ -99,7 +100,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                     <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
                       #{index + 1}
                     </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
+                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose w-full truncate">
                       {user.name || "Usuário"}
                     </div>
                   </div>

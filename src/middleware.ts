@@ -8,7 +8,7 @@ const isStudentRoute = createRouteMatcher(['/student(.*)']);
 const isManagerRoute = createRouteMatcher(['/manager(.*)']);
 const isClientRoute = createRouteMatcher(['/client(.*)']);
 const isAuthNeededRoute = createRouteMatcher(['/']);
-const isPublicRoute = createRouteMatcher(['/login(.*)','/aluno/project(.*)','/ranking(.*)']);
+const isPublicRoute = createRouteMatcher(['/login(.*)','/aluno/project(.*)','/communit(.*)']);
 
 
 export default clerkMiddleware(async (auth, req) => {
