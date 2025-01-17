@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MagicMotion } from "react-magic-motion";
+import { IoChevronForward, IoChevronDown, IoChevronBack } from "react-icons/io5";
 
 interface SidebarProps {
   data: any[];
@@ -8,7 +8,10 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [collapsedDirectories, setCollapsedDirectories] = useState<{ [key: string]: boolean }>({});
+  const [collapsedDirectories, setCollapsedDirectories] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [selectedFile, setSelectedFile] = useState<string>("")
 
   const toggleDirectory = (name: string) => {
     setCollapsedDirectories((prev) => ({
@@ -17,70 +20,97 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
     }));
   };
 
-  const renderTree = (items: any[]) => (
-    <ul style={{ listStyle: "none", padding: 0 }}>
-      {items.map((item) => (
-        <li key={item.name} style={{ margin: "0.5rem 0" }}>
-          {item.type === "directory" ? (
-            <>
-              <div
-                onClick={() => toggleDirectory(item.name)}
-                style={{ cursor: "pointer", fontWeight: "bold", paddingLeft: "8px" }}
-              >
-                {collapsedDirectories[item.name] ? "▶" : "▼"} {item.name}
-              </div>
-              {!collapsedDirectories[item.name] && renderTree(item.children)}
-            </>
-          ) : (
-            <div
-              onClick={() => onSelectFile(item.content, item.name)}
-              style={{ cursor: "pointer", paddingLeft: "16px" }}
-            >
-              {item.name}
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
+  const renderTree = (items: any[]) => {
+    if (!Array.isArray(items)) {
+      console.error("renderTree recebeu um valor inválido:", items);
+      return null;
+    }
+  
+    return (
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {items.map((item) => {
+          if (!item || typeof item.name !== "string" || !item.type) {
+            console.error("Item inválido detectado:", item);
+            return null;
+          }
+  
+          return (
+            <li key={item.name}>
+              {item.type === "directory" ? (
+                <div>
+                  <div
+                    onClick={() => toggleDirectory(item.name)}
+                    style={{
+                      cursor: "pointer",
+                      paddingLeft: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                    className="font-fustat font-bold text-xl"
+                  >
+                    {collapsedDirectories[item.name] ? (
+                      <IoChevronForward />
+                    ) : (
+                      <IoChevronDown />
+                    )}{" "}
+                    {item.name}
+                  </div>
+                  {!collapsedDirectories[item.name] && renderTree(item.children)}
+                </div>
+              ) : (
+                <div
+                  onClick={() => {
+                    onSelectFile(item.content, item.name)
+                    setSelectedFile(item.name)
+                  }}
+                  style={{ cursor: "pointer"}}
+                  className={`font-fustat p-2 rounded-md font-light text-base ${selectedFile === item.name  && "bg-[#2D2D2D]"} `}
+                >
+                  {item.name.split(".")[0]}
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   return (
-    <MagicMotion>
       <aside
         style={{
-          backgroundColor: "rgba(23, 23, 23)",
+          backgroundColor: "#1B1B1B",
           padding: "1rem",
           margin: "1rem 0",
           borderRadius: "0.65rem",
           width: isCollapsed ? "1.3rem" : "20rem",
-          fontWeight: "bold",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
           overflow: "hidden",
         }}
+        className="font-fustat shadow-lg"
       >
         <div
           style={{
             display: "flex",
             gap: "0.5rem",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: isCollapsed ? "center" : "end",
           }}
         >
-          {!isCollapsed && <h4 style={{ margin: 0 }}>Arquivos</h4>}
 
           <button
-            style={{ cursor: "pointer", padding: 0, border: 0 }}
+            style={{ cursor: "pointer", border: 0 }}
             onClick={() => setIsCollapsed(!isCollapsed)}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {isCollapsed ? "▶" : "▼"}
+            {isCollapsed ? <IoChevronForward /> : <IoChevronBack />}
           </button>
         </div>
         {!isCollapsed && renderTree(data)}
       </aside>
-    </MagicMotion>
   );
 };
 

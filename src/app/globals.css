@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "fustat";
+  src: url("/fonts/fustat.ttf") format("woff2"),
+}
 
 :root {
   --background: #ffffff;
@@ -20,73 +24,73 @@ body {
 }
 
 .descricao-container {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  padding: 20px;
-  background-color: #1e1e1e;
-  color: #f4f4f4;
-  border: 1px solid #444;
-  border-radius: 8px;
+  font-family: fustat, Arial, sans-serif;
+  line-height: 1.8;
+  padding: 24px;
+  color: #EEE;
+  border-radius: 10px;
   width: 100%;
-  margin: 20px auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .descricao-container h1, 
 .descricao-container h2, 
-.descricao-container h3{
-  border-bottom: 1px solid #444;
-  margin-bottom: 15px;
-  padding-bottom: 5px;
+.descricao-container h3 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
 }
 
 .descricao-container h1 {
-  font-size: 2.2em;
-  color: #00bcd4;
-  border-bottom: 2px solid #00bcd4;
+  font-size: 2.4em;
+  font-weight: bold;
+  color: #EEE;
 }
 
 .descricao-container h2 {
-  font-size: 1.8em;
-  color: #82aaff;
+  font-size: 2em;
+  color: #EEE;
 }
 
 .descricao-container h3 {
-  font-size: 1.5em;
-  color: #c792ea;
+  font-size: 1.7em;
+  color: #EEE;
 }
 
 .descricao-container p {
-  margin: 10px 0;
-  color: #cccccc;
+  margin: 12px 0;
+  font-size: 1.1em;
+  color: #EEE;
 }
 
 .descricao-container a {
-  color: #82aaff;
+  color: #4DB8FF;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .descricao-container a:hover {
   text-decoration: underline;
+  color: #1E90FF;
 }
 
 .descricao-container pre {
   background: #2d2d2d;
   color: #f8f8f2;
-  padding: 15px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 10px;
   overflow-x: auto;
-  font-size: 0.95em;
+  font-size: 1em;
+  margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .descricao-container code {
   background-color: #272822;
   color: #f78c6c;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 6px;
+  border-radius: 5px;
   font-family: "Consolas", "Courier New", monospace;
-  font-size: 0.95em;
+  font-size: 1em;
 }
 
 .descricao-container pre code {
@@ -97,7 +101,8 @@ body {
 
 .descricao-container ul, 
 .descricao-container ol {
-  margin: 10px 0 20px 20px;
+  margin: 15px 0 25px 25px;
+  font-size: 1.1em;
 }
 
 .descricao-container ul {
@@ -111,41 +116,55 @@ body {
 .descricao-container table {
   border-collapse: collapse;
   width: 100%;
-  margin: 20px 0;
-  color: #ddd;
+  margin: 25px 0;
+  color: #EEE;
 }
 
 .descricao-container table th, 
 .descricao-container table td {
   border: 1px solid #444;
-  padding: 10px;
+  padding: 12px;
   text-align: left;
+}
+.toc.sticky {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 }
 
 .descricao-container table th {
   background-color: #333;
-  color: #f4f4f4;
+  color: #EEE;
   font-weight: bold;
 }
 
 @media (max-width: 768px) {
   .descricao-container {
-    padding: 10px;
+    padding: 16px;
   }
 
   .descricao-container h1 {
-    font-size: 1.8em;
+    font-size: 2em;
   }
 
   .descricao-container h2 {
-    font-size: 1.5em;
+    font-size: 1.7em;
   }
 
   .descricao-container h3 {
-    font-size: 1.3em;
+    font-size: 1.5em;
+  }
+
+  .descricao-container p {
+    font-size: 1em;
   }
 
   .descricao-container pre {
-    font-size: 0.85em;
+    font-size: 0.9em;
+  }
+
+  .descricao-container ul, 
+  .descricao-container ol {
+    margin-left: 20px;
   }
 }
