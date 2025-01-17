@@ -28,39 +28,55 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData })
   };
 
   useEffect(() => {
+    const getUserName = (userId: string): string => {
+      // Verificar se usersData está disponível e se não está vazio
+      if (!usersData || usersData.length === 0) {
+        return "Usuário não encontrado";
+      }
+  
+      const user = usersData.find((user: UserData) => user.id === userId);
+      return user ? user.name : "Usuário não encontrado"; // Retorna o nome ou uma mensagem padrão
+    };
     console.log("UserData: ", usersData);
 
     const usersTime = AllCards.reduce(
       (acc, card) => {
-        if (!acc[card.assigned]) {
-          acc[card.assigned] = 0;
+        
+        if (!acc[getUserName(card.assigned)]) {
+          acc[getUserName(card.assigned)] = 0;
         }
-        acc[card.assigned] -= card.tempo_estimado || 0;
-        acc[card.assigned] += card.tempo || 0;
+        acc[getUserName(card.assigned)] -= card.tempo_estimado || 0;
+        acc[getUserName(card.assigned)] += card.tempo || 0;
 
         return acc;
       },
       { equipe: 0 } as Record<string, number>
     );
-
+    
+    
     setUserData(usersTime);
+
   }, [AllCards, usersData]); // Adicionando usersData na lista de dependências
 
+
+  useEffect(() => console.log(userData), [userData])
   // Mapeia os IDs dos usuários para os nomes
-  const labels = Object.keys(userData).map((userId) => getUserName(userId));
-  const realData = labels.map((user) => userData[user]);
+  // const labels = Object.keys(userData).map((userId) => getUserName(userId));
+  // const realData = labels.map((user) => userData[user]);
 
   const data = {
-    labels: [...labels], // Usando os nomes na legenda
     datasets: [
       {
         label: "Delta tempo",
-        data: [...realData],
-        backgroundColor: [...realData].map((value) =>
-          value < 0 ? "rgba(255,0,0,0.6)" : "rgba(30,100,255,0.6)"
+        data: userData,
+        backgroundColor: usersData.map((value) =>
+          userData[getUserName(value.id)] > 0 ? "rgba(255,0,0,0.6)" : "rgba(30,100,255,0.6)"
         ),
-        borderColor: [...realData].map((value) =>
-          value < 0 ? "rgba(255,0,0,1)" : "rgba(30,100,255,1)"
+        borderColor: usersData.map((value) =>{
+          console.log(userData[getUserName(value.id)], userData[getUserName(value.id)] < 0)
+          
+         return userData[getUserName(value.id)] > 0 ? "rgba(255,0,0,0.6)" : "rgba(30,100,255,0.6)"
+        }
         ),
         borderWidth: 1,
         barPercentage: 0.8,

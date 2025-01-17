@@ -70,17 +70,19 @@ const Kanban: React.FC<KanbanProps> = ({ cards, statusChanged }) => {
 
   const handleDragOver = (e: React.DragEvent, columnName: string) => {
     e.preventDefault();
+    
     setDraggedOverColumn(columnName);
   };
-
+  
   const handleDragLeave = () => {
     setDraggedOverColumn(null);
   };
-
+  
   const handleDrop = async (
     e: React.DragEvent,
     targetColumn: "toDo" | "doing" | "done" | "prevented"
   ) => {
+    console.log("column", targetColumn);
     e.preventDefault();
     setDraggedOverColumn(null);
 
