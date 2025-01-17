@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SideNav from "@/app/components/sideNav";
+
 import Timeline from "../components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import Kanban from "../components/kanban/kanban";
@@ -20,6 +21,7 @@ interface Card {
   assigned?: string;
   sprint?: number;
   projeto?: number;
+
   dod?: string;
   dor?: string;
   xp_frontend?: number;
@@ -32,6 +34,7 @@ interface Card {
 }
 
 export default function Project() {
+
   const { projectId } = useParams(); 
   const [sprintSelected, setSprintSelected] = useState<number>(0);
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
@@ -46,12 +49,14 @@ export default function Project() {
   useEffect(() => {
     async function fetchCards() {
       try {
+
         const response = await axiosInstance.get(`/cards/project/${projectId}`);
         setCards(response.data);
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
       }
     }
+
     fetchCards();
   }, [statusChanged, projectId]);
 
@@ -119,12 +124,14 @@ export default function Project() {
         {/* Header */}
         <div className="flex items-center gap-5">
           <IoChevronBack size={28} />
+
           <p className="font-fustat text-[#eee] text-2xl">{project.nome}</p>
         </div>
 
         {/* Timeline Section */}
         <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
           <Timeline
+
             totalSprints={sprints.length}
             currentSprint={currentSprint}
             sprintProgress={currentSprintPercentage }
@@ -165,6 +172,8 @@ export default function Project() {
             cardsProject={sprintCards.filter((card) => card.status === "done")}
           />
         )}
+        {viewSelected === "Descrição" && <Descricao id={1}/>} {/* passar o id do projeto aqui */}
+
       </div>
     </div>
   );
