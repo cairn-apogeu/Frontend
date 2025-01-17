@@ -9,16 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.3.4",
+    "@clerk/backend": "^1.18.0",
+    "@clerk/clerk-sdk-node": "^5.0.69",
+    "@clerk/nextjs": "^6.6.0",
+    "axios": "^1.7.8",
+    "chart.js": "^4.4.6",
+    "gsap": "^3.12.5",
     "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.3.1",
     "react-icons": "^5.3.0"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/webpack": "^5.28.5",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
