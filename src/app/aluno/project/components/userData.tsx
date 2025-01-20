@@ -7,7 +7,7 @@ interface UserData {
   profileImageUrl: string;
 }
 
-const DadosUsuario = ({ id }: { id: string }) => {
+const DadosUsuario = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [userDataServer, setUserDataServer] = useState<any | null>(null);
   const [editField, setEditField] = useState<string | null>(null);
@@ -79,7 +79,7 @@ const DadosUsuario = ({ id }: { id: string }) => {
         // Crie um FormData e adicione o arquivo
         const formData = new FormData();
         formData.append("file", file);
-
+        console.log("------------------------------------<><><><><><>", file);
         // Faz upload da foto para o seu servidor
         const response = await fetch(`/api/postProfilePic/${userId}`, {
           method: "POST",
@@ -98,11 +98,8 @@ const DadosUsuario = ({ id }: { id: string }) => {
           ...prev!,
           profileImageUrl: data.newProfileImageUrl,
         }));
-
-        alert("Foto de perfil atualizada com sucesso!");
       } catch (error) {
-        console.error("Erro ao atualizar foto:", error);
-        alert("Erro ao atualizar a foto. Tente novamente.");
+        console.log("Erro ao atualizar foto>>>>>>>>>>>>>>>>>>>>>>>>>>>", error);
       } finally {
         setUploading(false);
       }
