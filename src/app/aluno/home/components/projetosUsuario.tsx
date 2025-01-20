@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import axiosInstance from "@/app/api/axiosInstance";
+import Image from "next/image";
 
 // Define o tipo Projeto conforme o modelo retornado pela API
 interface Projeto {
@@ -16,23 +18,16 @@ interface Projeto {
 
 // Define o tipo Participante baseado na tabela users
 interface Participante {
-  user_clerk_id: string;
-  tipo_perfil: string;
-  discord?: string;
-  linkedin?: string;
-  github?: string;
-  objetivo_curto?: string;
-  objetivo_medio?: string;
-  objetivo_longo?: string;
-  genero?: string;
-  nascimento?: string; // Pode ser usado para calcular idade
+  id: string,
+  name: string,
+  profileImageUrl: string,
 }
 
 const ProjectCards = ({ userId }: { userId: string }) => {
   const [projects, setProjects] = useState<Projeto[]>([]); // Inicializado como array vazio
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [participants, setParticipants] = useState<{ [key: number]: Participante[] }>({}); // Participantes por projeto
+  const [participants, setParticipants] = useState<Participante[] >([]); // Participantes por projeto
 
   // Função para calcular o progresso com base em dia_inicio e dia_fim
   const calculateProgress = (diaInicio: string, diaFim: string): number => {
@@ -51,11 +46,19 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   // Função para buscar os participantes de um projeto
   const fetchParticipants = async (projectId: number) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:3333/users/project/${projectId}`);
-      setParticipants((prev) => ({
-        ...prev,
-        [projectId]: response.data, // Armazena os participantes do projeto
-      }));
+      const response = await axiosInstance.get(`/users/project/${projectId}`);
+      const usersData: any[] = [];
+      for (const card of response.data) {
+        if (card.user_clerk_id && !usersData.some(user => user.id === card.user_clerk_id)) {
+          const response = await fetch(`/api/getUser?userId=${card.user_clerk_id}`);
+          const data = await response.json();
+          usersData.push(data);
+        }
+      }
+      console.log(usersData);
+      
+      
+      setParticipants(usersData);
     } catch (err) {
       console.error(`Erro ao buscar participantes do projeto ${projectId}:`, err);
     }
@@ -64,7 +67,7 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:3333/projetos/aluno/${userId}`);
+        const response = await axiosInstance.get(`/projetos/aluno/${userId}`);
 
         if (Array.isArray(response.data)) {
           setProjects(response.data);
@@ -102,9 +105,11 @@ const ProjectCards = ({ userId }: { userId: string }) => {
           {/* Div para a logo */}
           <div className="flex items-start space-x-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-green-500 to-teal-600 flex items-center justify-center">
-              <img
+              <Image
                 src="https://via.placeholder.com/40" // Substitua pela URL do logo
                 alt="Logo"
+                width={40}
+                height={40}
                 className="rounded-full w-10 h-10"
               />
             </div>
@@ -128,13 +133,15 @@ const ProjectCards = ({ userId }: { userId: string }) => {
           </div>
 
           {/* Div para os avatares e informações dos participantes */}
-          <div className="absolute bottom-2 right-4 flex flex-col items-end space-y-2">
-            {participants[project.id]?.map((participant) => (
-              <div key={participant.user_clerk_id} className="flex items-center space-x-2">
+          <div className="absolute bottom-2 right-4 flex flex-row items-end -space-x-2">
+            {participants.map((participant) => (
+              <div key={participant.id} className="flex items-center space-x-2">
                 {/* Avatar */}
-                <img
-                  src={`https://clerk.dev/avatar/${participant.user_clerk_id}`}
-                  alt={participant.tipo_perfil}
+                <Image
+                  src={participant.profileImageUrl}
+                  alt={participant.name}
+                  width={24}
+                  height={24}
                   className="w-6 h-6 rounded-full border-2 border-[#1B1B1B]"
                 />
               </div>
