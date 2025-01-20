@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
           padding: "1rem",
           margin: "1rem 0",
           borderRadius: "0.65rem",
-          width: isCollapsed ? "1.3rem" : "20rem",
+          width: isCollapsed ? "1.3rem" : "15rem",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",

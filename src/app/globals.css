@@ -26,7 +26,6 @@ body {
 .descricao-container {
   font-family: fustat, Arial, sans-serif;
   line-height: 1.8;
-  padding: 24px;
   color: #EEE;
   border-radius: 10px;
   width: 100%;
@@ -65,7 +64,7 @@ body {
 .descricao-container a {
   color: #4DB8FF;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: light;
 }
 
 .descricao-container a:hover {
@@ -74,14 +73,14 @@ body {
 }
 
 .descricao-container pre {
-  background: #2d2d2d;
+  background: #282a36;
   color: #f8f8f2;
   padding: 16px;
   border-radius: 10px;
   overflow-x: auto;
   font-size: 1em;
   margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px inset rgba(0, 0, 0, 0.5);
 }
 
 .descricao-container code {

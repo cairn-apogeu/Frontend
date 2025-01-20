@@ -8,6 +8,7 @@ import Sidebar from "./descricao/descricaoSideBar";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css"; // Escolha um estilo de realce
 import { visit } from "unist-util-visit";
+import CodeBlock from "./descricao/codeBlock";
 
 interface DescricaoProps {
   id: number;
@@ -179,12 +180,12 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
   console.log(processedData);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row max-w-full">
       <div className="descricao-container" style={{ display: "flex" }}>
         <Sidebar data={processedData} onSelectFile={handleFileSelect} />
         <div className="content-area" style={{ flex: 1, padding: "16px" }}>
           {selectedFile ? (
-            <div className="p-4 max-w-7xl">
+            <div className="p-4 max-w-3xl">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[
@@ -202,6 +203,9 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
                     });
                   },
                 ]}
+                components={{
+                  pre: CodeBlock, // <-- Atribuímos nosso componente
+                }}
               >
                 {selectedFile.content}
               </ReactMarkdown>
@@ -214,9 +218,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
       <nav
         className="toc"
         style={{
-          marginLeft: "20px",
           padding: "16px",
-          borderRadius: "8px",
           width: "250px",
           zIndex: 10,
           maxHeight: "80vh",
@@ -231,6 +233,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
             padding: 0,
             position: isSticky ? "fixed" : "relative",
             top: isSticky ? "24px" : "auto",
+            width: "250px",
           }}
         >
           {headings.map((heading) => (

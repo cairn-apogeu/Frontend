@@ -10,6 +10,7 @@ import Estatisticas from "../components/estatistica";
 
 import axiosInstance from "@/app/api/axiosInstance";
 import { useParams } from "next/navigation";
+import Descricao from "../components/descricao";
 
 interface Card {
   id: number;
@@ -33,17 +34,24 @@ interface Card {
   indicacao_conteudo?: string;
 }
 
+interface Sprint {
+  id: number;
+  objetivo: string;
+  numero: number;
+
+}
+
 export default function Project() {
 
   const { projectId } = useParams(); 
-  const [sprintSelected, setSprintSelected] = useState<number>(0);
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
   const [sprintCards, setSprintCards] = useState<Card[]>([]);
   const [statusChanged, setStatusChanged] = useState<boolean>(true);
   const [sprints, setSprints] = useState<any>([]);
   const [project, setProject] = useState<any>([])
-  const [currentSprint, setCurrentSprint] = useState<any>(null);
+  const [currentSprint, setCurrentSprint] = useState<Sprint>({numero: 0, id: 0, objetivo: ""});
+  const [sprintSelected, setSprintSelected] = useState<Sprint | null>(null);
   const [currentSprintPercentage, setCurrentSprintPercentage] = useState<number>(0);
 
   useEffect(() => {
@@ -52,6 +60,8 @@ export default function Project() {
 
         const response = await axiosInstance.get(`/cards/project/${projectId}`);
         setCards(response.data);
+        console.log(response.data);
+        
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
       }
@@ -76,8 +86,9 @@ export default function Project() {
         });
 
         if (sprintAtual) {
+          console.log(sprintAtual);
           
-          setCurrentSprint(sprintAtual.numero);
+          setCurrentSprint(sprintAtual);
 
           // Calcular a porcentagem concluída da sprint atual
           const diaInicio = new Date(sprintAtual.dia_inicio);
@@ -89,7 +100,6 @@ export default function Project() {
           
           setCurrentSprintPercentage(Math.min(100, Math.max(0, progresso)));
         } else {
-          setCurrentSprint(null);
           setCurrentSprintPercentage(0);
         }
       } catch (error) {
@@ -105,8 +115,8 @@ export default function Project() {
   useEffect(() => {
     setSprintCards(
       cards.filter((card) => {
-        if (sprintSelected !== 0) {
-          return card.sprint === sprintSelected;
+        if (sprintSelected?.numero !== 0) {
+          return card.sprint === sprintSelected?.numero;
         }
         return true;
       })
@@ -129,22 +139,31 @@ export default function Project() {
         </div>
 
         {/* Timeline Section */}
-        <div className="flex flex-col rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
+        <div className="flex flex-col gap-6 rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
+          <p className="self-start text-lg font-extralight"><span className="font-semibold">Objetivo: </span>
+           {sprintSelected?.objetivo || ""}
+          </p>
           <Timeline
 
             totalSprints={sprints.length}
-            currentSprint={currentSprint}
+            currentSprint={currentSprint.numero}
             sprintProgress={currentSprintPercentage }
-            sprintSelected={sprintSelected}
-            setSprintSelected={setSprintSelected}
+            sprintSelected={sprintSelected?.numero || 0}
+            setSprintSelected={(e) => {
+              console.log("aaa ", currentSprint);
+              
+              setSprintSelected(sprints.filter((sprint: Sprint) => {
+                return sprint.numero === e
+              })[0] || {numero: 0, id: 0, objetivo: ""})
+              
+            }}
           />
 
-          <div className="flex mt-12 w-full justify-between">
+          <div className="flex w-full justify-around">
             {[
               "Kanban",
               "Descrição",
               "Estatísticas",
-              "Chat AI",
             ].map((btnLabel, index) => (
               <button
                 key={index}
@@ -163,7 +182,7 @@ export default function Project() {
           <Kanban
             statusChanged={() => setStatusChanged(!statusChanged)}
             cards={sprintCards}
-            sprint={sprintSelected}
+            sprint={sprintSelected?.numero || 1}
             project={Number(projectId)}
           />
         )}

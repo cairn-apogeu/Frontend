@@ -76,6 +76,10 @@ const Kanban: React.FC<KanbanProps> = ({
     e.dataTransfer.setData("text/plain", data);
   };
 
+  useEffect(() => {
+    statusChanged()
+  }, [modalCardIsVisible])
+
   const handleDragOver = (e: React.DragEvent, columnName: string) => {
     e.preventDefault();
     
@@ -170,7 +174,7 @@ const Kanban: React.FC<KanbanProps> = ({
             className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
             {config.title} {" "}
-            {columnName === "toDo" && (
+            {columnName === "toDo" && sprint !== 0 && (
               <button
                 onClick={() => setModalCardIsVisible(true)}
                 className="hover:opacity-70"

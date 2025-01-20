@@ -54,7 +54,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
   const [formData, setFormData] = useState<FormData>({
     id: initialData.id,
     status: initialData.status || "toDo",
-    titulo: initialData.titulo || " Kanban",
+    titulo: initialData.titulo || "Nome do Card",
     descricao: initialData.descricao || "",
     tempo: initialData.tempo || 0,
     conteudoDeApoio:
@@ -174,9 +174,9 @@ const ModalCard: React.FC<ModalCardProps> = ({
     e.preventDefault();
 
     // Validations for required fields
-    if (!formData.dor || !formData.tempo_estimado) {
+    if (!formData.dor || !formData.tempo_estimado || formData.titulo === "Nome do Card") {
       alert(
-        "Por favor, preencha o campo DOR e Tempo Estimado antes de salvar."
+        "Por favor, preencha o campo DOR e Tempo Estimado e nome antes de salvar."
       );
       return;
     }
@@ -407,8 +407,8 @@ const ModalCard: React.FC<ModalCardProps> = ({
                 <IoLinkOutline className="text-green-500 w-5 h-5" />
                 <input
                   type="text"
-                  id="conteudoDeApoio"
-                  name="conteudoDeApoio"
+                  id="prova_pr"
+                  name="prova_pr"
                   placeholder="Prova de PR"
                   className="bg-transparent w-full md:w-2/3 rounded-md text-[#eeee] border-none focus:outline-none font-extralight text-sm md:text-base"
                   value={formData.prova_pr || ""}
