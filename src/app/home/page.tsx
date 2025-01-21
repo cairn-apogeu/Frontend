@@ -1,13 +1,13 @@
 'use client'
 
 import React from 'react';
-import TotalTroughputCard from './components/statistics/totalTroughputCard.tsx';
-import DeltaTimePredictCard from './components/statistics/deltaTimePredictCard.tsx';
-import AverageDailyTroughputCard from './components/statistics/averageDailyTroughputCard.tsx';
+import TotalTroughputCard from './components/statistics/totalTroughputCard';
+import DeltaTimePredictCard from './components/statistics/deltaTimePredictCard';
+import AverageDailyTroughputCard from './components/statistics/averageDailyTroughputCard';
 
 
 const Page = () => {
-  const userId = 'aluno1'; 
+  const userId = 'user_2pPbWrKiNVfCPZEjIU8RL3zwA1e'; 
 
   return (
     <div>

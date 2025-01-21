@@ -7,7 +7,7 @@ interface Card {
     descricao?: string;
     status: "toDo" | "doing" | "done" | "prevented";
     tempo_estimado?: number;
-    tempo?: number;
+    tempo: number;
     assigned?: string;
     sprint?: number;
     projeto?: number;
@@ -40,7 +40,8 @@ const TotalTroughputCard: React.FC<TotalTroughputCard> = ({ userId }) => {
         const response = await axiosInstance.get(`/cards/assigned/${userId}`);
         const cards: Card[] = response.data;
 
-        const total = cards.reduce((sum, card) => sum + card.tempo, 0);
+        const total = cards.filter(card => card.status === "done").reduce((sum, card) => sum + card.tempo, 0);
+        console.log(cards);
         
         setTotalTime(total);
       } catch (err) {

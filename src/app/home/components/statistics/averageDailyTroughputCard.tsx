@@ -50,52 +50,34 @@ const AverageDailyTroughputCard: React.FC<AverageDailyTroughputCard> = ({ userId
         setLoading(true);
         setError(null);
 
-        // const response = await axiosInstance.get(`/cards/assigned/${userId}`);
-        // const projetos: Project[] = response.data;
-
-        const projetos: Project[] = [
-          {
-            id: 1,
-            id_cliente: "clerk_12345",
-            id_gestor: "clerk_67890",
-            nome: "Desenvolvimento de Aplicativo Mobile",
-            valor: 15000,
-            status: "Concluído",
-            dia_inicio: new Date("2023-01-01"),
-            dia_fim: new Date("2023-01-06"),
-            
-          },
-          {
-            id: 2,
-            id_cliente: "clerk_54321",
-            id_gestor: "clerk_98765",
-            nome: "Plataforma de E-commerce",
-            valor: 30000,
-            status: "Em Andamento",
-            dia_inicio: new Date("2025-01-01"),
-            dia_fim: new Date("2025-01-30"),
-           
-          },
-          {
-            id: 3,
-            id_cliente: "clerk_11111",
-            id_gestor: "clerk_22222",
-            nome: "Sistema de Gerenciamento Escolar",
-            valor: 20000,
-            status: "Concluído",
-            dia_inicio: new Date("2023-01-01"),
-            dia_fim: new Date("2023-01-02"),
-            
-          },
-        ];
+        const responseProject = await axiosInstance.get(`/projetos/aluno/${userId}`);
+        const projetos: Project[] = responseProject.data;
 
         const calcularDiasTrabalhados = (projetos: Project[]): number => {
-          return projetos.reduce((totalDias, projeto) => {
+          const diasUteis = new Set<string>();
+        
+          const isDiaUtil = (data: Date): boolean => {
+            const diaSemana = data.getDay();
+            // 0 = Domingo, 6 = Sábado
+            return diaSemana !== 0 && diaSemana !== 6;
+          };
+        
+          projetos.forEach((projeto) => {
             const dataInicio = new Date(projeto.dia_inicio);
             const dataFim = projeto.status === "Concluído" ? new Date(projeto.dia_fim) : new Date();
-            const diasTrabalhados = Math.ceil((dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24));
-            return totalDias + diasTrabalhados;
-          }, 0);
+        
+            for (
+              let data = dataInicio;
+              data <= dataFim;
+              data.setDate(data.getDate() + 1) // Incrementa 1 dia
+            ) {
+              if (isDiaUtil(data)) {
+                diasUteis.add(data.toISOString().split("T")[0]); // Adiciona apenas a data no formato YYYY-MM-DD
+              }
+            }
+          });
+        
+          return diasUteis.size;
         };
         
         const diasTotaisTrabalhados = calcularDiasTrabalhados(projetos);
@@ -135,9 +117,9 @@ const AverageDailyTroughputCard: React.FC<AverageDailyTroughputCard> = ({ userId
       width: '180px',
       backgroundColor: '#1a1a1a',
       color: '#fff',
-      fontFamily: "'Arial', sans-serif",
       boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.5)',
     }}
+    className='font-fustat'
   >
     <h3
       style={{
@@ -147,7 +129,7 @@ const AverageDailyTroughputCard: React.FC<AverageDailyTroughputCard> = ({ userId
         color: '#ccc',
       }}
     >
-      Average Daily Troughput
+      Average Daily
     </h3>
     <p
       style={{
