@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SideNav from "@/app/components/sideNav";
-import Card from "../aluno/project/components/kanban/card";
 import axiosInstance from "@/app/api/axiosInstance";
+import { useAuth } from "@clerk/nextjs";
+import Card from "@/app/aluno/project/components/kanban/card";
 
 interface CardData {
   id: number;
@@ -27,35 +27,37 @@ interface CardData {
   data_criacao: string; // Adicione o campo data_criacao
 }
 
-export default function DoingCardPage() {
-  const [doingCards, setDoingCards] = useState<CardData[]>([]);
+export default function DoingCard() {
+  const { userId } = useAuth();
+  const [userCards, setUserCards] = useState<CardData[]>([]);
 
   useEffect(() => {
-    async function fetchDoingCards() {
+    async function fetchUserCards() {
       try {
-        const response = await axiosInstance.get(`/cards/project/1`);
-        const cards = response.data.filter((card: CardData) => card.status === "doing");
-        setDoingCards(cards);
+        const response = await axiosInstance.get(`cards/assigned/${userId}`);
+        setUserCards(response.data);
       } catch (error) {
-        console.error("Erro ao buscar cards:", error);
+        console.error("Erro ao buscar cards do usuário logado:", error);
       }
     }
-    fetchDoingCards();
-  }, []);
+
+    if (userId) {
+      fetchUserCards();
+    }
+  }, [userId]);
+
+  // Separar os cards com status "Doing" (exemplo)
 
   return (
-    <div className="flex min-h-screen min-w-screen bg-[#141414] relative">
-      <SideNav />
-      <div className="flex flex-col w-full p-8">
-        
-        <div className="absolute top-36 right-16 w-[300px] space-y-4">
-          <div className="bg-yellow-500 font-bold text-center py-2 rounded">
-            Doing
-          </div>
-          {userCards.map((card) => (
-              <Card key={card.id} card={card} />
-            ))}
-        </div>
+    <div className="flex flex-col items-center w-96">
+      <div className="flex bg-[#F1C946] items-center mb-8 py-2 px-8 rounded-md">
+        Doing
+      </div>
+
+      <div className="flex flex-col overflow-y-auto max-h-80 min-w-full">
+        {userCards.map((card) => (
+          <Card key={card.id} card={card} />
+        ))}
       </div>
     </div>
   );
