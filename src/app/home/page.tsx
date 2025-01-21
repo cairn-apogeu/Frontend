@@ -8,6 +8,9 @@ import axiosInstance from "../api/axiosInstance";
 import RadarComponent from "../components/radarChart";
 import axios from "axios";
 import { UserData } from "../components/graphsTypes";
+import TotalTroughputCard from "./components/statistics/totalTroughputCard";
+import AverageDailyTroughputCard from "./components/statistics/averageDailyTroughputCard";
+import DeltaTimePredictCard from "./components/statistics/deltaTimePredictCard";
 
 interface CardData {
   id: number;
@@ -57,6 +60,11 @@ export default function Project() {
       <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
         <div className="flex flex-row w-full justify-between">
           <DadosUsuario />
+          <div className="flex flex-col justify-between w-fit max-h-full">
+            <TotalTroughputCard userId={userId || ""}/>
+            <AverageDailyTroughputCard userId={userId||""}/>
+            <DeltaTimePredictCard userId={userId||""} />
+          </div>
           <div className="flex items-center justify-center bg-[#1b1b1b] rounded-md shadow-xl m-4 p-4 overflow-hidden">
             <RadarComponent
               AllCards={userCards.filter((card) => card.status === "done")}

@@ -86,7 +86,7 @@ const DeltaTimePredictCard: React.FC<DeltaTimePredictCard> = ({ userId }) => {
     </h3>
     <p
       style={{
-        margin: '8px 0 0',
+        margin: '4px 0 0',
         fontSize: '28px',
         fontWeight: 'bold',
       }}

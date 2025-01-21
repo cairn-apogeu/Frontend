@@ -47,7 +47,7 @@ export default function DoingCard() {
   // Separar os cards com status "Doing" (exemplo)
 
   return (
-    <div className="flex flex-col items-center w-96">
+    <div className="flex flex-col items-center max-w-full">
       <div className="flex bg-[#F1C946] items-center mb-8 py-2 px-8 rounded-md">
         Doing
       </div>
