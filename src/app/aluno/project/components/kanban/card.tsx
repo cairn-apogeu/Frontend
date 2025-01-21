@@ -14,8 +14,8 @@ interface CardData {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
@@ -34,6 +34,7 @@ interface CardProps {
 interface UserData {
   name: string;
   profileImageUrl: string;
+  tipo_perfil: string;
 }
 
 const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => {
@@ -92,7 +93,7 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
 
   return (
     <div
-      className=" bg-[#2D2D2D] w-full max-w-80 gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4"
+      className={` bg-[#2D2D2D] max-w-80 ${card.status === "prevented" ? "w-fit" : "w-full"} gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4`}
       draggable={draggable}
       onDragStart={handleDragStart}
     >
@@ -114,12 +115,12 @@ const Card: React.FC<CardProps> = ({ card, draggable = false, onDragStart }) => 
       </div>
 
       {/* Middle Section */}
-      <div>
+      <div className="flex w-full">
         <h2 className="text-white text-lg font-semibold">{card.titulo}</h2>
       </div>
 
       {/* Bottom Section */}
-      <div className="flex justify-around">
+      <div className="flex gap-2 justify-around">
         {/* Time Badge */}
         <div className="flex items-center space-x-1 px-2 py-1 bg-[#2D2D2D] border border-[#F1C946] text-[#F1C946] rounded-lg text-sm">
           <IoHourglassOutline />

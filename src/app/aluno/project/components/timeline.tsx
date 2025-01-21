@@ -29,9 +29,9 @@ const Timeline: React.FC<TimelineProps> = ({
   }, []);
 
   let lastSprintProgress: number = 0;
-  if (currentSprint > 5) lastSprintProgress = 1;
-  if (currentSprint < 5) lastSprintProgress = 0;
-  if (currentSprint === 5) lastSprintProgress = sprintProgress;
+  if (currentSprint > totalSprints) lastSprintProgress = 1;
+  if (currentSprint < totalSprints) lastSprintProgress = 0;
+  if (currentSprint === totalSprints) lastSprintProgress = sprintProgress;
 
   return (
     <div
@@ -98,13 +98,13 @@ const Timeline: React.FC<TimelineProps> = ({
         className={`flex flex-row items-center`}
       >
         <button
-          onClick={() => setSprintSelected(5)} // Atualiza o estado no componente pai
+          onClick={() => setSprintSelected(totalSprints)} // Atualiza o estado no componente pai
           style={{
             backgroundColor: lastSprintProgress !== 0 ? "#4DB8FF" : "#eee",
           }}
           className="flex items-center justify-center min-w-4 min-h-4 rounded-full"
         >
-          {sprintSelected === 5 && (
+          {sprintSelected === totalSprints && (
             <div className="w-2 h-2 rounded-full bg-[#eee]" />
           )}
         </button>
