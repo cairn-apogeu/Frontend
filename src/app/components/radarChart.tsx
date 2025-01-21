@@ -21,7 +21,7 @@ ChartJS.register(
   Filler
 );
 
-const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData }) => {
+const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData, showLegend }) => {
   const [userData, setUserData] = useState<Record<string, number[]>>({});
 
   // Função para buscar o nome do usuário com base no ID
@@ -112,6 +112,7 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData }) =>
           boxHeight: 10,
           borderRadius: 5,
         },
+        display: showLegend
       },
     },
   };
