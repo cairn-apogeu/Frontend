@@ -62,7 +62,7 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData, show
     backgroundColor: `rgba(${index * 50}, 100, 200, 0.5)`, // Valores RGBA corrigidos
     borderColor: `rgba(${index * 50}, 100, 200, 1)`,
     pointRadius: 3,
-    tension: 0.4,
+    tension: 0,
   }));
 
   const data = {

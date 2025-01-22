@@ -65,7 +65,7 @@ export default function Project() {
             <AverageDailyTroughputCard userId={userId||""}/>
             <DeltaTimePredictCard userId={userId||""} />
           </div>
-          <div className="flex items-center justify-center bg-[#1b1b1b] rounded-md shadow-xl m-4 p-4 overflow-hidden">
+          <div className="flex items-center justify-center bg-[#1b1b1b] rounded-md shadow-xl min-h-full m-4 p-4 overflow-hidden">
             <RadarComponent
               AllCards={userCards.filter((card) => card.status === "done")}
               usersData={[userData]}
