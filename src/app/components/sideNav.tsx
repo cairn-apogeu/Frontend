@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Comunidade",
-    href: "/config",
+    href: "/communit",
     icon: <IoPeople className="h-8 w-8" />,
   },
   {
