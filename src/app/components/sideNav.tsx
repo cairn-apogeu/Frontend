@@ -20,7 +20,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: "Home",
-    href: "/",
+    href: "/home",
     icon: <IoHome className="h-8 w-8" />,
   },
   {

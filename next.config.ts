@@ -10,7 +10,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: "via.placeholder.com",
-        hostname: 'images.clerk.dev',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: "images.clerk.dev",
         pathname: '**',
       },
     ],

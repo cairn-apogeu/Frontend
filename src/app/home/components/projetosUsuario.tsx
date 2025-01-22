@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
 import axios from "axios";
+import Link from "next/link";
 
 // Define o tipo Projeto conforme o modelo retornado pela API
 interface Projeto {
@@ -131,7 +132,8 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   return (
     <div className="flex flex-col w-96 gap-6">
       {projects.map((project) => (
-        <div
+        <Link
+          href={`/aluno/project/${project.id}`}
           key={project.id}
           className="flex flex-row bg-[#1B1B1B] text-white py-4 px-6 gap-6 rounded-xl shadow-xl min-w-full "
         >
@@ -184,7 +186,7 @@ const ProjectCards = ({ userId }: { userId: string }) => {
               ))}
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

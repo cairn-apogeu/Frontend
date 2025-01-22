@@ -11,6 +11,7 @@ import { UserData } from "../components/graphsTypes";
 import TotalTroughputCard from "./components/statistics/totalTroughputCard";
 import AverageDailyTroughputCard from "./components/statistics/averageDailyTroughputCard";
 import DeltaTimePredictCard from "./components/statistics/deltaTimePredictCard";
+import ProjectCards from "./components/projetosUsuario";
 
 interface CardData {
   id: number;
@@ -58,6 +59,7 @@ export default function Project() {
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
       <SideNav />
       <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
+        <h1 className="text-2xl font-fustat font-semibold">{userData?.name}</h1>
 
         <div className="flex flex-row w-full justify-between">
           <DadosUsuario />
@@ -74,6 +76,12 @@ export default function Project() {
             />
           </div>
           <DoingCard />
+        </div>
+        
+        <div className="flex min-w-full h-[1px] bg-[#eee] opacity-10"/>
+
+        <div className="flex flex-row w-full">
+          <ProjectCards userId={userId || ""}/>
         </div>
       </div>
     </div>

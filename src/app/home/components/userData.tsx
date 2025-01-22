@@ -141,7 +141,7 @@ const DadosUsuario = () => {
   return (
     <div className="w-[13%]">
       {/* Foto do Usuário */}
-      <div className="relative group">
+      <div className="">
         <Image
           src={userData?.profileImageUrl}
           alt={`${user.fullName}'s profile`}
