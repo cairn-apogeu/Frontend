@@ -26,4 +26,5 @@ export interface UserData {
 export interface paramsGraphsProps {
   AllCards: Card[];
   usersData: UserData[];
+  showLegend: boolean | undefined;
 }
