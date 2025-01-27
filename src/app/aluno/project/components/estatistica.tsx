@@ -14,8 +14,8 @@ interface Card {
   assigned?: string;
   sprint?: number;
   projeto?: number;
-  dod?: string[];
-  dor?: string[];
+  dod?: string;
+  dor?: string;
   xp_frontend?: number;
   xp_backend?: number;
   xp_negocios?: number;
