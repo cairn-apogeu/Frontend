@@ -11,6 +11,7 @@ import Estatisticas from "../components/estatistica";
 import axiosInstance from "@/app/api/axiosInstance";
 import { useParams } from "next/navigation";
 import Descricao from "../components/descricao";
+import { getCookie } from "cookies-next";
 
 interface Card {
   id: number;
@@ -38,30 +39,49 @@ interface Sprint {
   id: number;
   objetivo: string;
   numero: number;
-
 }
 
 export default function Project() {
-
-  const { projectId } = useParams(); 
+  const { projectId } = useParams();
   const [viewSelected, setViewSelected] = useState<string>("Kanban");
   const [cards, setCards] = useState<Card[]>([]);
   const [sprintCards, setSprintCards] = useState<Card[]>([]);
   const [statusChanged, setStatusChanged] = useState<boolean>(true);
   const [sprints, setSprints] = useState<any>([]);
-  const [project, setProject] = useState<any>([])
-  const [currentSprint, setCurrentSprint] = useState<Sprint>({numero: 0, id: 0, objetivo: ""});
+  const [project, setProject] = useState<any>([]);
+  const [currentSprint, setCurrentSprint] = useState<Sprint>({
+    numero: 0,
+    id: 0,
+    objetivo: "",
+  });
   const [sprintSelected, setSprintSelected] = useState<Sprint | null>(null);
-  const [currentSprintPercentage, setCurrentSprintPercentage] = useState<number>(0);
+  const [currentSprintPercentage, setCurrentSprintPercentage] =
+    useState<number>(0);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [newObjective, setNewObjective] = useState<string>(
+    sprintSelected?.objetivo || ""
+  );
+  const [userType, setUserType] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Busca o valor do cookie `userId.type` usando cookies-next
+    const cookieValue = getCookie('userId') as string | null;
+
+    if (cookieValue) {
+      const parsedValue = JSON.parse(cookieValue);
+      setUserType(parsedValue.type || 'Desconhecido'); // Define o tipo de usuário
+      console.log('Tipo de usuário:', parsedValue);
+    } else {
+      console.warn('Cookie userId.type não encontrado!');
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchCards() {
       try {
-
         const response = await axiosInstance.get(`/cards/project/${projectId}`);
         setCards(response.data);
         console.log(response.data);
-        
       } catch (error) {
         console.error("Erro ao buscar cards:", error);
       }
@@ -75,7 +95,7 @@ export default function Project() {
       try {
         const response = await axiosInstance.get(`/projetos/${projectId}`);
         setSprints(response.data.sprints);
-        setProject(response.data)
+        setProject(response.data);
 
         // Encontrar a sprint atual
         const hoje = new Date();
@@ -87,7 +107,7 @@ export default function Project() {
 
         if (sprintAtual) {
           console.log(sprintAtual);
-          
+
           setCurrentSprint(sprintAtual);
 
           // Calcular a porcentagem concluída da sprint atual
@@ -95,9 +115,9 @@ export default function Project() {
           const diaFim = new Date(sprintAtual.dia_fim);
           const duracaoTotal = diaFim.getTime() - diaInicio.getTime();
           const duracaoAtual = hoje.getTime() - diaInicio.getTime();
-          const progresso = (duracaoAtual / duracaoTotal);
+          const progresso = duracaoAtual / duracaoTotal;
           console.log(Math.min(100, Math.max(0, progresso)));
-          
+
           setCurrentSprintPercentage(Math.min(100, Math.max(0, progresso)));
         } else {
           setCurrentSprintPercentage(0);
@@ -107,10 +127,8 @@ export default function Project() {
       }
     }
 
-    
-    
     fetchProject();
-  }, [projectId]);
+  }, [projectId, newObjective]);
 
   useEffect(() => {
     setSprintCards(
@@ -124,8 +142,22 @@ export default function Project() {
   }, [sprintSelected, cards]);
 
   useEffect(() => {
-    console.log(currentSprint, " ", currentSprintPercentage)
-  }, [currentSprint, currentSprintPercentage])
+    console.log(currentSprint, " ", currentSprintPercentage);
+  }, [currentSprint, currentSprintPercentage]);
+
+  const saveObjective = async () => {
+    try {
+      console.log(sprintSelected?.id);
+      
+      await axiosInstance.put(`/sprints/${sprintSelected?.id}`, {
+        objetivo: newObjective,
+      });
+      console.log("Objetivo atualizado com sucesso");
+      setIsEditing(false); // Fecha o modo de edição após salvar
+    } catch (error) {
+      console.error("Erro ao atualizar o objetivo:", error);
+    }
+  };
 
   return (
     <div className="flex min-h-screen min-w-screen bg-[#141414]">
@@ -137,34 +169,50 @@ export default function Project() {
 
           <p className="font-fustat text-[#eee] text-2xl">{project.nome}</p>
         </div>
-
         {/* Timeline Section */}
         <div className="flex flex-col gap-6 rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
-          <p className="self-start text-lg font-extralight"><span className="font-semibold">Objetivo: </span>
-           {sprintSelected?.objetivo || ""}
+          <p className="self-start text-lg font-extralight">
+            {" "}
+            <span className="font-semibold">Objetivo: </span>
+            {isEditing && userType === "gestor" ? (
+              <input
+                type="text"
+                value={newObjective}
+                onChange={(e) => setNewObjective(e.target.value)}
+                onBlur={saveObjective} // Salva ao perder o foco
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveObjective(); // Salva ao pressionar Enter
+                }}
+                className="bg-[#2D2D2D] text-white border-none outline-none p-1 rounded"
+                autoFocus
+              />
+            ) : (
+              <span
+                onClick={() => setIsEditing(true)} // Entra no modo de edição ao clicar no texto
+                className="cursor-pointer hover:underline"
+              >
+                {sprintSelected?.objetivo || "Sem objetivo definido"}
+              </span>
+            )}
           </p>
           <Timeline
-
             totalSprints={sprints.length}
             currentSprint={currentSprint.numero}
-            sprintProgress={currentSprintPercentage }
+            sprintProgress={currentSprintPercentage}
             sprintSelected={sprintSelected?.numero || 0}
             setSprintSelected={(e) => {
               console.log("aaa ", currentSprint);
-              
-              setSprintSelected(sprints.filter((sprint: Sprint) => {
-                return sprint.numero === e
-              })[0] || {numero: 0, id: 0, objetivo: ""})
-              
+
+              setSprintSelected(
+                sprints.filter((sprint: Sprint) => {
+                  return sprint.numero === e;
+                })[0] || { numero: 0, id: 0, objetivo: "" }
+              );
             }}
           />
 
           <div className="flex w-full justify-around">
-            {[
-              "Kanban",
-              "Descrição",
-              "Estatísticas",
-            ].map((btnLabel, index) => (
+            {["Kanban", "Descrição", "Estatísticas"].map((btnLabel, index) => (
               <button
                 key={index}
                 onClick={() => setViewSelected(btnLabel)}
@@ -177,7 +225,6 @@ export default function Project() {
             ))}
           </div>
         </div>
-
         {viewSelected === "Kanban" && (
           <Kanban
             statusChanged={() => setStatusChanged(!statusChanged)}
@@ -191,8 +238,8 @@ export default function Project() {
             cardsProject={sprintCards.filter((card) => card.status === "done")}
           />
         )}
-        {viewSelected === "Descrição" && <Descricao id={1}/>} {/* passar o id do projeto aqui */}
-
+        {viewSelected === "Descrição" && <Descricao id={1} />}{" "}
+        {/* passar o id do projeto aqui */}
       </div>
     </div>
   );

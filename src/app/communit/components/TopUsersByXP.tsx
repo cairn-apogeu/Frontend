@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 interface UserXP {
@@ -27,52 +28,56 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
   userTotalRank,
 }) => {
   return (
-    <div className="w-[80%] h-[full] flex flex-col justify-center items-center gap-3.5 mx-auto">
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-4 p-4">
       {showTotalXP ? (
         <>
-          <div className="self-stretch text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
+          <h2 className="text-white text-lg md:text-2xl font-semibold text-center">
             Top 3 Usuários com mais XP Total
-          </div>
-          <div className="self-stretch h-[0px] border border-[#eeeeee]/10"></div>
-          <div className="self-stretch justify-between items-start inline-flex mb-10">
+          </h2>
+          <div className="border-t border-gray-700 my-4"></div>
+          <div className="flex flex-wrap justify-center gap-4">
             {topUsersTotal.map((user, index) => (
               <div
                 key={user.userId}
-                className="w-72 px-6 py-4 bg-[#1b1b1b] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex-col justify-center items-center gap-6 inline-flex"
+                className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
               >
-                <img
-                  className="w-36 h-36 rounded-[5px]"
-                  src={user.profileImageUrl || "https://via.placeholder.com/144x144"}
+                <Image
+                  width={128}
+                  height={128}
+                  className="w-24 h-24 md:w-36 md:h-36 rounded-md"
+                  src={
+                    user.profileImageUrl ||
+                    "https://via.placeholder.com/144x144"
+                  }
                   alt={user.name || "Usuário"}
                 />
-                <div className="w-60 h-16 flex-col justify-between items-center flex">
-                  <div className="self-stretch justify-start items-center gap-1 inline-flex">
-                    <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      #{index + 1}
-                    </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose w-full truncate">
-                      {user.name || "Usuário"}
-                    </div>
-                  </div>
+                <div className="mt-2 text-center">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                    #{index + 1}
+                  </p>
+                  <p className="text-white text-lg md:text-xl truncate">
+                    {user.name || "Usuário"}
+                  </p>
                 </div>
               </div>
             ))}
             {userTotalRank && (
-              <div className="w-72 px-6 py-4 bg-[#1b1b1b] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex-col justify-center items-center gap-6 inline-flex">
-                <img
-                  className="w-36 h-36 rounded-[5px]"
-                  src={topUsersTotal.find(user => user.userId === user.userId)?.profileImageUrl || "https://via.placeholder.com/144x144"}
+              <div className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
+                <Image
+                  width={128}
+                  height={128}
+                  className="w-24 h-24 md:w-36 md:h-36 rounded-md"
+                  src={
+                    topUsersTotal.find((user) => user.userId === user.userId)
+                      ?.profileImageUrl || "https://via.placeholder.com/144x144"
+                  }
                   alt="Você"
                 />
-                <div className="w-60 h-16 flex-col justify-between items-start flex">
-                  <div className="self-stretch justify-start items-center gap-[26px] inline-flex">
-                    <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      #{userTotalRank}
-                    </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      Você
-                    </div>
-                  </div>
+                <div className="mt-2 text-center">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                    #{userTotalRank}
+                  </p>
+                  <p className="text-white text-lg md:text-xl">Você</p>
                 </div>
               </div>
             )}
@@ -80,49 +85,53 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
         </>
       ) : (
         <>
-          <div className="self-stretch text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
+          <h2 className="text-white text-lg md:text-2xl font-semibold text-center">
             Top 3 {area}
-          </div>
-          <div className="self-stretch h-[0px] border border-[#eeeeee]/10"></div>
-          <div className="self-stretch justify-between items-start inline-flex mb-10">
+          </h2>
+          <div className="border-t border-gray-700 my-4"></div>
+          <div className="flex flex-wrap justify-center gap-4">
             {topUsersArea.map((user, index) => (
               <div
                 key={user.userId}
-                className="w-72 px-6 py-4 bg-[#1b1b1b] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex-col justify-center items-center gap-6 inline-flex"
+                className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
               >
-                <img
-                  className="w-36 h-36 rounded-[5px]"
-                  src={user.profileImageUrl || "https://via.placeholder.com/144x144"}
+                <Image
+                  width={128}
+                  height={128}
+                  className="w-24 h-24 md:w-36 md:h-36 rounded-md"
+                  src={
+                    user.profileImageUrl ||
+                    "https://via.placeholder.com/144x144"
+                  }
                   alt={user.name || "Usuário"}
                 />
-                <div className="w-60 h-16 flex-col justify-between items-start flex">
-                  <div className="self-stretch justify-start items-center gap-1 inline-flex">
-                    <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      #{index + 1}
-                    </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose w-full truncate">
-                      {user.name || "Usuário"}
-                    </div>
-                  </div>
+                <div className="mt-2 text-center">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                    #{index + 1}
+                  </p>
+                  <p className="text-white text-lg md:text-xl truncate">
+                    {user.name || "Usuário"}
+                  </p>
                 </div>
               </div>
             ))}
             {userRank && (
-              <div className="w-72 px-6 py-4 bg-[#1b1b1b] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex-col justify-center items-center gap-6 inline-flex">
-                <img
-                  className="w-36 h-36 rounded-[5px]"
-                  src={topUsersArea.find(user => user.userId === user.userId)?.profileImageUrl || "https://via.placeholder.com/144x144"}
+              <div className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
+                <Image
+                  width={128}
+                  height={128}
+                  className="w-24 h-24 md:w-36 md:h-36 rounded-md"
+                  src={
+                    topUsersArea.find((user) => user.userId === user.userId)
+                      ?.profileImageUrl || "https://via.placeholder.com/144x144"
+                  }
                   alt="Você"
                 />
-                <div className="w-60 h-16 flex-col justify-between items-start flex">
-                  <div className="self-stretch justify-start items-center gap-[26px] inline-flex">
-                    <div className="text-[#4db8ff] text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      #{userRank}
-                    </div>
-                    <div className="text-white text-[32px] font-semibold font-['Fustat'] leading-loose">
-                      Você
-                    </div>
-                  </div>
+                <div className="mt-2 text-center">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                    #{userRank}
+                  </p>
+                  <p className="text-white text-lg md:text-xl">Você</p>
                 </div>
               </div>
             )}

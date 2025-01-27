@@ -12,6 +12,7 @@ import TotalTroughputCard from "./components/statistics/totalTroughputCard";
 import AverageDailyTroughputCard from "./components/statistics/averageDailyTroughputCard";
 import DeltaTimePredictCard from "./components/statistics/deltaTimePredictCard";
 import ProjectCards from "./components/projetosUsuario";
+import Objetivos from "./components/Objetivos";
 
 interface CardData {
   id: number;
@@ -80,8 +81,9 @@ export default function Project() {
         
         <div className="flex min-w-full h-[1px] bg-[#eee] opacity-10"/>
 
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row min-w-full justify-between">
           <ProjectCards userId={userId || ""}/>
+          <Objetivos />
         </div>
       </div>
     </div>

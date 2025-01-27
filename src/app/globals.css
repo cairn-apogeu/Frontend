@@ -98,6 +98,15 @@ body {
   color: #f8f8f2;
 }
 
+.descricao-container blockquote {
+  font-style: italic;
+  color: #eee;
+  opacity: 70%;
+  border-left: 4px solid #ccc;
+  padding-left: 16px;
+  margin: 16px 0;
+}
+
 .descricao-container ul, 
 .descricao-container ol {
   margin: 15px 0 25px 25px;
