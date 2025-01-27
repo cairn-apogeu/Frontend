@@ -39,12 +39,13 @@ const Timeline: React.FC<TimelineProps> = ({
       ref={divRef}
     >
       <div
-        style={{ width: `${(divSize.width) / (totalSprints + 2)}px` }}
+        style={{ width: `${divSize.width / (totalSprints + 2)}px` }}
         className={`flex flex-row items-center`}
       >
-        <div 
-        onClick={() => setSprintSelected(0)} // Atualiza o estado no componente pai
-        className="flex items-center justify-center w-4 h-4 rounded-full bg-[#4DB8FF]">
+        <div
+          onClick={() => setSprintSelected(0)} // Atualiza o estado no componente pai
+          className="flex items-center justify-center w-4 h-4 rounded-full bg-[#4DB8FF]"
+        >
           {sprintSelected === 0 && (
             <div className="w-2 h-2 rounded-full bg-[#eee]" />
           )}
@@ -61,7 +62,7 @@ const Timeline: React.FC<TimelineProps> = ({
         return (
           <div
             key={index}
-            style={{ width: `${(divSize.width) / (totalSprints + 1)}px` }}
+            style={{ width: `${divSize.width / (totalSprints + 1)}px` }}
             className={`flex flex-row items-center`}
           >
             <button
@@ -76,7 +77,7 @@ const Timeline: React.FC<TimelineProps> = ({
             <div
               style={{
                 width: `${
-                  ((divSize.width) / (totalSprints + 1) - 16) * progress
+                  (divSize.width / (totalSprints + 1) - 16) * progress
                 }px`,
               }}
               className="h-1 bg-[#4DB8FF]"
@@ -84,8 +85,7 @@ const Timeline: React.FC<TimelineProps> = ({
             <div
               style={{
                 width: `${
-                  ((divSize.width) / (totalSprints + 1) - 16) *
-                  (1 - progress)
+                  (divSize.width / (totalSprints + 1) - 16) * (1 - progress)
                 }px`,
               }}
               className="h-1 bg-[#eee]"

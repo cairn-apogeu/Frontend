@@ -40,15 +40,19 @@ const Estatisticas: React.FC<StatisticProps> = ({ cardsProject }) => {
         const usersData: any[] = [];
 
         for (const card of cardsProject) {
-          if (card.assigned && !usersData.some(user => user.id === card.assigned)) {
-            const response = await fetch(`/api/getUser?userId=${card.assigned}`);
+          if (
+            card.assigned &&
+            !usersData.some((user) => user.id === card.assigned)
+          ) {
+            const response = await fetch(
+              `/api/getUser?userId=${card.assigned}`
+            );
             const data = await response.json();
             usersData.push(data);
           }
         }
 
         setUserData(usersData);
-        
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
       }
@@ -78,24 +82,22 @@ const Estatisticas: React.FC<StatisticProps> = ({ cardsProject }) => {
     }
   }, [cardsProject]); // Dependência em cardsProject
 
-
-
   const capacity = numUsers * 960;
   const averageThroughput = throughput / numUsers;
 
   return (
-    <div className="bg-[#141414] font-fustat flex-col ml-10 mr-10 h-[100vh] overflow-hidden">
-      <div className="flex items-stretch overflow-hidden h-[50%]">
-        <div className="flex-[1.5] grid grid-rows-3 gap-[1%] items-start justify-between mt-4 ml-[1%] mr-[-1%] h-min-full overflow-hidden">
-          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md h-min-ful">
+    <div className="bg-[#141414] font-fustat flex-col md:ml-10 mr-10 w-max-screen ">
+      <div className="flex flex-col md:flex-row items-stretch h-[50%]">
+        <div className="flex-[1.5] grid grid-rows-3 md:grid-cols-1 gap-[1%] sm:w-full items-start justify-between mt-4 ml-[1.2%] h-80">
+          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:min-w-full h-min-ful">
             <p className="text-sm font-extralight">Capacity</p>
             <p className="text-3xl font-semibold"> {capacity}min </p>
           </div>
-          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md h-min-ful">
+          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:w-full h-min-ful">
             <p className="text-sm font-extralight">Throughput</p>
             <p className="text-3xl font-semibold"> {throughput}min</p>
           </div>
-          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md h-min-ful">
+          <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:w-full h-min-ful">
             <p className="text-sm font-extralight whitespace-nowrap">
               Average ThroughPut
             </p>
@@ -103,19 +105,19 @@ const Estatisticas: React.FC<StatisticProps> = ({ cardsProject }) => {
           </div>
         </div>
 
-        <div className="flex-[8] bg-[#1b1b1b] rounded-md shadow-md m-4 w-full h-min-full p-4 overflow-hidden">
+        <div className="flex-[8] bg-[#1b1b1b] rounded-md shadow-md mt-4 md:m-4 w-[99%] md:w-full h-min-full p-4">
           <p className="text-sm font-extralight mb-3">Individual Throughput</p>
           <ThroughputComponent usersData={userData} AllCards={cardsProject} />
         </div>
       </div>
 
-      <div className="flex overflow-hidden h-[50%]">
-        <div className="flex-[1.8] bg-[#1b1b1b] rounded-md shadow-md m-4 w-full h-min-full p-4 overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[50%]">
+        <div className="flex-[1.8] bg-[#1b1b1b] rounded-md shadow-md mt-4 md:m-4 w-[99%] md:w-full h-min-full p-4">
           <p className="text-sm font-extralight mb-3">Delta Time Predict</p>
           <BarChartComponent usersData={userData} AllCards={cardsProject} />
         </div>
 
-        <div className="flex-[1.2] flex-row bg-[#1b1b1b] rounded-md shadow-md m-4 w-full p-4 overflow-hidden">
+        <div className="flex-[1.2] flex-row bg-[#1b1b1b] rounded-md shadow-md mt-4 md:m-4 w-[99%] md:w-full p-4">
           <p className="text-sm font-extralight ">Skills</p>
           <RadarComponent usersData={userData} AllCards={cardsProject} />
         </div>

@@ -40,6 +40,7 @@ const Kanban: React.FC<KanbanProps> = ({
   sprint,
   project,
 }) => {
+
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
     null
   );
@@ -129,6 +130,7 @@ const Kanban: React.FC<KanbanProps> = ({
         return;
       }
 
+
       if (targetColumn === "done" && !cardToMove.tempo) {
         console.warn("Card move canceled: missing required fields.");
         alert("Cannot move the card. Please complete all required fields.");
@@ -158,10 +160,26 @@ const Kanban: React.FC<KanbanProps> = ({
   };
 
   const columnConfigs = {
-    prevented: { title: "Prevented", bgColor: "bg-[#F14646]" },
-    toDo: { title: "To do", bgColor: "bg-[#F17C46]" },
-    doing: { title: "Doing", bgColor: "bg-[#F1C946]" },
-    done: { title: "Done", bgColor: "bg-[#51F146]" },
+    prevented: {
+      title: "Prevented",
+      bgColor: "bg-[#F14646]",
+      responsive: "w-full 2xl:w-9/12",
+    },
+    toDo: {
+      title: "To do",
+      bgColor: "bg-[#F17C46]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
+    doing: {
+      title: "Doing",
+      bgColor: "bg-[#F1C946]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
+    done: {
+      title: "Done",
+      bgColor: "bg-[#51F146]",
+      responsive: "sm:w-1/2 lg:w-1/3 2xl:w-1/4",
+    },
   };
 
   const renderColumn = (columnName: keyof typeof filteredCards) => {
@@ -170,6 +188,7 @@ const Kanban: React.FC<KanbanProps> = ({
     return (
       <div className="flex w-full flex-col min-h-44 bg-[#1B1B1B] rounded-xl shadow-md p-4">
         <div className={`flex w-full ${columnName !== "prevented" ? "justify-center" : "justify-start"}`}>
+
           <div
             className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
@@ -251,9 +270,9 @@ const Kanban: React.FC<KanbanProps> = ({
 
 
   return (
-    <div className="flex flex-col mt-6 w-full items-center gap-9">
+    <div className="flex flex-wrap lg:flex-nowrap flex-col lg:flex-col mt-6 w-full items-center gap-9">
       {renderColumn("prevented")}
-      <div className="w-full flex justify-center gap-9 h-fit align-middle mt-9">
+      <div className="w-full flex flex-col sm:flex-row justify-center gap-9 h-fit align-middle mt-9">
         {renderColumn("toDo")}
         {renderColumn("doing")}
         {renderColumn("done")}
