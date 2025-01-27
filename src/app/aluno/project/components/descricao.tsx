@@ -6,7 +6,7 @@ import rehypeRaw from "rehype-raw";
 import axiosInstance from "@/app/api/axiosInstance";
 import Sidebar from "./descricao/descricaoSideBar";
 import rehypeHighlight from "rehype-highlight";
-import "highlight.js/styles/github-dark.css"; // Escolha um estilo de realce
+import "highlight.js/styles/github-dark.css";
 import { visit } from "unist-util-visit";
 import CodeBlock from "./descricao/codeBlock";
 
@@ -34,12 +34,9 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
       if (nav) {
         const navTop = nav.getBoundingClientRect().top;
 
-        // Atualize o estado apenas se houver mudança
         if (navTop <= 40 && !isSticky) {
-          console.log(navTop);
           setIsSticky(true);
         } else if (navTop > 40 && isSticky) {
-          console.log(navTop);
           setIsSticky(false);
         }
       }
@@ -50,7 +47,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isSticky]); // Adicione isSticky como dependência
+  }, [isSticky]);
 
   useEffect(() => {
     const fetchJsonData = async () => {
@@ -77,11 +74,11 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
 
   const processJson = (data: any): any[] => {
     const processedData: any[] = [];
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (typeof value === "object") {
+  
+    Object.entries(data as Record<string, any>).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
         const subDirectory = processJson(value);
-        const order = parseInt(value["Order.md"] || "Infinity", 10);
+        const order = "Order.md" in value ? parseInt(value["Order.md"], 10) : Infinity;
         processedData.push({
           name: key,
           type: "directory",
@@ -89,18 +86,17 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
           children: subDirectory,
         });
       } else if (key.endsWith(".md") && key !== "Order.md") {
-        const order = getFileOrder(value);
+        const order = getFileOrder(value as string);
         processedData.push({ name: key, type: "file", order, content: value });
       }
     });
-
+  
     return processedData.sort((a, b) => a.order - b.order);
   };
-
+  
   const handleFileSelect = (content: string, name: string) => {
     setSelectedFile({ content, name });
 
-    // Extrair os títulos do Markdown
     const headingRegex = /^(#{1,2})\s+(.+)$/gm;
     const matches = Array.from(content.matchAll(headingRegex));
     const extractedHeadings = matches.map((match) => ({
@@ -110,6 +106,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
     }));
     setHeadings(extractedHeadings);
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -177,7 +174,6 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
   }
 
   const processedData = processJson(jsonData || {});
-  console.log(processedData);
 
   return (
     <div className="flex flex-row max-w-full">
@@ -204,7 +200,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
                   },
                 ]}
                 components={{
-                  pre: CodeBlock, // <-- Atribuímos nosso componente
+                  pre: CodeBlock,
                 }}
               >
                 {selectedFile.content}
