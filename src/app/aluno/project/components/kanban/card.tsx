@@ -1,32 +1,11 @@
 "use client";
 
+import { Card as CardType } from "@/app/components/graphsTypes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoHourglassOutline, IoPricetagsOutline } from "react-icons/io5";
-
-interface CardData {
-  id: number;
-  titulo: string;
-  descricao?: string;
-  status: string;
-  tempo_estimado?: number;
-  tempo?: number;
-  assigned?: string;
-  sprint?: number;
-  projeto?: number;
-  dod?: string;
-  dor?: string;
-  xp_frontend?: number;
-  xp_backend?: number;
-  xp_negocios?: number;
-  xp_arquitetura?: number;
-  xp_design?: number;
-  xp_datalytics?: number;
-  indicacao_conteudo?: string;
-}
-
 interface CardProps {
-  card: CardData;
+  card: CardType;
   draggable?: boolean;
   onDragStart?: (e: React.DragEvent, cardId: number) => void;
 }
@@ -48,7 +27,7 @@ const Card: React.FC<CardProps> = ({
   );
 
   // Função para calcular o maior XP
-  function calculateMaxXp(card: CardData) {
+  function calculateMaxXp(card: CardType) {
     const xpAreas = [
       { area: "Frontend", value: card.xp_frontend ?? 0 },
       { area: "Backend", value: card.xp_backend ?? 0 },

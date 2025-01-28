@@ -8,6 +8,7 @@ import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
 
 interface FormData {
+  [key: string]: string | number | readonly string[] | undefined
   status?: string;
   titulo: string;
   descricao: string;

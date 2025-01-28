@@ -4,9 +4,16 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/app/api/axiosInstance";
 import { useAuth } from "@clerk/nextjs";
 
+interface User {
+  [key: string]: any; // Use um índice de string se as propriedades forem dinâmicas
+  objetivo_curto?: string;
+  objetivo_medio?: string;
+  objetivo_longo?: string;
+}
+
 export default function Objetivos() {
   const { userId } = useAuth();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User>();
   const [objetivoSelected, setObjetivoSelected] = useState<"curto" | "medio" | "longo">("curto");
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState("");
@@ -27,7 +34,7 @@ export default function Objetivos() {
     if (userId) {
       fetchUserCards();
     }
-  }, [userId]);
+  }, [userId, objetivoSelected]);
 
   useEffect(() => {
     if (user) {

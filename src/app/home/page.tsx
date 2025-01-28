@@ -7,38 +7,18 @@ import { useAuth } from "@clerk/nextjs";
 import axiosInstance from "../api/axiosInstance";
 import RadarComponent from "../components/radarChart";
 import axios from "axios";
-import { UserData } from "../components/graphsTypes";
+import { Card, UserData } from "../components/graphsTypes";
 import TotalTroughputCard from "./components/statistics/totalTroughputCard";
 import AverageDailyTroughputCard from "./components/statistics/averageDailyTroughputCard";
 import DeltaTimePredictCard from "./components/statistics/deltaTimePredictCard";
 import ProjectCards from "./components/projetosUsuario";
 import Objetivos from "./components/Objetivos";
 
-interface CardData {
-  id: number;
-  titulo: string;
-  descricao?: string;
-  status: string;
-  tempo_estimado?: number;
-  tempo?: number;
-  assigned?: string;
-  sprint?: number;
-  projeto?: number;
-  dod?: string;
-  dor?: string;
-  xp_frontend?: number;
-  xp_backend?: number;
-  xp_negocios?: number;
-  xp_arquitetura?: number;
-  xp_design?: number;
-  xp_datalytics?: number;
-  indicacao_conteudo?: string;
-}
-
 export default function Project() {
   const { userId } = useAuth();
-  const [userCards, setUserCards] = useState<CardData[]>([]);
-  const [userData, setUserData] = useState<UserData>();
+  const [userCards, setUserCards] = useState<Card[]>([]);
+  const [userData, setUserData] = useState<UserData | undefined>();
+
 
   useEffect(() => {
     async function fetchUserCards() {
@@ -72,7 +52,7 @@ export default function Project() {
           <div className="flex items-center justify-center bg-[#1b1b1b] rounded-md shadow-xl min-h-full m-4 p-4 overflow-hidden">
             <RadarComponent
               AllCards={userCards.filter((card) => card.status === "done")}
-              usersData={[userData]}
+              usersData={userData ? [userData] : []}
               showLegend={false}
             />
           </div>

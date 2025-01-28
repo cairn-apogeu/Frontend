@@ -87,11 +87,12 @@ const AverageDailyTroughputCard: React.FC<AverageDailyTroughputCard> = ({ userId
         const response = await axiosInstance.get(`/cards/assigned/${userId}`);
         const cards: Card[] = response.data;
 
-        const total = cards.reduce((sum, card) => sum + card.tempo, 0);
+        const total = cards.reduce((sum, card) => sum + (card.tempo || 0), 0);
 
         const mediaTempoTrabalhado = total/diasTotaisTrabalhados;
 
-        setTotalTime(mediaTempoTrabalhado.toFixed(2));
+        setTotalTime(parseFloat(mediaTempoTrabalhado.toFixed(2)));
+
       } catch (err) {
         console.log(err);
         setError('Erro ao carregar os dados dos cartões.');

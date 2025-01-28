@@ -10,6 +10,10 @@ interface SearchBarProps {
   onFetch: (users: UserData[]) => void;
 }
 
+interface User {
+  user_clerk_id: string
+}
+
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFetch }) => {
   const [searchValue, setSearchValue] = useState("");
   const [users, setUsers] = useState<UserData[]>([]);
@@ -18,7 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFetch }) => {
     async function fetchAllUsers() {
       try {
         const response = await axiosInstance.get("/users");
-        const usersPromises = response.data.map((user: UserData) =>
+        const usersPromises = response.data.map((user: User) =>
           axios.get(`api/getUser?userId=${user.user_clerk_id}`)
         );
         const usersData = await Promise.all(usersPromises);

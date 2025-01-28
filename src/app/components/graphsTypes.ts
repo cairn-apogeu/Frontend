@@ -1,14 +1,15 @@
 export interface Card {
+  [key: string]: string | number | readonly string[] | undefined
   id: number;
   titulo: string;
   status: string;
-  tempo_estimado: number;
-  tempo: number;
+  tempo_estimado?: number; // Tornar opcional
+  tempo: number | undefined; // Tornar compatível
   assigned: string;
   sprint: number;
   projeto: number;
-  dod: string[];
-  dor: string[];
+  dod: string;
+  dor: string;
   xp_frontend: number;
   xp_backend: number;
   xp_negocios: number;

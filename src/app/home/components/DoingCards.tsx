@@ -4,36 +4,18 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/app/api/axiosInstance";
 import { useAuth } from "@clerk/nextjs";
 import Card from "@/app/aluno/project/components/kanban/card";
+import { Card as CardType } from "@/app/components/graphsTypes";
 
-interface CardData {
-    id: number;
-    titulo: string;
-    descricao?: string;
-    status: string;
-    tempo_estimado?: number;
-    tempo?: number;
-    assigned?: string;
-    sprint?: number;
-    projeto?: number;
-    dod?: string;
-    dor?: string;
-    xp_frontend?: number;
-    xp_backend?: number;
-    xp_negocios?: number;
-    xp_arquitetura?: number;
-    xp_design?: number;
-    xp_datalytics?: number;
-    indicacao_conteudo?: string;
-  }
+
 export default function DoingCard() {
   const { userId } = useAuth();
-  const [userCards, setUserCards] = useState<CardData[]>([]);
+  const [userCards, setUserCards] = useState<CardType[]>([]);
 
   useEffect(() => {
     async function fetchUserCards() {
       try {
         const response = await axiosInstance.get(`cards/assigned/${userId}`);
-        setUserCards(response.data.filter(card => card.status === "doing"));
+        setUserCards(response.data.filter((card: any) => card.status === "doing"));
       } catch (error) {
         console.error("Erro ao buscar cards do usuário logado:", error);
       }
