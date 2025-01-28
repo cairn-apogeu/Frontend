@@ -40,8 +40,8 @@ const DeltaTimePredictCard: React.FC<DeltaTimePredictCard> = ({ userId }) => {
         const response = await axiosInstance.get(`/cards/assigned/${userId}`);
         const cards: Card[] = response.data;
 
-        const total = cards.reduce((sum, card) => sum + card.tempo, 0);
-        const totalPredicted = cards.reduce((sum, card) => sum + card.tempo_estimado, 0);
+        const total = cards.reduce((sum, card) => sum + (card?.tempo || 0), 0);
+        const totalPredicted = cards.reduce((sum, card) => sum + (card?.tempo_estimado || 0), 0);
         const deltaTime = total - totalPredicted;
 
         setTotalTime(deltaTime);

@@ -69,7 +69,7 @@ const FinalPage: React.FC = () => {
     return diasUteis.size;
   };
 
-  const processCards = async (cards: any[], diasTotaisTrabalhados: number) => {
+  const processCards = useCallback(async (cards: any[], diasTotaisTrabalhados: number) => {
     const userXPMapTotal: Record<string, number> = {};
     const userXPMapArea: Record<string, number> = {};
     const userThroughputMap: Record<string, number> = {};
@@ -211,7 +211,7 @@ const FinalPage: React.FC = () => {
       usersWithDetailsArea,
       usersWithDetailsThroughput,
     };
-  };
+  }, [userId])
 
   const fetchData = useCallback(async () => {
     try {
@@ -251,11 +251,12 @@ const FinalPage: React.FC = () => {
       setUserRank(currentUserArea?.rank || null);
       setUserThroughputRank(currentUserThroughput?.rank || null);
     } catch (err) {
+      console.error(err);
       setError("Erro ao buscar os dados.");
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, processCards]);
 
   useEffect(() => {
     fetchData();
