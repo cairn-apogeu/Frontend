@@ -12,28 +12,7 @@ import axiosInstance from "@/app/api/axiosInstance";
 import { useParams } from "next/navigation";
 import Descricao from "../components/descricao";
 import { getCookie } from "cookies-next";
-
-interface Card {
-  id: number;
-  titulo: string;
-  descricao?: string;
-  status: "toDo" | "doing" | "done" | "prevented";
-  tempo_estimado?: number;
-  tempo?: number;
-  assigned?: string;
-  sprint?: number;
-  projeto?: number;
-
-  dod?: string;
-  dor?: string;
-  xp_frontend?: number;
-  xp_backend?: number;
-  xp_negocios?: number;
-  xp_arquitetura?: number;
-  xp_design?: number;
-  xp_datalytics?: number;
-  indicacao_conteudo?: string;
-}
+import { Card } from "@/app/components/graphsTypes";
 
 interface Sprint {
   id: number;
