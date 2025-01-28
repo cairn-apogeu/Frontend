@@ -5,27 +5,7 @@ import axiosInstance from "@/app/api/axiosInstance";
 import { IoAddCircleOutline } from "react-icons/io5";
 import ModalCard from "@/app/aluno/project/components/kanban/Modalcard";
 import Card from "./card";
-
-interface CardType {
-  id: number;
-  titulo: string;
-  descricao?: string;
-  status: "toDo" | "doing" | "done" | "prevented";
-  tempo_estimado?: number;
-  tempo?: number;
-  assigned?: string;
-  sprint?: number;
-  projeto?: number;
-  dod?: string;
-  dor?: string;
-  xp_frontend?: number;
-  xp_backend?: number;
-  xp_negocios?: number;
-  xp_arquitetura?: number;
-  xp_design?: number;
-  xp_datalytics?: number;
-  indicacao_conteudo?: string;
-}
+import { Card as CardType } from "@/app/components/graphsTypes";
 
 interface KanbanProps {
   cards: CardType[];
@@ -41,9 +21,7 @@ const Kanban: React.FC<KanbanProps> = ({
   project,
 }) => {
 
-  const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(
-    null
-  );
+
   const [filteredCards, setFilteredCards] = useState<{
     toDo: CardType[];
     doing: CardType[];
@@ -79,16 +57,14 @@ const Kanban: React.FC<KanbanProps> = ({
 
   useEffect(() => {
     statusChanged()
-  }, [modalCardIsVisible])
+  }, [modalCardIsVisible, statusChanged])
 
-  const handleDragOver = (e: React.DragEvent, columnName: string) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     
-    setDraggedOverColumn(columnName);
   };
   
   const handleDragLeave = () => {
-    setDraggedOverColumn(null);
   };
   
   const handleDrop = async (
@@ -97,7 +73,6 @@ const Kanban: React.FC<KanbanProps> = ({
   ) => {
     console.log("column", targetColumn);
     e.preventDefault();
-    setDraggedOverColumn(null);
 
     try {
       const draggedData = JSON.parse(e.dataTransfer.getData("text/plain"));
@@ -214,7 +189,7 @@ const Kanban: React.FC<KanbanProps> = ({
               ? { whiteSpace: "nowrap", justifyContent: "center", overflowY: "hidden", display: "flex" }
               : {justifyContent: "center",}
           }
-          onDragOver={(e) => handleDragOver(e, columnName)}
+          onDragOver={(e) => handleDragOver(e)}
           onDragLeave={handleDragLeave}
           onDrop={(e) => handleDrop(e, columnName)}
         >

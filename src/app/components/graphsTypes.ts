@@ -2,7 +2,7 @@ export interface Card {
   [key: string]: string | number | readonly string[] | undefined
   id: number;
   titulo: string;
-  status: string;
+  status: "toDo" | "doing" | "done" | "prevented";
   tempo_estimado?: number; // Tornar opcional
   tempo: number | undefined; // Tornar compatível
   assigned: string;
