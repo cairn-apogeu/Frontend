@@ -57,7 +57,7 @@ const Kanban: React.FC<KanbanProps> = ({
 
   useEffect(() => {
     statusChanged()
-  }, [modalCardIsVisible, statusChanged])
+  }, [modalCardIsVisible])
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
