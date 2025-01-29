@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-       <meta name="og:image" content="/public/og-image.jpg" />
+       <meta name="og:image" content="https://drive.google.com/u/0/drive-viewer/AKGpihbYFooK9qmJW2Pmcznzq9ohV-cgh7JQdVObOmipIy7ctY19Oty78zwDuj_o9jyA4IyUCsmbUaibgoxnLT0pivwa6_avDH3_vw=s1600-rw-v1" />
       <body className={`${fustat.variable} w-full`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
