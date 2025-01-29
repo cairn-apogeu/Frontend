@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
-import OGImage from "../../public/og-image.jpg"
 
 const fustat = localFont({
   src: "./fonts/Fustat.woff",
@@ -39,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-       <meta name="og:image" content={OGImage} />
+       <meta name="og:image" content="/public/og-image.jpg" />
       <body className={`${fustat.variable} w-full`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
