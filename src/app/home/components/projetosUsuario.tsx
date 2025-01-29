@@ -133,7 +133,7 @@ const ProjectCards = ({ userId }: { userId: string }) => {
     <div className="flex flex-col w-96 gap-6">
       {projects.map((project) => (
         <Link
-          href={`/aluno/project/${project.id}`}
+          href={`/project/${project.id}`}
           key={project.id}
           className="flex flex-row bg-[#1B1B1B] text-white py-4 px-6 gap-6 rounded-xl shadow-xl min-w-full "
         >

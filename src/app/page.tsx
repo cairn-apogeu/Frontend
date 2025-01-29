@@ -7,6 +7,7 @@ import DarkMontainSVG from "../../public/Dark-Montain-SVG.svg";
 import MinDarkMontainSVG from "../../public/Dark-Montain-SVG-min.svg";
 import Image from "next/image";
 import LogoFull from "../../public/logo-full.svg";
+import Link from "next/link";
 
 export default function InteractivePage() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -75,9 +76,9 @@ export default function InteractivePage() {
       {/* Header fixo */}
       <div className="fixed left-0 px-6 md:px-14 flex flex-row w-full items-center justify-between z-50">
         <Image src={LogoFull} alt="logo" className="w-28 md:w-40" />
-        <button className="bg-[#1b1b1b] px-4 md:px-6 py-2 text-sm md:text-xl rounded-md font-fustat font-medium shadow-md">
+        <Link href={"/login"} className="bg-[#1b1b1b] px-4 md:px-6 py-2 text-sm md:text-xl rounded-md font-fustat font-medium shadow-md">
           Login
-        </button>
+        </Link>
       </div>
 
       {/* Imagem da montanha */}

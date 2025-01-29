@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/app/api/axiosInstance";
 import { IoAddCircleOutline } from "react-icons/io5";
-import ModalCard from "@/app/aluno/project/components/kanban/Modalcard";
+import ModalCard from "@/app/project/components/kanban/Modalcard";
 import Card from "./card";
 import { Card as CardType } from "@/app/components/graphsTypes";
 

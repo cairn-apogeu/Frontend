@@ -80,6 +80,9 @@ export default function LoginPage() {
         } else {
           throw new Error("Sessão não encontrada.");
         }
+
+        // Redirecionamento para outra página
+        window.location.href = "/home";
       } else {
         setError("Autenticação incompleta. Verifique suas credenciais.");
       }

@@ -25,12 +25,12 @@ const navItems: NavItem[] = [
   },
   {
     label: "Comunidade",
-    href: "/communit",
+    href: "/community",
     icon: <IoPeople className="h-8 w-8" />,
   },
   {
     label: "Apogeu Codes",
-    href: "/user",
+    href: "/",
     icon: <IoCodeSlash className="h-8 w-8" />,
   },
 ];

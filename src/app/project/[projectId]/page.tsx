@@ -143,8 +143,10 @@ export default function Project() {
       <SideNav />
       <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
         {/* Header */}
-        <div className="flex items-center gap-5">
-          <IoChevronBack size={28} />
+        <div className="flex  items-center gap-5">
+          <button onClick={() => window.history.back()}>
+            <IoChevronBack size={28} />
+          </button>
 
           <p className="font-fustat text-[#eee] text-2xl">{project.nome}</p>
         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/app/api/axiosInstance";
 import { useAuth } from "@clerk/nextjs";
-import Card from "@/app/aluno/project/components/kanban/card";
+import Card from "@/app/project/components/kanban/card";
 import { Card as CardType } from "@/app/components/graphsTypes";
 
 
