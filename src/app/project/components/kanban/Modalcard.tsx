@@ -8,7 +8,7 @@ import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
 
 interface FormData {
-  [key: string]: string | number | readonly string[] | undefined
+  [key: string]: string | number | readonly string[] | undefined;
   status?: string;
   titulo: string;
   descricao: string;
@@ -29,6 +29,7 @@ interface FormData {
   tempo_estimado?: number;
   prova_pr?: string;
   data_criacao: string;
+  assigned?: string;
 }
 
 interface UserData {
@@ -74,6 +75,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
     tempo_estimado: initialData.tempo_estimado || 0,
     prova_pr: initialData.prova_pr || "",
     data_criacao: initialData.data_criacao || `${new Date()}`,
+    assigned: initialData.assigned || "",
   });
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -175,7 +177,11 @@ const ModalCard: React.FC<ModalCardProps> = ({
     e.preventDefault();
 
     // Validations for required fields
-    if (!formData.dor || !formData.tempo_estimado || formData.titulo === "Nome do Card") {
+    if (
+      !formData.dor ||
+      !formData.tempo_estimado ||
+      formData.titulo === "Nome do Card"
+    ) {
       alert(
         "Por favor, preencha o campo DOR e Tempo Estimado e nome antes de salvar."
       );
@@ -213,8 +219,18 @@ const ModalCard: React.FC<ModalCardProps> = ({
   useEffect(() => {}, []);
   const formattedDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).slice(-2)}`;
+    return `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}/${String(date.getFullYear()).slice(-2)}`;
   };
+
+  useEffect(() => {
+    if (initialData.assigned) {
+      fetchUserData(initialData.assigned).then((data) => {
+        setUserData(data);
+      });
+    }
+  }, [initialData]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -260,14 +276,22 @@ const ModalCard: React.FC<ModalCardProps> = ({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {userData?.profileImageUrl ? (
-              <Image
-                src={userData.profileImageUrl}
-                alt={userData.name}
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
+            {userData ? (
+              <div className="flex flex-row gap-4">
+                <h2
+                  className="text-xl md:text-2xl font-light text-white cursor-pointer"
+                  onClick={() => setIsEditingTitle(true)}
+                >
+                  {userData.name}
+                </h2>
+                <Image
+                  src={userData.profileImageUrl}
+                  alt={userData.name}
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              </div>
             ) : (
               <Link
                 href="#"
