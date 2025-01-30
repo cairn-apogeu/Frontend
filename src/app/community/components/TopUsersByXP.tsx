@@ -54,7 +54,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   alt={user.name || "Usuário"}
                 />
                 <div className="mt-2 text-center truncate">
-                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold max-w-xs overflow-hidden whitespace-nowrap truncate">
                     #{index + 1}
                   </p>
                   <p className="text-white text-lg md:text-xl truncate">
@@ -76,7 +76,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   alt="Você"
                 />
                 <div className="mt-2 text-center truncate">
-                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold max-w-xs overflow-hidden whitespace-nowrap truncate">
                     #{userTotalRank}
                   </p>
                   <p className="text-white text-lg md:text-xl truncate">Você</p>
@@ -108,10 +108,10 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   alt={user.name || "Usuário"}
                 />
                 <div className="mt-2 text-center truncate">
-                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold max-w-xs overflow-hidden whitespace-nowrap truncate">
                     #{index + 1}
                   </p>
-                  <p className="text-white text-lg md:text-xl truncate">
+                  <p className="text-white text-lg md:text-xl max-w-56 overflow-hidden whitespace-nowrap truncate">
                     {user.name || "Usuário"}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                     alt="Você"
                   />
                   <div className="mt-2 text-center truncate">
-                    <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                    <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold max-w-xs overflow-hidden whitespace-nowrap truncate">
                       #{userRank}
                     </p>
                     <p className="text-white text-lg md:text-xl truncate">Você</p>
