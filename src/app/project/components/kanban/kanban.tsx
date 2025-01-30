@@ -35,7 +35,9 @@ const Kanban: React.FC<KanbanProps> = ({
   });
   const [modalCardIsVisible, setModalCardIsVisible] = useState<boolean>(false);
   const [cardSelected, setCardSelected] = useState<CardType | null>();
-
+  useEffect(() => {
+    console.log("sprint: ", sprint);
+  }, [sprint])
   // Filtra os cards por status
   useEffect(() => {
     const toDo = cards.filter((card) => card.status === "toDo");

@@ -33,7 +33,11 @@ export default function Project() {
     id: 0,
     objetivo: "",
   });
-  const [sprintSelected, setSprintSelected] = useState<Sprint | null>(null);
+  const [sprintSelected, setSprintSelected] = useState<Sprint>({
+    numero: 0,
+    id: 0,
+    objetivo: "",
+  });
   const [currentSprintPercentage, setCurrentSprintPercentage] =
     useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -180,7 +184,7 @@ export default function Project() {
             totalSprints={sprints.length}
             currentSprint={currentSprint.numero}
             sprintProgress={currentSprintPercentage}
-            sprintSelected={sprintSelected?.numero || 0}
+            sprintSelected={sprintSelected?.numero}
             setSprintSelected={(e) => {
               console.log("aaa ", currentSprint);
 
@@ -210,7 +214,7 @@ export default function Project() {
           <Kanban
             statusChanged={() => setStatusChanged(!statusChanged)}
             cards={sprintCards}
-            sprint={sprintSelected?.numero || 1}
+            sprint={sprintSelected?.numero}
             project={Number(projectId)}
           />
         )}

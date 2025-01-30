@@ -84,7 +84,7 @@ const Card: React.FC<CardProps> = ({
     >
       {/* Top Section */}
       <div className="flex justify-between items-center">
-        <span className="text-white text-sm">16/11/2024</span>
+        <span className="text-white text-sm">{new Date(card.data_criacao).toLocaleDateString('pt-BR').replace(/\//g, '/').slice(0, 10)}</span>
         <div className="flex items-center space-x-2">
           {userData?.profileImageUrl && (
             <Image
