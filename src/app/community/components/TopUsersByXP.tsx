@@ -57,7 +57,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold max-w-xs overflow-hidden whitespace-nowrap truncate">
                     #{index + 1}
                   </p>
-                  <p className="text-white text-lg md:text-xl truncate">
+                  <p className="text-white text-lg md:text-xl max-w-56 overflow-hidden whitespace-nowrap truncate">
                     {user.name || "Usuário"}
                   </p>
                 </div>
@@ -88,7 +88,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
       ) : (
         <>
           <h2 className="text-white text-lg md:text-2xl font-semibold text-center">
-            Top 3 {area}
+            Top 3 {area === "datalytics" ? "Data Analytics" : area}
           </h2>
           <div className="border-t border-gray-700 my-4"></div>
           <div className="flex max-sm:flex-wrap justify-center gap-4">
