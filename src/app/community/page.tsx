@@ -282,6 +282,7 @@ const FinalPage: React.FC = () => {
         {userName === "" ? (
           <>
             <TopUsersByXP
+              userId={userId || ""}
               area="Throughput Diário"
               topUsersTotal={topUsersThroughput}
               topUsersArea={topUsersThroughput}
@@ -289,6 +290,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userThroughputRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="frontend"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}
@@ -296,6 +298,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userTotalRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="backend"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}
@@ -303,6 +306,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userTotalRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="arquitetura"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}
@@ -310,6 +314,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userTotalRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="design"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}
@@ -317,6 +322,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userTotalRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="negocios"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}
@@ -324,6 +330,7 @@ const FinalPage: React.FC = () => {
               userTotalRank={userTotalRank}
             />
             <TopUsersByXP
+              userId={userId || ""}
               area="datalytics"
               topUsersTotal={topUsersTotal}
               topUsersArea={topUsersArea}

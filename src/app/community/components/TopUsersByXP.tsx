@@ -17,6 +17,7 @@ interface TopUsersByXPProps {
   topUsersArea: UserXP[];
   userRank: number | null;
   userTotalRank: number | null;
+  userId: string;
 }
 
 const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
@@ -26,6 +27,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
   topUsersArea,
   userRank,
   userTotalRank,
+  userId,
 }) => {
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-4 p-4">
@@ -35,11 +37,11 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
             Top 3 Usuários com mais XP Total
           </h2>
           <div className="border-t border-gray-700 my-4"></div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {topUsersTotal.map((user, index) => (
+          <div className="flex justify-center gap-4">
+            {topUsersTotal.slice(0, 3).map((user, index) => (
               <div
                 key={user.userId}
-                className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
+                className="w-1/4 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
               >
                 <Image
                   width={128}
@@ -51,7 +53,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   }
                   alt={user.name || "Usuário"}
                 />
-                <div className="mt-2 text-center">
+                <div className="mt-2 text-center truncate">
                   <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
                     #{index + 1}
                   </p>
@@ -62,22 +64,22 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
               </div>
             ))}
             {userTotalRank && (
-              <div className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
+              <div className="w-1/4 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
                 <Image
                   width={128}
                   height={128}
                   className="w-24 h-24 md:w-36 md:h-36 rounded-md"
                   src={
-                    topUsersTotal.find((user) => user.userId === user.userId)
+                    topUsersTotal.find((user) => user.userId === userId)
                       ?.profileImageUrl || "https://via.placeholder.com/144x144"
                   }
                   alt="Você"
                 />
-                <div className="mt-2 text-center">
+                <div className="mt-2 text-center truncate">
                   <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
                     #{userTotalRank}
                   </p>
-                  <p className="text-white text-lg md:text-xl">Você</p>
+                  <p className="text-white text-lg md:text-xl truncate">Você</p>
                 </div>
               </div>
             )}
@@ -89,11 +91,11 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
             Top 3 {area}
           </h2>
           <div className="border-t border-gray-700 my-4"></div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {topUsersArea.map((user, index) => (
+          <div className="flex max-sm:flex-wrap justify-center gap-4">
+            {topUsersArea.slice(0, 3).map((user, index) => (
               <div
                 key={user.userId}
-                className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
+                className="w-1/4 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center"
               >
                 <Image
                   width={128}
@@ -105,7 +107,7 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
                   }
                   alt={user.name || "Usuário"}
                 />
-                <div className="mt-2 text-center">
+                <div className="mt-2 text-center truncate">
                   <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
                     #{index + 1}
                   </p>
@@ -116,24 +118,25 @@ const TopUsersByXP: React.FC<TopUsersByXPProps> = ({
               </div>
             ))}
             {userRank && (
-              <div className="w-64 md:w-72 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
-                <Image
-                  width={128}
-                  height={128}
-                  className="w-24 h-24 md:w-36 md:h-36 rounded-md"
-                  src={
-                    topUsersArea.find((user) => user.userId === user.userId)
-                      ?.profileImageUrl || "https://via.placeholder.com/144x144"
-                  }
-                  alt="Você"
-                />
-                <div className="mt-2 text-center">
-                  <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
-                    #{userRank}
-                  </p>
-                  <p className="text-white text-lg md:text-xl">Você</p>
+                <div className="w-1/4 bg-[#1b1b1b] rounded-lg shadow-lg p-4 flex flex-col items-center">
+                  <Image
+                    width={128}
+                    height={128}
+                    className="w-24 h-24 md:w-36 md:h-36 rounded-md"
+                    src={
+                      topUsersArea.find((user) => user.userId === userId)
+                        ?.profileImageUrl || "https://via.placeholder.com/144x144"
+                    }
+                    alt="Você"
+                  />
+                  <div className="mt-2 text-center truncate">
+                    <p className="text-[#4db8ff] text-xl md:text-2xl font-semibold">
+                      #{userRank}
+                    </p>
+                    <p className="text-white text-lg md:text-xl truncate">Você</p>
+                  </div>
                 </div>
-              </div>
+              
             )}
           </div>
         </>
