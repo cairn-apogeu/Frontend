@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useSignIn, useClerk } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useSignIn, useClerk, useAuth } from "@clerk/nextjs";
 import { setCookie } from "cookies-next";
 import Image from "next/image";
 import Mountains from "../../../public/Dark-Montain-SVG.svg";
 import LogoFull from "../../../public/logo-full.svg";
 import axiosInstance from "../api/axiosInstance";
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
@@ -16,6 +17,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push("/home");
+    }
+  }, [router, isSignedIn]);
 
   async function fetchUserType(userId: string) {
     try {
@@ -82,7 +91,7 @@ export default function LoginPage() {
         }
 
         // Redirecionamento para outra página
-        window.location.href = "/home";
+        router.push("/home")
       } else {
         setError("Autenticação incompleta. Verifique suas credenciais.");
       }
