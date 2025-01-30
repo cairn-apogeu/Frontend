@@ -96,7 +96,7 @@ const Card: React.FC<CardProps> = ({
             />
           )}
           <span className="text-white text-sm">
-            {userData?.name || "Usuário"}
+          {userData?.name ? `${userData.name.split(" ")[0]} ${userData.name.split(" ").slice(-1)}` : "Usuário"}
           </span>
         </div>
       </div>

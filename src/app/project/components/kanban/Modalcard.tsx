@@ -311,7 +311,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
                   className="text-xl md:text-2xl font-light text-white cursor-pointer"
                   onClick={() => setIsEditingTitle(true)}
                 >
-                  {userData.name}
+                  {`${userData.name.split(" ")[0]} ${userData.name.split(" ").slice(-1)}`}
                 </h2>
                 <Image
                   src={userData.profileImageUrl}
