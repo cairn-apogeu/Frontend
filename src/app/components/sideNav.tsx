@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import {
   IoHome,
   IoPeople,
-  IoCodeSlash,
+  // IoCodeSlash,
 } from "react-icons/io5"; // Importe os ícones do Ionicons
 import Link from "next/link";
 import Image from "next/image";
 import LogoFull from "../../../public/logo-full.svg";
 import Logo from "../../../public/logo-apogeu.svg";
 import LogOutButton from "./logout";
+import { SignOutButton } from "@clerk/nextjs";
 
 interface NavItem {
   label: string;
@@ -28,11 +29,11 @@ const navItems: NavItem[] = [
     href: "/community",
     icon: <IoPeople className="h-8 w-8" />,
   },
-  {
-    label: "Apogeu Codes",
-    href: "/",
-    icon: <IoCodeSlash className="h-8 w-8" />,
-  },
+  // {
+  //   label: "Apogeu Codes",
+  //   href: "/",
+  //   icon: <IoCodeSlash className="h-8 w-8" />,
+  // },
 ];
 
 const SideNav: React.FC = () => {
@@ -69,7 +70,9 @@ const SideNav: React.FC = () => {
           </Link>
         ))}
         <div className="flex flex-col justify-around h-full">
-          <LogOutButton isExpanded={isExpanded} />
+          <SignOutButton > 
+            <LogOutButton isExpanded={isExpanded} />
+          </SignOutButton>
         </div>
       </nav>
     </aside>
