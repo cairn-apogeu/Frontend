@@ -7,7 +7,6 @@ import Image from "next/image";
 import Mountains from "../../../public/Dark-Montain-SVG.svg";
 import LogoFull from "../../../public/logo-full.svg";
 import axiosInstance from "../api/axiosInstance";
-import { useRouter } from "next/router";
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
@@ -18,13 +17,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { isSignedIn } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     if (isSignedIn) {
-      router.push("/home");
+      window.location.href = "/home"; // Redireciona corretamente
     }
-  }, [router, isSignedIn]);
+  }, [isSignedIn]);
 
   async function fetchUserType(userId: string) {
     try {
@@ -91,7 +89,7 @@ export default function LoginPage() {
         }
 
         // Redirecionamento para outra página
-        router.push("/home")
+        window.location.href = "/home";
       } else {
         setError("Autenticação incompleta. Verifique suas credenciais.");
       }
