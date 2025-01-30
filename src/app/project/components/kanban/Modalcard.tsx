@@ -299,7 +299,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
                 onClick={handleAssignClick}
               >
                 <span className="text-blue-400 text-base md:text-lg font-light">
-                  {userData?.name || "Assign to"}
+                  {"Assign to"}
                 </span>
               </Link>
             )}
