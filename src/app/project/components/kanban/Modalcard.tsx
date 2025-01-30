@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { IoHourglassOutline, IoLinkOutline } from "react-icons/io5";
+import {
+  IoHourglassOutline,
+  IoLinkOutline,
+  IoTrashOutline,
+} from "react-icons/io5";
 import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
 
@@ -231,6 +235,31 @@ const ModalCard: React.FC<ModalCardProps> = ({
       });
     }
   }, [initialData]);
+
+  const handleDeleteCard = async () => {
+    const confirmDelete = window.confirm(
+      "Você tem certeza de que deseja excluir este cartão?"
+    );
+
+    if (!confirmDelete) {
+      console.log("Exclusão cancelada");
+      return;
+    }
+
+    try {
+      // Exemplo de chamada para a API ou ação de deletar
+      const response = await axiosInstance.delete(`/cards/${initialData.id}`);
+
+      // Verifica se a resposta foi bem-sucedida
+      if (response.status === 200) {
+        console.log("Cartão deletado com sucesso!");
+      } else {
+        throw new Error("Erro ao deletar o cartão");
+      }
+    } catch (error) {
+      console.error("Falha ao deletar o cartão:", error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -483,24 +512,41 @@ const ModalCard: React.FC<ModalCardProps> = ({
           </div>
         </div>
 
-        {/* Botões */}
-        <div className="flex mt-6 justify-end gap-4">
-          <button
-            type="submit"
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base ${
-              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Salvando..." : "Salvar"}
-          </button>
-          <button
-            type="button"
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base"
-            onClick={onClose}
-          >
-            Fechar
-          </button>
+        <div className="flex mt-6 flex-row justify-between">
+          {initialData.id ? (
+            <button
+              type="button"
+              onClick={() => {
+                handleDeleteCard()
+                onClose()
+              }}
+              className="bg-[#F14646] flex flex-row items-center rounded gap-2 px-2"
+            >
+              <IoTrashOutline className="text-[#eee] w-4 h-4 md:w-5 md:h-5" />
+              Deletar
+            </button>
+          ) : (
+            <div></div>
+          )}
+
+          <div className="flex justify-end gap-4">
+            <button
+              type="submit"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Salvando..." : "Salvar"}
+            </button>
+            <button
+              type="button"
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-sm md:text-base"
+              onClick={onClose}
+            >
+              Fechar
+            </button>
+          </div>
         </div>
       </form>
     </div>
