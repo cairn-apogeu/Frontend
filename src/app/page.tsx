@@ -8,18 +8,32 @@ import MinDarkMontainSVG from "../../public/Dark-Montain-SVG-min.svg";
 import Image from "next/image";
 import LogoFull from "../../public/logo-full.svg";
 import Link from "next/link";
+import { getCalApi } from "@calcom/embed-react";
 
 export default function InteractivePage() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({
+        namespace: "reuniao-de-apresentacao-de-projeto",
+      });
+      cal("ui", {
+        theme: "dark",
+        cssVarsPerTheme: {
+          light: { "cal-brand": "#1b1b1b" },
+          dark: { "cal-brand": "#4DB8FF" },
+        },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
+    })();
+  }, []);
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener("resize", handleResize);
-
-
 
     // Animação da montanha
     gsap.to(".mountain-image", {
@@ -56,7 +70,7 @@ export default function InteractivePage() {
         { opacity: 0, scale: 0.9 },
         {
           opacity: 1,
-          scale: isMobile ? 1:1.3,
+          scale: isMobile ? 1 : 1.3,
           ease: "power3.inOut",
           scrollTrigger: {
             trigger: section, // Cada seção é o gatilho da sua animação
@@ -71,12 +85,22 @@ export default function InteractivePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, [isMobile]);
 
+  const handleScroll = () => {
+    window.scrollTo({
+      top: window.scrollY + 300, // Ajuste o valor 500 para a distância que deseja rolar
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="container relative px-6 md:px-14 py-5 min-h-[200vh] min-w-full w-full overflow-hidden bg-[#141414]">
       {/* Header fixo */}
       <div className="fixed left-0 px-6 md:px-14 flex flex-row w-full items-center justify-between z-50">
         <Image src={LogoFull} alt="logo" className="w-28 md:w-40" />
-        <Link href={"/login"} className="bg-[#1b1b1b] px-4 md:px-6 py-2 text-sm md:text-xl rounded-md font-fustat font-medium shadow-md">
+        <Link
+          href={"/login"}
+          className="bg-[#1b1b1b] px-4 md:px-6 py-2 text-sm md:text-xl rounded-md font-fustat font-medium shadow-md"
+        >
           Login
         </Link>
       </div>
@@ -124,10 +148,18 @@ export default function InteractivePage() {
           Soluções sob medida que aumentam sua eficiência e reduzem seus custos.
         </p>
         <div className="flex flex-wrap flex-col md:flex-row gap-4 md:gap-8 items-center justify-center md:justify-start">
-          <button className="py-2 md:py-3 px-4 md:px-6 bg-[#eee] text-[#141414] rounded-lg text-sm md:text-lg font-semibold hover:bg-[#0070bb] transition-all">
-            Começar minha Jornada
+          <button
+            data-cal-namespace="reuniao-de-apresentacao-de-projeto"
+            data-cal-link="paulo-octavio-paula/reuniao-de-apresentacao-de-projeto"
+            data-cal-config='{"layout":"month_view","theme":"dark"}'
+            className="py-2 md:py-3 px-4 md:px-6 bg-[#eee] text-[#141414] rounded-lg text-sm md:text-lg font-semibold hover:bg-[#0070bb] transition-all"
+          >
+            Iniciar Jornada Gratuitamente
           </button>
-          <button className="py-2 md:py-4 px-4 md:px-6 bg-transparent border border-[#eee] text-[#eee] rounded-lg text-sm md:text-lg font-semibold hover:bg-[#0070bb] transition-all">
+          <button
+            onClick={handleScroll}
+            className="py-2 md:py-4 px-4 md:px-6 bg-transparent border border-[#eee] text-[#eee] rounded-lg text-sm md:text-lg font-semibold hover:bg-[#0070bb] transition-all"
+          >
             Conhecer Melhor
           </button>
         </div>
@@ -150,7 +182,8 @@ export default function InteractivePage() {
 
       <div className="new-content  inset-0 flex flex-wrap flex-col mb-[41vh] items-center justify-center text-center z-10 scale-75">
         <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">
-          Criação de <span className="text-[#4DB8FF]">design e brandkit profissional</span>
+          Criação de{" "}
+          <span className="text-[#4DB8FF]">design e brandkit profissional</span>
         </h2>
       </div>
 
