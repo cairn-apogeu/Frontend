@@ -98,7 +98,7 @@ export default function InteractivePage() {
       </div>
 
       <div
-        className={`mountain-image-2 scale-50 fixed -bottom-20 max-sm:-bottom-0 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none ${
+        className={`flex flex-row items-end mountain-image-2 scale-50 fixed -bottom-20 max-sm:-bottom-0 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none ${
           isMobile ? "w-[150%]" : "w-full"
         } h-auto`}
       >
@@ -110,6 +110,8 @@ export default function InteractivePage() {
           className="w-full h-auto max-sm:w-[1500px]"
           priority
         />
+        <div className="w-[50%] -left-96 absolute bg-[#090A0C] -z-10 h-[48%]"></div>
+        <div className="w-[50%] -right-96 absolute bg-[#090A0C] -z-10 h-[52%]"></div>
       </div>
 
       {/* Conteúdo inicial */}
