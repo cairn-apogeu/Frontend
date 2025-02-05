@@ -10,11 +10,9 @@ const fustat = localFont({
   weight: "100 200 300 400 500 600 700 800 900",
 });
 
-
 export const metadata: Metadata = {
   title: "Apogeu - Desenvolvimento de Software",
   description: "Apogeu é uma plataforma inovadora que conecta alunos a projetos de desenvolvimento de software, oferecendo aprendizado prático e capacitação de gestores. Junte-se a nós para transformar sua carreira e levar seu projeto ao próximo nível.",
-  keywords: ["desenvolvimento de software", "capacitação de gestores", "aprendizado prático", "projetos de tecnologia", "software house", "educação em tecnologia", "gestão de projetos"],
   openGraph: {
     type: "website",
     url: "https://www.apogeu.org",
@@ -23,13 +21,12 @@ export const metadata: Metadata = {
     siteName: "Apogeu",
     images: [
       {
-        url: "/public/og-image.jpg",
+        url: "https://www.apogeu.org/assets/og-image.jpg", // 🚀 Certifique-se de hospedar a imagem corretamente!
         alt: "Imagem de Apogeu",
       }
     ],
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -37,8 +34,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-       <meta name="og:image" content="https://drive.google.com/u/0/drive-viewer/AKGpihbYFooK9qmJW2Pmcznzq9ohV-cgh7JQdVObOmipIy7ctY19Oty78zwDuj_o9jyA4IyUCsmbUaibgoxnLT0pivwa6_avDH3_vw=s1600-rw-v1" />
+    <html lang="pt-BR">
+      <head>
+        <meta name="keywords" content="desenvolvimento de software, capacitação de gestores, aprendizado prático, projetos de tecnologia, software house, educação em tecnologia, gestão de projetos, apogeu, software, desenvolvimento, app, criação de app" />
+      </head>
       <body className={`${fustat.variable} w-full`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
