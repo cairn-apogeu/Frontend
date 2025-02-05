@@ -52,13 +52,7 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   // Função para buscar os participantes de um projeto
   const fetchParticipants = async (projectId: number) => {
     try {
-      const responseUserType = await axiosInstance.get(`/users/${userId}`)
-      const url = "/projetos"
-      console.log("tipo de usuário: ",responseUserType.data.tipo_perfil, ", url: ", url);
-
-      const response = await axiosInstance.get(url);
-      console.log(response);
-      
+      const response = await axiosInstance.get(`/users/project/${projectId}`);
       const usersData: Participante[] = [];
 
       for (const card of response.data) {
@@ -100,7 +94,12 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axiosInstance.get(`/projetos/aluno/${userId}`);
+        const responseUserType = await axiosInstance.get(`/users/${userId}`);
+        const url =
+          responseUserType.data.tipo_perfil !== "gestor"
+            ? `/projetos/aluno/${userId}`
+            : "/projetos";
+        const response = await axiosInstance.get(url);
 
         if (Array.isArray(response.data)) {
           setProjects(response.data);
