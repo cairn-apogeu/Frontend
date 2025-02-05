@@ -74,17 +74,17 @@ const Estatisticas: React.FC<StatisticProps> = ({ cardsProject }) => {
         <div className="flex-[1.5] grid grid-rows-3 md:grid-cols-1 gap-[1%] sm:w-full items-start justify-between mt-4 ml-[1.2%] h-80">
           <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:min-w-full h-min-ful">
             <p className="text-sm font-extralight">Capacity</p>
-            <p className="text-3xl font-semibold"> {capacity}min </p>
+            <p className="text-3xl font-semibold"> {Math.round(capacity)}min </p>
           </div>
           <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:w-full h-min-ful">
             <p className="text-sm font-extralight">Throughput</p>
-            <p className="text-3xl font-semibold"> {throughput}min</p>
+            <p className="text-3xl font-semibold"> {Math.round(throughput)}min</p>
           </div>
           <div className="bg-[#1b1b1b] p-3 rounded-md shadow-md sm:w-full h-min-ful">
             <p className="text-sm font-extralight whitespace-nowrap">
               Average ThroughPut
             </p>
-            <p className="text-3xl font-semibold">{averageThroughput}min</p>
+            <p className="text-3xl font-semibold">{Math.round(averageThroughput)}min</p>
           </div>
         </div>
 
