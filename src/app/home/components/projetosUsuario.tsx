@@ -54,7 +54,11 @@ const ProjectCards = ({ userId }: { userId: string }) => {
     try {
       const responseUserType = await axiosInstance.get(`/users/${userId}`)
       const url = responseUserType.data.tipo_perfil !== "gestor" ? `/users/project/${projectId}` : "/projetos"
+      console.log("tipo de usuário: ",responseUserType.data.tipo_perfil, ", url: ", url);
+
       const response = await axiosInstance.get(url);
+      console.log(response);
+      
       const usersData: Participante[] = [];
 
       for (const card of response.data) {
