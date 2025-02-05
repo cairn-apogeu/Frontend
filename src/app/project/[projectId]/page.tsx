@@ -44,7 +44,6 @@ export default function Project() {
   const [newObjective, setNewObjective] = useState<string>(
     sprintSelected?.objetivo || ""
   );
-  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     // Busca o valor do cookie `userId.type` usando cookies-next
@@ -52,7 +51,7 @@ export default function Project() {
 
     if (cookieValue) {
       const parsedValue = JSON.parse(cookieValue);
-      setUserType(parsedValue.type || 'Desconhecido'); // Define o tipo de usuário
+      // setUserType(parsedValue.type || 'Desconhecido');
       console.log('Tipo de usuário:', parsedValue);
     } else {
       console.warn('Cookie userId.type não encontrado!');
@@ -159,7 +158,7 @@ export default function Project() {
           <p className="self-start text-lg font-extralight">
             {" "}
             <span className="font-semibold">Objetivo: </span>
-            {isEditing && userType === "gestor" ? (
+            {isEditing ? (
               <input
                 type="text"
                 value={newObjective}

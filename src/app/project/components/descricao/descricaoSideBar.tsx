@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
   
           return (
             <li key={item.name}>
-              {item.type === "directory" ? (
+              {item.type === "directory" && item.name !== "img" ? (
                 <div>
                   <div
                     onClick={() => toggleDirectory(item.name)}
@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
                     ) : (
                       <IoChevronDown />
                     )}{" "}
-                    {item.name}
+                    {item.name.replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
                   </div>
                   {!collapsedDirectories[item.name] && renderTree(item.children)}
                 </div>
@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
                   style={{ cursor: "pointer"}}
                   className={`font-fustat p-2 rounded-md font-light text-base ${selectedFile === item.name  && "bg-[#2D2D2D]"} `}
                 >
-                  {item.name.split(".")[0]}
+                  {item.name.split(".")[0].replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
                 </div>
               )}
             </li>

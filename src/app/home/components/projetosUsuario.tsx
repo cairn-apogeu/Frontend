@@ -52,7 +52,9 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   // Função para buscar os participantes de um projeto
   const fetchParticipants = async (projectId: number) => {
     try {
-      const response = await axiosInstance.get(`/users/project/${projectId}`);
+      const responseUserType = await axiosInstance.get(`/users/${userId}`)
+      const url = responseUserType.data.tipo_perfil !== "gestor" ? `/users/project/${projectId}` : "/projetos"
+      const response = await axiosInstance.get(url);
       const usersData: Participante[] = [];
 
       for (const card of response.data) {
