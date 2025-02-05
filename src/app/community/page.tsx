@@ -263,7 +263,6 @@ const FinalPage: React.FC = () => {
   }, [fetchData]);
 
   if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <div>

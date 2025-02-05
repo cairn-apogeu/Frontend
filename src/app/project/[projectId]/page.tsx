@@ -11,7 +11,6 @@ import Estatisticas from "../components/estatistica";
 import axiosInstance from "@/app/api/axiosInstance";
 import { useParams } from "next/navigation";
 import Descricao from "../components/descricao";
-import { getCookie } from "cookies-next";
 import { Card } from "@/app/components/graphsTypes";
 
 interface Sprint {
@@ -42,21 +41,8 @@ export default function Project() {
     useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [newObjective, setNewObjective] = useState<string>(
-    sprintSelected?.objetivo || ""
+    sprintSelected?.objetivo
   );
-
-  useEffect(() => {
-    // Busca o valor do cookie `userId.type` usando cookies-next
-    const cookieValue = getCookie('userId') as string | null;
-
-    if (cookieValue) {
-      const parsedValue = JSON.parse(cookieValue);
-      // setUserType(parsedValue.type || 'Desconhecido');
-      console.log('Tipo de usuário:', parsedValue);
-    } else {
-      console.warn('Cookie userId.type não encontrado!');
-    }
-  }, []);
 
   useEffect(() => {
     async function fetchCards() {
@@ -127,10 +113,14 @@ export default function Project() {
     console.log(currentSprint, " ", currentSprintPercentage);
   }, [currentSprint, currentSprintPercentage]);
 
+  useEffect(() => {
+    setNewObjective(sprintSelected.objetivo)
+  }, [sprintSelected])
+
   const saveObjective = async () => {
     try {
       console.log(sprintSelected?.id);
-      
+
       await axiosInstance.put(`/sprints/${sprintSelected?.id}`, {
         objetivo: newObjective,
       });
@@ -155,30 +145,34 @@ export default function Project() {
         </div>
         {/* Timeline Section */}
         <div className="flex flex-col gap-6 rounded-xl shadow-md items-center px-10 py-5 w-full bg-[#1B1B1B]">
-          <p className="self-start text-lg font-extralight">
-            {" "}
-            <span className="font-semibold">Objetivo: </span>
-            {isEditing ? (
-              <input
-                type="text"
-                value={newObjective}
-                onChange={(e) => setNewObjective(e.target.value)}
-                onBlur={saveObjective} // Salva ao perder o foco
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") saveObjective(); // Salva ao pressionar Enter
-                }}
-                className="bg-[#2D2D2D] text-white border-none outline-none p-1 rounded"
-                autoFocus
-              />
-            ) : (
-              <span
-                onClick={() => setIsEditing(true)} // Entra no modo de edição ao clicar no texto
-                className="cursor-pointer hover:underline"
-              >
-                {sprintSelected?.objetivo || "Sem objetivo definido"}
-              </span>
-            )}
-          </p>
+          {sprintSelected.numero !== 0 ? (
+            <p className="self-start text-lg font-extralight">
+              {" "}
+              <span className="font-semibold">Objetivo: </span>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={newObjective}
+                  onChange={(e) => setNewObjective(e.target.value)}
+                  onBlur={saveObjective} // Salva ao perder o foco
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveObjective(); // Salva ao pressionar Enter
+                  }}
+                  className="bg-[#2D2D2D] text-white border-none outline-none p-1 rounded"
+                  autoFocus
+                />
+              ) : (
+                <span
+                  onClick={() => setIsEditing(true)} // Entra no modo de edição ao clicar no texto
+                  className="cursor-pointer hover:underline"
+                >
+                  {newObjective || "Sem Objetivo"}
+                </span>
+              )}
+            </p>
+          ) : (
+            <p className="self-start text-lg font-semibold">Todas as Sprints</p>
+          )}
           <Timeline
             totalSprints={sprints.length}
             currentSprint={currentSprint.numero}
