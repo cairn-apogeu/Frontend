@@ -53,7 +53,7 @@ const ProjectCards = ({ userId }: { userId: string }) => {
   const fetchParticipants = async (projectId: number) => {
     try {
       const responseUserType = await axiosInstance.get(`/users/${userId}`)
-      const url = await responseUserType.data.tipo_perfil !== "gestor" ? `/users/project/${projectId}` : "/projetos"
+      const url = "/projetos"
       console.log("tipo de usuário: ",responseUserType.data.tipo_perfil, ", url: ", url);
 
       const response = await axiosInstance.get(url);
