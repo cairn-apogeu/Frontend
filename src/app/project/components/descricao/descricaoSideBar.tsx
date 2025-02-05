@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, onSelectFile }) => {
                   </div>
                   {!collapsedDirectories[item.name] && renderTree(item.children)}
                 </div>
-              ) : (
+              ) : item.name !== "img" && (
                 <div
                   onClick={() => {
                     onSelectFile(item.content, item.name)

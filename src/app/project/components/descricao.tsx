@@ -110,7 +110,7 @@ const Descricao: React.FC<DescricaoProps> = ({ id }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/projetos/1`, form);
+      await axiosInstance.put(`/projetos/${id}`, form);
       alert("Informações enviadas com sucesso!");
     } catch (err: any) {
       console.error("Erro ao enviar informações:", err);

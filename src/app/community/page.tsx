@@ -38,7 +38,6 @@ const FinalPage: React.FC = () => {
     null
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<UserData[]>([]);
   const [userName, setUserName] = useState<string>("");
   const [usersResult, setUsersResult] = useState<UserData[]>([]);
@@ -217,7 +216,7 @@ const FinalPage: React.FC = () => {
     try {
       setLoading(true);
       const [projectsResponse, cardsResponse] = await Promise.all([
-        axiosInstance.get(`/projetos/aluno/${userId}`),
+        axiosInstance.get(`/projetos`),
         axiosInstance.get("/cards"),
       ]);
 
@@ -252,7 +251,6 @@ const FinalPage: React.FC = () => {
       setUserThroughputRank(currentUserThroughput?.rank || null);
     } catch (err) {
       console.error(err);
-      setError("Erro ao buscar os dados.");
     } finally {
       setLoading(false);
     }

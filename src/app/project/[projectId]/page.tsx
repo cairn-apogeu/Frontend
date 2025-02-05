@@ -216,7 +216,7 @@ export default function Project() {
             cardsProject={sprintCards.filter((card) => card.status === "done")}
           />
         )}
-        {viewSelected === "Descrição" && <Descricao id={1} />}{" "}
+        {viewSelected === "Descrição" && <Descricao id={Number(projectId)} />}{" "}
         {/* passar o id do projeto aqui */}
       </div>
     </div>
