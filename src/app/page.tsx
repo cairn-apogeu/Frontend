@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DarkMontainSVG from "../../public/Dark-Montain-SVG.svg";
@@ -9,9 +9,52 @@ import Image from "next/image";
 import LogoFull from "../../public/logo-full.svg";
 import Link from "next/link";
 import { getCalApi } from "@calcom/embed-react";
+import SoftwareHouseSection from "./components/landingPage/SoftwareHouseSection";
 
 export default function InteractivePage() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [showDetails, setShowDetails] = useState(false);
+
+  const titleRef = useRef<HTMLDivElement | null>(null);
+  const detailsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (showDetails) {
+      // Ajusta a posição inicial do título antes de animar
+      gsap.set(titleRef.current, { x: 0 });
+
+      // Animação para mover título e botão suavemente para a esquerda
+      gsap.to(titleRef.current, {
+        x: -50, // Move para a esquerda
+        duration: 0.6,
+        ease: "power3.out",
+      });
+
+      // Animação para exibir os detalhes suavemente
+      gsap.fromTo(
+        detailsRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", delay: 0.2 }
+      );
+    } else {
+      // Animação para esconder os detalhes antes de removê-los
+      gsap.to(detailsRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 0.4,
+        ease: "power3.in",
+        onComplete: () => setShowDetails(false),
+      });
+
+      // Retorna o título para o centro
+      gsap.to(titleRef.current, {
+        x: 0,
+        duration: 0.6,
+        ease: "power3.out",
+      });
+    }
+  }, [showDetails]);
+
   useEffect(() => {
     (async function () {
       const cal = await getCalApi({
@@ -67,10 +110,10 @@ export default function InteractivePage() {
     newContents.forEach((section) => {
       gsap.fromTo(
         section,
-        { opacity: 0, scale: 0.9 },
+        { opacity: 0, scale: 0.75 },
         {
           opacity: 1,
-          scale: isMobile ? 1 : 1.3,
+          scale: 1,
           ease: "power3.inOut",
           scrollTrigger: {
             trigger: section, // Cada seção é o gatilho da sua animação
@@ -166,6 +209,9 @@ export default function InteractivePage() {
       </div>
 
       {/* Seções de conteúdo novo */}
+
+      <SoftwareHouseSection />
+
       <div className="new-content inset-0 mb-[41vh] flex flex-wrap flex-col items-center justify-center text-center z-10 scale-75">
         <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">
           6 Desenvolvedores{" "}
