@@ -10,6 +10,7 @@ import LogoFull from "../../public/logo-full.svg";
 import Link from "next/link";
 import { getCalApi } from "@calcom/embed-react";
 import SoftwareHouseSection from "./components/landingPage/SoftwareHouseSection";
+import Laptop3D from "./components/landingPage/Laptop3d";
 
 export default function InteractivePage() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -81,7 +82,7 @@ export default function InteractivePage() {
     // Animação da montanha
     gsap.to(".mountain-image", {
       scale: isMobile ? 2 : 1.5,
-      y: isMobile ? "100%" : "100%",
+      y: isMobile ? "90%" : "90%",
       ease: "power3.out",
       scrollTrigger: {
         trigger: ".container",
@@ -94,6 +95,7 @@ export default function InteractivePage() {
 
     gsap.to(".mountain-image-2", {
       scale: 1,
+      y: isMobile ? "95%" : "95%",
       ease: "power3.out",
       scrollTrigger: {
         trigger: ".container",
@@ -182,7 +184,7 @@ export default function InteractivePage() {
       </div>
 
       {/* Conteúdo inicial */}
-      <div className="current-content flex flex-col mt-[20vh] mb-[41vh] z-30 text-center md:text-left">
+      <div className="current-content flex flex-col mt-[20vh] mb-[41vh] z-50 text-center md:text-left">
         <h1 className="text-3xl md:text-4xl w-full md:w-2/3 text-[#eee] font-fustat font-bold mx-auto md:mx-0">
           Transforme sua empresa{" "}
           <span className="text-[#4DB8FF]">em uma máquina de inovação.</span>
@@ -212,12 +214,8 @@ export default function InteractivePage() {
 
       <SoftwareHouseSection />
 
-      <div className="new-content inset-0 mb-[41vh] flex flex-wrap flex-col items-center justify-center text-center z-10 scale-75">
-        <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">
-          6 Desenvolvedores{" "}
-          <span className="text-[#4DB8FF]">focados no seu projeto!</span>
-        </h2>
-      </div>
+        <Laptop3D />
+
 
       <div className="new-content inset-0 flex flex-wrap flex-col mb-[41vh] items-center justify-center text-center z-10 scale-75">
         <h2 className="text-3xl md:text-4xl text-white font-fustat font-bold">

@@ -1,5 +1,18 @@
 /** @type {import('next').NextConfig} */
+import type { Configuration } from "webpack";
 const nextConfig = {
+  webpack: (config: Configuration) => {
+    if (!config.module) return config;
+
+    config.module.rules?.push({
+      test: /\.(glb|gltf)$/,
+      use: {
+        loader: "file-loader",
+      },
+    });
+
+    return config;
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

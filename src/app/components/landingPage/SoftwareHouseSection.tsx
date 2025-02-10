@@ -142,7 +142,7 @@ const SoftwareHouseSection = () => {
         </h2>
         {!isMobile || !showDetails ? (
             <button
-          className={`mt-6 py-2 px-4 md:px-6 bg-transparent border border-[#eee] text-[#eee] rounded-lg text-sm md:text-lg font-semibold transition-all ${
+          className={` z-20 mt-6 py-2 px-4 md:px-6 bg-transparent border border-[#eee] text-[#eee] rounded-lg text-sm md:text-lg font-semibold transition-all ${
             !showDetails && "self-center"
           } ${showDetails ? "bg-[#4DB8FF] text-[#eee] hover:bg-[#3a96e3]" : "hover:bg-[#4DB8FF]"}`}
           onClick={() => setShowDetails(!showDetails)}
