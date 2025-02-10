@@ -71,8 +71,8 @@ const Laptop3D = () => {
     );
   }, [scene, windowSize.width]);
 
-  const scale = useMemo(() => (windowSize.width < 768 ? [2.8, 2.8, 2.8] : [4, 4, 4]), [windowSize.width]);
-  const cameraPosition = useMemo(() => (windowSize.width < 768 ? [0, 0.4, 2.2] : [0, 0.5, 2]), [windowSize.width]);
+  const scale = useMemo<[x: number, y: number, z: number]>(() => (windowSize.width < 768 ? [2.8, 2.8, 2.8] : [4, 4, 4]), [windowSize.width]);
+  const cameraPosition = useMemo<[x: number, y: number, z: number]>(() => (windowSize.width < 768 ? [0, 0.4, 2.2] : [0, 0.5, 2]), [windowSize.width]);
   const textPosition = useMemo(() => (windowSize.width < 768 ? "top-[55%] text-center px-4" : "left-10"), [windowSize.width]);
 
   return (
