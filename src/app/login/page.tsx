@@ -84,53 +84,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#141414]">
+    <div className="flex flex-col h-screen bg-[#141414] relative justify-start items-center">
+        <Image src={LogoFull} className="w-32 md:w-60 mt-10" alt="logo-full" />
       <Image
         src={Mountains}
-        className="w-full absolute bottom-0 z-0"
+        className="hidden md:block w-full absolute bottom-0 z-0 opacity-60 object-cover h-full md:h-auto"
         alt="montain"
       />
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-6 md:p-10 z-10 bg-[#1b1b1b] rounded-none md:rounded-r-3xl shadow-2xl">
-        <Image src={LogoFull} className="w-40 md:w-60" alt="logo-full" />
-        <form className="flex flex-col gap-5 w-full max-w-sm" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="login" className="text-lg md:text-xl text-[#eeee]">
-              Login
-            </label>
-            <input
-              type="text"
-              id="login"
-              className="px-4 py-2 text-black rounded-xl border shadow-inner outline-none bg-[#D9D8D8]"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              required
-            />
-          </div>
+      <div className="flex w-full h-full justify-center items-center">
+        <div className="flex flex-col justify-center items-center w-full max-w-sm p-6 bg-[#1b1b1b] rounded-xl shadow-2xl z-10">
+          <form className="flex flex-col gap-6 w-full bg-[#222222] p-6 rounded-xl shadow-lg" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="login" className="text-lg md:text-xl text-[#eeee] font-semibold">
+                Login
+              </label>
+              <input
+                type="text"
+                id="login"
+                className="px-4 py-3 text-black rounded-lg border border-gray-600 shadow-inner outline-none bg-[#D9D8D8] focus:ring-2 focus:ring-blue-500"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-lg md:text-xl text-[#eeee]">
-              Senha
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="px-4 py-2 text-black rounded-xl border shadow-inner outline-none bg-[#D9D8D8]"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-lg md:text-xl text-[#eeee] font-semibold">
+                Senha
+              </label>
+              <input
+                type="password"
+                id="password"
+                className="px-4 py-3 text-black rounded-lg border border-gray-600 shadow-inner outline-none bg-[#D9D8D8] focus:ring-2 focus:ring-blue-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-          {error && <p className="text-red-500 text-sm md:text-base">{error}</p>}
+            {error && <p className="text-red-500 text-sm md:text-base text-center">{error}</p>}
 
-          <button
-            type="submit"
-            className="mt-5 py-2 md:py-3 w-full bg-[#4DB8FF] text-white hover:bg-[#0070bb] font-semibold transition-all rounded-xl text-lg"
-            disabled={isLoading}
-          >
-            {isLoading ? "Entrando..." : "Entrar"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="mt-5 py-3 w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:opacity-90 font-semibold transition-all rounded-lg text-lg shadow-md"
+              disabled={isLoading}
+            >
+              {isLoading ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+        </div>
+        <div className=" fixed -bottom-10 w-full h-1/3 bg-gradient-to-t from-[#4DB8FF]/20 to-transparent blur-2xl rounded-t-full md:hidden"></div>
+
       </div>
     </div>
   );
