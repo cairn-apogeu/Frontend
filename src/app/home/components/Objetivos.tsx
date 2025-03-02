@@ -58,8 +58,8 @@ export default function Objetivos() {
   };
 
   return (
-    <div className="flex flex-col font-fustats gap-11 text-[#eee] items-center w-[57%]">
-      <div className="flex flex-row min-w-full justify-between">
+    <div className="flex flex-col font-fustats gap-11 text-[#eee] items-center w-60 md:w-[1000px]">
+      <div className="flex flex-row min-w-full justify-center md:justify-between">
         <button
           onClick={() => setObjetivoSelected("curto")}
           className={`flex shadow-xl py-2 px-6 bg-[${objetivoSelected === "curto" ? "#4DB8FF" : "#2d2d2d"}] rounded-md font-extralight`}

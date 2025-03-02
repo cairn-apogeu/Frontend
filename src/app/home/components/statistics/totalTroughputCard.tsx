@@ -59,41 +59,14 @@ const TotalTroughputCard: React.FC<TotalTroughputCard> = ({ userId }) => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div
-    style={{
-      paddingLeft: '30px',
-      marginLeft: '30px',
-      borderRadius: '12px',
-      padding: '16px',
-      textAlign: 'left',
-      width: '180px',
-      backgroundColor: '#1a1a1a',
-      color: '#fff',
-      fontFamily: "'Arial', sans-serif",
-      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.5)',
-    }}
-  >
-    <h3
-      style={{
-        margin: '0',
-        fontSize: '14px',
-        fontWeight: 'normal',
-        color: '#ccc',
-      }}
-    >
-      Total Throughput
-    </h3>
-    <p
-      style={{
-        margin: '4px 0 0',
-        fontSize: '28px',
-        fontWeight: 'bold',
-      }}
-    >
-      {totalTime !== null ? `${totalTime} min` : 'No data'}
-    </p>
-  </div>
-  
+    <div className="pl-8 rounded-lg p-4 text-left w-45 bg-[#1A1A1A] text-white font-sans shadow-lg mb-2 md:mb-6">
+      <h3 className="m-0 text-sm font-normal text-gray-400">
+        Total Throughput
+      </h3>
+      <p className="mt-1 text-2xl font-bold">
+        {totalTime !== null ? `${totalTime} min` : 'No data'}
+      </p>
+    </div>
   );
 };
 
