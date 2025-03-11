@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
 import {
   IoHourglassOutline,
   IoLinkOutline,
@@ -10,6 +9,7 @@ import {
 } from "react-icons/io5";
 import axiosInstance from "@/app/api/axiosInstance";
 import Image from "next/image";
+import ParticipantsModal from "./AddAssign";
 
 interface FormData {
   [key: string]: string | number | readonly string[] | undefined;
@@ -79,14 +79,22 @@ const ModalCard: React.FC<ModalCardProps> = ({
     tempo_estimado: initialData.tempo_estimado || 0,
     prova_pr: initialData.prova_pr || "",
     data_criacao: initialData.data_criacao || `${new Date()}`,
-    assigned: initialData.assigned || "",
+    assigned: initialData.assigned,
   });
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [assignedTo, setAssignedTo] = useState<string | null>(null);
+  const [assignedTo] = useState<string | null>(null); // Remova setAssignedTo se não estiver usando
+
   const [userData, setUserData] = useState<UserData | null>(null);
-  const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState(false);
+
+  const handleAssignClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setIsParticipantsModalOpen(true); // Abre o modal de seleção de participantes
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -152,6 +160,24 @@ const ModalCard: React.FC<ModalCardProps> = ({
     }
   };
 
+  const handleParticipantSelect = (selectedUserId: string | null) => {
+    if (!selectedUserId || selectedUserId === undefined) {
+      // Se `null`, significa que ninguém deve estar atribuído
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        assigned: "",
+      }));
+      setUserData(null);
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        assigned: selectedUserId,
+      }));
+      fetchUserData(selectedUserId).then((data) => setUserData(data));
+    }
+    setIsParticipantsModalOpen(false); // Fecha o modal após a escolha
+  };
+
   useEffect(() => {
     if (assignedTo) {
       fetchUserData(assignedTo).then((data) => {
@@ -159,23 +185,6 @@ const ModalCard: React.FC<ModalCardProps> = ({
       });
     }
   }, [assignedTo]);
-
-  const handleAssignClick = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    if (user) {
-      const userId = user.id;
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        assigned: userId,
-      }));
-      setAssignedTo(userId);
-      console.log(`Usuário atribuído ID: ${userId}`);
-    } else {
-      console.error("Usuário não logado");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -305,13 +314,20 @@ const ModalCard: React.FC<ModalCardProps> = ({
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              href="#"
+              className="text-blue-400 hover:underline"
+              onClick={handleAssignClick}
+            >
             {userData ? (
               <div className="flex flex-row gap-4">
                 <h2
                   className="text-xl md:text-2xl font-light text-white cursor-pointer"
                   onClick={() => setIsEditingTitle(true)}
                 >
-                  {`${userData.name.split(" ")[0]} ${userData.name.split(" ").slice(-1)}`}
+                  {`${userData.name.split(" ")[0]} ${userData.name
+                    .split(" ")
+                    .slice(-1)}`}
                 </h2>
                 <Image
                   src={userData.profileImageUrl}
@@ -322,16 +338,11 @@ const ModalCard: React.FC<ModalCardProps> = ({
                 />
               </div>
             ) : (
-              <Link
-                href="#"
-                className="text-blue-400 hover:underline"
-                onClick={handleAssignClick}
-              >
                 <span className="text-blue-400 text-base md:text-lg font-light">
                   {"Assign to"}
                 </span>
-              </Link>
             )}
+              </Link>
           </div>
         </div>
 
@@ -517,8 +528,8 @@ const ModalCard: React.FC<ModalCardProps> = ({
             <button
               type="button"
               onClick={() => {
-                handleDeleteCard()
-                onClose()
+                handleDeleteCard();
+                onClose();
               }}
               className="bg-[#F14646] flex flex-row items-center rounded gap-2 px-2"
             >
@@ -549,6 +560,20 @@ const ModalCard: React.FC<ModalCardProps> = ({
           </div>
         </div>
       </form>
+
+      {isParticipantsModalOpen && (
+        <ParticipantsModal
+          projectId={project}
+          isOpen={isParticipantsModalOpen}
+          onClose={() => setIsParticipantsModalOpen(false)}
+          assign={formData.assigned || ""}
+          onSave={(selectedUsers) => {
+            console.log(selectedUsers);
+            
+            handleParticipantSelect(selectedUsers)
+          }} // Assume que apenas um usuário é selecionado
+        />
+      )}
     </div>
   );
 };
