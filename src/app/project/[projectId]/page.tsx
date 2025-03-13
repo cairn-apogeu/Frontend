@@ -6,7 +6,7 @@ import SideNav from "@/app/components/sideNav";
 import Timeline from "../components/timeline";
 import { IoChevronBack } from "react-icons/io5";
 import Kanban from "../components/kanban/kanban";
-import Estatisticas from "../components/estatistica";
+import Estatisticas from "../components/estatistica/estatistica";
 
 import axiosInstance from "@/app/api/axiosInstance";
 import { useParams } from "next/navigation";
@@ -132,9 +132,9 @@ export default function Project() {
   };
 
   return (
-    <div className="flex min-h-screen min-w-screen bg-[#141414]">
+    <div className="flex w-full h-full bg-[#141414]">
       <SideNav />
-      <div className="flex flex-col gap-11 w-full h-fit ml-16 p-14">
+      <div className="flex flex-col gap-11 w-full ml-16 p-10">
         {/* Header */}
         <div className="flex  items-center gap-5">
           <button onClick={() => window.history.back()}>
@@ -189,7 +189,7 @@ export default function Project() {
             }}
           />
 
-          <div className="flex w-full justify-around">
+          <div className="hidden md:flex w-full justify-around">
             {["Kanban", "Descrição", "Estatísticas"].map((btnLabel, index) => (
               <button
                 key={index}
@@ -201,6 +201,19 @@ export default function Project() {
                 {btnLabel}
               </button>
             ))}
+          </div>
+          <div className="flex w-full justify-around md:hidden">
+            <select
+              value={viewSelected}
+              onChange={(e) => setViewSelected(e.target.value)}
+              className="bg-[#2D2D2D] font-light rounded-md font-fustat shadow-xl text-[#eee] px-6 py-2 hover:bg-[#4DB8FF]"
+            >
+              {["Kanban", "Descrição", "Estatísticas"].map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         {viewSelected === "Kanban" && (

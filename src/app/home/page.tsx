@@ -47,7 +47,7 @@ export default function Project() {
             <div className="md:w-[192px] h-[400px]">
               <DadosUsuario />
             </div>
-            <div className="flex w-[120px] md:w-[192px] h-[400px]">
+            <div className="flex w-[120px] mr-10 md:w-[192px] h-[400px]">
               <div className="flex flex-col md:w-fit">
                 <TotalTroughputCard userId={userId || ""} />
                 <AverageDailyTroughputCard userId={userId || ""} />

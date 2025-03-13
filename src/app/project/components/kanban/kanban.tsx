@@ -164,8 +164,7 @@ const Kanban: React.FC<KanbanProps> = ({
 
     return (
       <div className="flex w-full flex-col min-h-44 bg-[#1B1B1B] rounded-xl shadow-md p-4">
-        <div className={`flex w-full ${columnName !== "prevented" ? "justify-center" : "justify-start"}`}>
-
+        <div className={`flex w-full justify-center`}>
           <div
             className={`flex ${config.bgColor} gap-3 rounded-md shadow-md justify-center items-center text-xl px-8 py-2 font-fustat mb-4 text-white `}
           >
@@ -181,56 +180,22 @@ const Kanban: React.FC<KanbanProps> = ({
           </div>
         </div>
         <div
-          className={`flex ${
-            columnName === "prevented"
-              ? "w-full justify-center overflow-x-auto h-44"
-              : "flex-1 flex-col w-full justify-center"
-          } `}
-          style={
-            columnName === "prevented"
-              ? { whiteSpace: "nowrap", justifyContent: "center", overflowY: "hidden", display: "flex" }
-              : {justifyContent: "center",}
-          }
+          className="flex flex-1 flex-col w-full align-start max-h-[480px] overflow-y-auto scrollbar-hide md:min-h-[480px]"
+          style={{ justifyContent: "start", whiteSpace: "nowrap" }}
           onDragOver={(e) => handleDragOver(e)}
           onDragLeave={handleDragLeave}
           onDrop={(e) => handleDrop(e, columnName)}
         >
-          <div
-            className={`flex justify-center ${
-              columnName === "prevented" ? "gap-4" : "flex-col gap-2"
-            }`}
-            style={
-              columnName === "prevented"
-                ? {
-                    overflowX: "auto",
-                    overflowY: "hidden",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    alignItems: "start",
-                    justifyContent: "space-around",
-                    height: "100%",
-                    width: "100%",
-                    gap: "16px"
-                  }
-                : {justifyContent: "center",}
-            }
-          >
+          <div className="flex flex-col gap-2 overflow-y-1 justify-center">
             {filteredCards[columnName].map((card: CardType) => (
               <button
-                
                 key={card.id}
                 onClick={() => {
                   setCardSelected(card);
                   setModalCardIsVisible(true);
                 }}
-                className={`${
-                  columnName === "prevented" ? "inline-block" : "flex justify-center"
-                }`}
-                style={
-                  columnName === "prevented"
-                    ? { flexShrink: 0 }
-                    : {width: "100%"}
-                }
+                className="flex justify-center"
+                style={{ width: "100%" }}
               >
                 <Card
                   card={card}
@@ -247,9 +212,9 @@ const Kanban: React.FC<KanbanProps> = ({
 
 
   return (
-    <div className="flex flex-wrap lg:flex-nowrap flex-col lg:flex-col mt-6 w-full items-center gap-9">
-      {renderColumn("prevented")}
-      <div className="w-full flex flex-col sm:flex-row justify-center gap-9 h-fit align-middle mt-9">
+    <div className="flex flex-wrap lg:flex-nowrap flex-col lg:flex-col w-full items-center gap-9">
+      <div className="w-full flex flex-col sm:flex-row justify-center gap-9 h-fit align-middle ">
+        {renderColumn("prevented")}
         {renderColumn("toDo")}
         {renderColumn("doing")}
         {renderColumn("done")}

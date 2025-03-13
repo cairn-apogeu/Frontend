@@ -118,7 +118,7 @@ const RadarComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData, show
   };
 
   return (
-    <div className="h-full">
+    <div className="h-auto">
       <Radar data={data} options={options} />
     </div>
   );
