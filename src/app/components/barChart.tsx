@@ -97,7 +97,7 @@ const BarChartComponent: React.FC<paramsGraphsProps> = ({ AllCards, usersData })
   };
 
   return (
-    <div className="h-autp">
+    <div className="h-auto">
       <Bar data={data} options={options}></Bar>
     </div>
   );
