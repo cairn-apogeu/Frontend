@@ -77,7 +77,7 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={` bg-[#2D2D2D] max-w-80 ${card.status === "prevented" ? "w-fit" : "w-full"} gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4`}
+      className={` bg-[#2D2D2D] w-[90%] gap-3 rounded-lg shadow-md p-4 flex flex-col justify-between self-center mb-4`}
 
       draggable={draggable}
       onDragStart={handleDragStart}

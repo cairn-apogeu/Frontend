@@ -139,7 +139,7 @@ const DadosUsuario = () => {
   };
 
   return (
-    <div className="w-[13%]">
+    <div className="w-[150px] md:w-[192px] justify-between">
       {/* Foto do Usuário */}
       <div className="">
         <Image
@@ -166,7 +166,7 @@ const DadosUsuario = () => {
           (field) => (
             <div
               key={field}
-              className="flex bg-[#1B1B1B]  px-2 py-1 items-center text-sm font-fustat font-light cursor-pointer mb-2 rounded-md shadow-lg"
+              className="flex bg-[#1B1B1B]  px-2 py-2 items-center text-sm font-fustat font-light cursor-pointer mb-6 rounded-md shadow-lg md:mb-2"
               onClick={() => handleEdit(field, metadata[field] || "")}
             >
               {iconMapping[field]}<p className="ml-5">@</p>
